@@ -14,5 +14,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += mongo-cxx-driver/include/mongocxx/v_noabi
+INCLUDEPATH += mongo-cxx-driver/include/libmongoc-1.0
+INCLUDEPATH += mongo-cxx-driver/include/bsoncxx/v_noabi
+INCLUDEPATH += mongo-cxx-driver/include/libbson-1.0
+INCLUDEPATH += boost\include\boost-1_67
+LIBS += -L"mongo-cxx-driver/lib" -lmongocxx -lbsoncxx
+LIBS += -L"boost\lib"
+
 SOURCES += \
         main.cpp
+
