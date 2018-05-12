@@ -71,3 +71,7 @@ Thumbs.db
 *.dll
 *.exe
 
+#Third party
+mongo-cxx-driver/
+boost/
+../build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Debug/

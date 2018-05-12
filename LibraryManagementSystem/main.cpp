@@ -6,7 +6,8 @@
 using namespace std;
 class AbstractApp{
 protected:
-    //vector<User*> users;
+    vector<User*> users;
+
     //vector<Book*> books;
     enum registerState{
         Success,
@@ -17,17 +18,17 @@ protected:
 #ifndef DataBase
     map<string,string> userList;
 #endif
-public:
+public:r
     virtual string getInput() = 0;
     virtual void ShowHelpPages() = 0;
     virtual void showMessage(const string &str) = 0;
     virtual void Register() = 0;
     virtual void exit() = 0;
-    //vector<Books*> searchByName(const string &str);
+    vector<Books*> search(const string &str);
     registerState addUser(const string &username,const string &password);
 };
 AbstractApp::registerState AbstractApp::addUser(const string &username,const string &password){
-#ifndef DataBase
+#ifndef __Database
     if(userList.count(username) > 0) return UserAlreadyExists;
     else if(username.length()<5) return UserNameInvalid;
     else if(password.length()<6) return PasswordInvalid;
@@ -44,6 +45,11 @@ vector<T*> AbstractApp::searchByName(const vector<string> &strs){
     return
 #endif
 }*/
+void login()
+{
+    User* new_user = User();
+    new_user->main();
+}
 class ConsoleApp:public AbstractApp{
     string str;
 public:
