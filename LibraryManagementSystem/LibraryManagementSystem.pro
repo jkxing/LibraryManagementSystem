@@ -23,5 +23,17 @@ LIBS += -L"mongo-cxx-driver/lib" -lmongocxx -lbsoncxx
 LIBS += -L"boost\lib"
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+    abstractapp.cpp \
+    consoleapp.cpp \
+    user.cpp \
+    books.cpp \
+    database.cpp
+
+HEADERS += \
+    abstractapp.h \
+    consoleapp.h \
+    user.h \
+    books.h \
+    database.h
 

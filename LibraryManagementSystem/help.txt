@@ -1,0 +1,3 @@
+Register-----Register a user
+Help---------show Help Page
+Exit---------Exit System

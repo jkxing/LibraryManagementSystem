@@ -3,40 +3,9 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+#include <abstractapp.h>
+#include <consoleapp.h>
 using namespace std;
-class AbstractApp{
-protected:
-    vector<User*> users;
-
-    //vector<Book*> books;
-    enum registerState{
-        Success,
-        UserAlreadyExists,
-        UserNameInvalid,
-        PasswordInvalid
-    };
-#ifndef DataBase
-    map<string,string> userList;
-#endif
-public:r
-    virtual string getInput() = 0;
-    virtual void ShowHelpPages() = 0;
-    virtual void showMessage(const string &str) = 0;
-    virtual void Register() = 0;
-    virtual void exit() = 0;
-    vector<Books*> search(const string &str);
-    registerState addUser(const string &username,const string &password);
-};
-AbstractApp::registerState AbstractApp::addUser(const string &username,const string &password){
-#ifndef __Database
-    if(userList.count(username) > 0) return UserAlreadyExists;
-    else if(username.length()<5) return UserNameInvalid;
-    else if(password.length()<6) return PasswordInvalid;
-    userList[username]=password;
-    return Success;
-#endif
-    //DataBase.addUser(username,password);
-}
 /*template<typename T>
 vector<T*> AbstractApp::searchByName(const vector<string> &strs){
 #ifndef DataBase
@@ -45,56 +14,32 @@ vector<T*> AbstractApp::searchByName(const vector<string> &strs){
     return
 #endif
 }*/
-void login()
-{
-    User* new_user = User();
-    new_user->main();
-}
-class ConsoleApp:public AbstractApp{
-    string str;
-public:
-    string getInput(){
-        cin>>str;
-        return str;
-    }
-    void showMessage(const string &str){
-        cout<<str<<endl;
-    }
-    void Register(){
-        this->showMessage("Please input your username:");
-        string Username = getInput();
-        this->showMessage("Please input your password");
-        string Password = getInput();
-        registerState st = addUser(Username,Password);
-        if(st == Success)
-            cout<<"registered Succeed"<<endl;
-        else
-            cout<<"registered failed"<<endl;
-    }
-    void ShowHelpPages(){
-        //cout<<"Haha! No such thing!"<<endl;
-    }
-    void exit(){
-        cout<<"Bye!"<<endl;
-    }
+enum OrderList{
+    Unknown,
+    Exit,
+    Register,
+    HelpPage
 };
 AbstractApp* System;
-
 void parseParameters(int argc,char* argv[])
 {
     System = new ConsoleApp();
 }
-int parseOrder(const string &str)
+OrderList parseOrder(const string &str)
 {
     if(str == "exit")
-        return -1;
-    return 1;
+        return OrderList::Exit;
+    if(str == "Register")
+        return OrderList::Register;
+    if(str == "help")
+        return OrderList::HelpPage;
+    return OrderList::Unknown;
 }
-int get_option()
+OrderList get_option()
 {
     static string str;
     str = System->getInput();
-    while(!parseOrder(str))
+    while(parseOrder(str)==OrderList::Unknown)
     {
         System->showMessage("unexpected order,please try again");
         str = System->getInput();
@@ -104,18 +49,13 @@ int get_option()
 int main(int argc, char *argv[])
 {
     parseParameters(argc,argv);
-    int order;
-    while((order = get_option())!=-1)
+    OrderList order;
+    while((order = get_option())!=OrderList::Exit)
     {
-        if(order == 1)
-        {
+        if(order == OrderList::Register)
             System->Register();
-        }
-        else
-        {
-            System->showMessage("Unexpected order");
-        }
-        //System->showMessage(to_string(order));
+        else if(order == OrderList::HelpPage)
+            System->ShowHelpPages();
     }
     System->exit();
     return 0;
