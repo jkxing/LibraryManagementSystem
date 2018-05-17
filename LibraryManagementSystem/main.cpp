@@ -18,6 +18,7 @@ enum OrderList{
     Unknown,
     Exit,
     Register,
+    Login,
     HelpPage
 };
 AbstractApp* System;
@@ -33,10 +34,13 @@ OrderList parseOrder(const string &str)
         return OrderList::Register;
     if(str == "help")
         return OrderList::HelpPage;
+    if(str == "Login")
+        return OrderList::Login;
     return OrderList::Unknown;
 }
 OrderList get_option()
 {
+    cout<<"Please input order: ";
     static string str;
     str = System->getInput();
     while(parseOrder(str)==OrderList::Unknown)
@@ -56,6 +60,8 @@ int main(int argc, char *argv[])
             System->Register();
         else if(order == OrderList::HelpPage)
             System->ShowHelpPages();
+        else if(order == OrderList::Login)
+            System->Login();
     }
     System->exit();
     return 0;

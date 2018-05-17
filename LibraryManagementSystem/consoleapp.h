@@ -9,5 +9,7 @@ public:
     void ShowHelpPages();
     void Register();
     void exit();
+    string getLoginInfo();
+    //string verifyUser();
 };
 #endif // CONSOLEAPP_H
