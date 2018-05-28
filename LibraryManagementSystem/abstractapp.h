@@ -19,7 +19,7 @@ protected:
         UserNameInvalid,
         PasswordInvalid
     };
-#ifndef DataBase
+#ifndef __Database
     map<string,string> userList;
 #endif
 public:
@@ -40,9 +40,9 @@ public:
     void returnBook(User* user,Book* book);
     void commitReturn(Book* book);
     void Login();
+    void addBook();
     pair<loginState,string> verifyUser(const string &username,const string &password);
-    template<typename T>
-    vector<T*> search(const vector<string>& str);
+    vector<Book*> search(const map<string,string>& str);
     registerState addUser(const string &username,const string &password);
 };
 #endif // ABSTRACTAPP_H

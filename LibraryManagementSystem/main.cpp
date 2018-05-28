@@ -28,6 +28,18 @@ void parseParameters(int argc,char* argv[])
 }
 OrderList parseOrder(const string &str)
 {
+    if(str=="a")
+    {
+        System->addBook();
+        return OrderList::Unknown;
+    }
+    if(str=="s")
+    {
+        map<string,string> mp{};
+        mp["name"]="helloworld";
+        System->search(mp);
+        return OrderList::Unknown;
+    }
     if(str == "exit")
         return OrderList::Exit;
     if(str == "Register")
@@ -36,6 +48,7 @@ OrderList parseOrder(const string &str)
         return OrderList::HelpPage;
     if(str == "Login")
         return OrderList::Login;
+
     return OrderList::Unknown;
 }
 OrderList get_option()

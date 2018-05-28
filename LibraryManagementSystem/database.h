@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
@@ -27,12 +28,15 @@ class Database{
     mongocxx::collection borrowCollection;
     mongocxx::collection returnCollection;
     mongocxx::collection userCollection;
+    mongocxx::collection bookCollection;
 public:
     Database();
+    void addBook();
     void addUser(const string &user_id,const string &password);
     void newBorrow(const string &user_id,const string &book_id);
     void addReturn(const string &user_id,const string &book_id);
     pair<string,string> getUserPassword(const string &username);
     void commitReturn(const string &book_id);
+    vector<string> search(const map<string,string>& keyword);
 };
 #endif // DATABASE_H

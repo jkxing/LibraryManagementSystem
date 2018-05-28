@@ -43,3 +43,15 @@ pair<AbstractApp::loginState,string> AbstractApp::verifyUser(const string &usern
         return make_pair(loginState::WrongPassword,"");
     return make_pair(loginState::SuccessLogin,passAndId.second);
 }
+vector<Book*> AbstractApp::search(const map<string,string> &keyword)
+{
+    vector<string> idList = db->search(keyword);
+    vector<Book*> bookList{};
+    for(auto &i:idList){
+        bookList.push_back(new Book(i));
+    }
+    return bookList;
+}
+void AbstractApp::addBook(){
+    db->addBook();
+}

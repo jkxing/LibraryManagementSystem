@@ -5,6 +5,7 @@ Database::Database(){
     borrowCollection = conn["LibraryManagementSystem"]["borrowInfo"];
     returnCollection = conn["LibraryManagementSystem"]["returnInfo"];
     userCollection = conn["LibraryManagementSystem"]["userInfo"];
+    bookCollection = conn["LibraryManagementSystem"]["bookList"];
 }
 void Database::addUser(const string &username, const string &pass){
     bsoncxx::builder::stream::document document{};
@@ -40,8 +41,33 @@ pair<string,string> Database::getUserPassword(const string &username){
         bsoncxx::document::view view = result->view();
         bsoncxx::document::element element = view["password"];
         string pass = element.get_utf8().value.to_string();
-        string id ="yinhan";
+        string id = username;
         return make_pair(pass,id);
     }
     return make_pair("","");
+}
+vector<string> Database::search(const map<string, string> &keyword){
+    vector<string> idList{};
+    bsoncxx::builder::stream::document filter{};
+    for(auto &i:keyword)
+    {
+        cout<<i.first<<" "<<i.second<<endl;
+        filter << i.first << i.second;
+    }
+    filter << finalize;
+    mongocxx::cursor cursor = bookCollection.find(filter.extract());
+    for(auto &doc : cursor) {
+        cout<<bsoncxx::to_json(doc)<<endl;
+        auto tmp = doc["id"];
+        cout<< tmp.get_utf8().value.to_string() <<endl;
+        idList.push_back(tmp.get_utf8().value.to_string());
+    }
+    return idList;
+}
+void Database::addBook(){
+    int num = rand();
+    bsoncxx::builder::stream::document document{};
+    document << "id" << "book"+to_string(num)
+             << "name" << "helloworld";
+    bookCollection.insert_one(document.view());
 }
