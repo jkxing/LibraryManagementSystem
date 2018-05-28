@@ -10,9 +10,16 @@ AbstractApp::registerState AbstractApp::addUser(const string &username,const str
     userList[username]=password;
     return Success;
 #endif
-    showMessage("using database");
-    db->addUser(username,password);
-    return Success;
+    //showMessage("using database");
+    if(username.length()<5) return UserNameInvalid;
+    else if(password.length()<6) return PasswordInvalid;
+    else if(db->existUser(username))
+        return UserAlreadyExists;
+    else
+    {
+        db->addUser(username,password);
+        return Success;
+    }
 }
 void AbstractApp::borrowBook(User *user,Book* books){
     db->newBorrow("user->getid()","books->getid()");
@@ -25,6 +32,23 @@ void AbstractApp::returnBook(User *user,Book* books)
 void AbstractApp::commitReturn(Book* book){
     db->commitReturn("book->getid()");
     //books->returnOne(book->getid());
+}
+
+vector<Book*> AbstractApp::getBorrowedBook(User* user){
+    vector<string> idList = db->getBorrowedList("user->getid()");
+    vector<Book*> bookList{};
+    for(auto &i:idList){
+        bookList.push_back(new Book(i));
+    }
+    return bookList;
+}
+vector<Book*> AbstractApp::getReturnBook(){
+    vector<string> idList = db->getReturnList();
+    vector<Book*>ReturnList{};
+    for(auto &i:idList){
+        ReturnList.push_back(new Book(i));
+    }
+    return ReturnList;
 }
 void AbstractApp::Login(){
     string id = getLoginInfo();
@@ -53,5 +77,8 @@ vector<Book*> AbstractApp::search(const map<string,string> &keyword)
     return bookList;
 }
 void AbstractApp::addBook(){
-    db->addBook();
+    map<string,string> mp;
+    mp.clear();
+    mp["name"]="helloworld"+to_string(rand());
+    db->addBook(mp);
 }

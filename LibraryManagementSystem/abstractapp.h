@@ -38,6 +38,8 @@ public:
     virtual string getLoginInfo() = 0;
     void borrowBook(User* user,Book* book);
     void returnBook(User* user,Book* book);
+    vector<Book*> getBorrowedBook(User* user);
+    vector<Book*> getReturnBook();
     void commitReturn(Book* book);
     void Login();
     void addBook();

@@ -6,14 +6,6 @@
 #include <abstractapp.h>
 #include <consoleapp.h>
 using namespace std;
-/*template<typename T>
-vector<T*> AbstractApp::searchByName(const vector<string> &strs){
-#ifndef DataBase
-    SeacherEngine* searcher = new NameSeacher<T*>();
-    searcher->work();
-    return
-#endif
-}*/
 enum OrderList{
     Unknown,
     Exit,
