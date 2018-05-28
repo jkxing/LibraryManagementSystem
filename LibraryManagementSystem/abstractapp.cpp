@@ -34,6 +34,22 @@ void AbstractApp::commitReturn(Book* book){
     //books->returnOne(book->getid());
 }
 
+void AbstractApp::updateUserInfo(User *user, const map<string, string> &info)
+{
+    db->updateUserInfo(user->getid(),info);
+}
+map<string,string> AbstractApp::getUserInfo(User *user, const vector<string> &key){
+    return db->getUserInfo(user->getid(),key);
+}
+
+void AbstractApp::updateBookInfo(Book *book, const map<string, string> &info)
+{
+    db->updateBookInfo(book->getid(),info);
+}
+map<string,string> AbstractApp::getBookInfo(Book *book, const vector<string> &key){
+    return db->getBookInfo(book->getid(),key);
+}
+
 vector<Book*> AbstractApp::getBorrowedBook(User* user){
     vector<string> idList = db->getBorrowedList("user->getid()");
     vector<Book*> bookList{};

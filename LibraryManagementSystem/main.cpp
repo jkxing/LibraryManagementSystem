@@ -5,6 +5,8 @@
 #include <string>
 #include <abstractapp.h>
 #include <consoleapp.h>
+#include <shop.h>
+#include <bookshop.h>
 using namespace std;
 enum OrderList{
     Unknown,
@@ -14,9 +16,11 @@ enum OrderList{
     HelpPage
 };
 AbstractApp* System;
+Shop* shop;
 void parseParameters(int argc,char* argv[])
 {
     System = new ConsoleApp();
+    shop = new bookShop();
 }
 OrderList parseOrder(const string &str)
 {

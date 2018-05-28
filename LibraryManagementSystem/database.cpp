@@ -109,3 +109,51 @@ void Database::addBook(const map<string,string> &bookInfo){
     }
     bookCollection.insert_one(doc.view());
 }
+map<string,string> Database::getUserInfo(const string &user_id, const vector<string> &key){
+    bsoncxx::stdx::optional<bsoncxx::document::value> result =
+    userCollection.find_one(document{} << "_id" <<bsoncxx::oid(user_id) << finalize);
+    map<string,string> mp;
+    mp.clear();
+    if(result) {
+        //cout << bsoncxx::to_json(*result) << endl;
+        bsoncxx::document::view view = result->view();
+        for(auto i:key)
+            mp[i]=view[i].get_utf8().value.to_string();
+    }
+    return mp;
+}
+void Database::updateUserInfo(const string &user_id, const map<string, string> &info){
+    bsoncxx::builder::stream::document addInfo{};
+    addInfo << "$set" << open_document;
+    for(auto i:info)
+        addInfo << i.first << i.second;
+    addInfo << close_document;
+    addInfo << finalize;
+    //userCollection.update_one(document{} << "_id" <<bsoncxx::oid(user_id) << finalize, addInfo);
+    userCollection.update_one(document{} << "_id" << bsoncxx::oid(user_id) << finalize,
+                          addInfo.extract());
+}
+map<string,string> Database::getBookInfo(const string &book_id, const vector<string> &key){
+    bsoncxx::stdx::optional<bsoncxx::document::value> result =
+    bookCollection.find_one(document{} << "_id" <<bsoncxx::oid(book_id) << finalize);
+    map<string,string> mp;
+    mp.clear();
+    if(result) {
+        //cout << bsoncxx::to_json(*result) << endl;
+        bsoncxx::document::view view = result->view();
+        for(auto i:key)
+            mp[i]=view[i].get_utf8().value.to_string();
+    }
+    return mp;
+}
+void Database::updateBookInfo(const string &book_id, const map<string, string> &info){
+    bsoncxx::builder::stream::document addInfo{};
+    addInfo << "$set" << open_document;
+    for(auto i:info)
+        addInfo << i.first << i.second;
+    addInfo << close_document;
+    addInfo << finalize;
+    //userCollection.update_one(document{} << "_id" <<bsoncxx::oid(user_id) << finalize, addInfo);
+    bookCollection.update_one(document{} << "_id" << bsoncxx::oid(book_id) << finalize,
+                          addInfo.extract());
+}

@@ -41,5 +41,9 @@ public:
     pair<string,string> getUserPassword(const string &username);
     void commitReturn(const string &book_id);
     vector<string> search(const map<string,string>& keyword);
+    map<string,string> getUserInfo(const string &user_id,const vector<string> &key);
+    void updateUserInfo(const string &user_id,const map<string,string>& info);
+    map<string,string> getBookInfo(const string &book_id,const vector<string> &key);
+    void updateBookInfo(const string &book_id,const map<string,string>& info);
 };
 #endif // DATABASE_H

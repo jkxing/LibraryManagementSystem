@@ -28,12 +28,15 @@ SOURCES += \
     consoleapp.cpp \
     user.cpp \
     books.cpp \
-    database.cpp
+    database.cpp \
+    bookshop.cpp
 
 HEADERS += \
     abstractapp.h \
     consoleapp.h \
     user.h \
     books.h \
-    database.h
+    database.h \
+    bookshop.h \
+    shop.h
 

@@ -43,6 +43,10 @@ public:
     void commitReturn(Book* book);
     void Login();
     void addBook();
+    map<string,string> getUserInfo(User* user,const vector<string>& key);
+    void updateUserInfo(User* user,const map<string,string>& info);
+    map<string,string> getBookInfo(Book* user,const vector<string>& key);
+    void updateBookInfo(Book* user,const map<string,string>& info);
     pair<loginState,string> verifyUser(const string &username,const string &password);
     vector<Book*> search(const map<string,string>& str);
     registerState addUser(const string &username,const string &password);
