@@ -1,10 +1,12 @@
 #include <QCoreApplication>
+#include <QApplication>
 #include <algorithm>
 #include <iostream>
 #include <cstdio>
 #include <string>
 #include <abstractapp.h>
 #include <consoleapp.h>
+#include <interface.h>
 using namespace std;
 enum OrderList{
     Unknown,
@@ -16,7 +18,9 @@ enum OrderList{
 AbstractApp* System;
 void parseParameters(int argc,char* argv[])
 {
-    System = new ConsoleApp();
+    //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
+    QApplication a(argc, argv);
+    System = new Interface();
 }
 OrderList parseOrder(const string &str)
 {
@@ -45,7 +49,9 @@ OrderList parseOrder(const string &str)
 }
 OrderList get_option()
 {
-    cout<<"Please input order: ";
+    //cout<<"Please input order: ";
+    cout<<23333<<endl;
+    System->showMessage("Please input order: ");
     static string str;
     str = System->getInput();
     while(parseOrder(str)==OrderList::Unknown)
@@ -57,6 +63,7 @@ OrderList get_option()
 }
 int main(int argc, char *argv[])
 {
+    //QApplication app(argc, argv);
     parseParameters(argc,argv);
     OrderList order;
     while((order = get_option())!=OrderList::Exit)

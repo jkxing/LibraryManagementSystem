@@ -5,9 +5,12 @@ string ConsoleApp::getInput(){
     cin>>str;
     return str;
 }
+
 void ConsoleApp::showMessage(const string &str){
+   // cout<<233<<endl;
     cout<<str<<endl;
 }
+
 void ConsoleApp::Register(){
     this->showMessage("Please input your username:");
     string Username = getInput();
