@@ -11,5 +11,4 @@ public:
     void preview(){}
     ~Reader(){}
 };
-
 #endif
