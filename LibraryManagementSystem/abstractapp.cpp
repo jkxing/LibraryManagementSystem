@@ -1,84 +1,10 @@
 #include <abstractapp.h>
+using bsoncxx::builder::basic::kvp;
+extern Database *db;
 AbstractApp::AbstractApp(){
-    db=new Database();
+
 }
-AbstractApp::registerState AbstractApp::addUser(const string &username,const string &password){
-#ifndef __Database
-    if(userList.count(username) > 0) return UserAlreadyExists;
-    else if(username.length()<5) return UserNameInvalid;
-    else if(password.length()<6) return PasswordInvalid;
-    userList[username]=password;
-    return Success;
-#endif
-    //showMessage("using database");
-    if(username.length()<5) return UserNameInvalid;
-    else if(password.length()<6) return PasswordInvalid;
-    else if(db->existUser(username))
-        return UserAlreadyExists;
-    else
-    {
-        db->addUser(username,password);
-        return Success;
-    }
-}
-void AbstractApp::borrowBook(User *user,Book* books){
-    db->newBorrow("user->getid()","books->getid()");
-    //books->borrowOne();
-}
-void AbstractApp::returnBook(User *user,Book* books)
-{
-    db->addReturn("user->getid()","books->getid()");
-}
-void AbstractApp::commitReturn(Book* book){
-    db->commitReturn("book->getid()");
-    //books->returnOne(book->getid());
+AbstractApp::~AbstractApp(){
+
 }
 
-vector<Book*> AbstractApp::getBorrowedBook(User* user){
-    vector<string> idList = db->getBorrowedList("user->getid()");
-    vector<Book*> bookList{};
-    for(auto &i:idList){
-        bookList.push_back(new Book(i));
-    }
-    return bookList;
-}
-vector<Book*> AbstractApp::getReturnBook(){
-    vector<string> idList = db->getReturnList();
-    vector<Book*>ReturnList{};
-    for(auto &i:idList){
-        ReturnList.push_back(new Book(i));
-    }
-    return ReturnList;
-}
-void AbstractApp::Login(){
-    string id = getLoginInfo();
-    if(id=="")
-        return;
-    User* new_user = new User(id);
-    users.push_back(new_user);
-    new_user->main();
-    delete new_user;
-}
-pair<AbstractApp::loginState,string> AbstractApp::verifyUser(const string &username, const string &password){
-    pair<string,string> passAndId = db->getUserPassword(username);
-    if(passAndId.second=="")
-        return make_pair(loginState::UserUnexist,"");
-    else if(passAndId.first!=password)
-        return make_pair(loginState::WrongPassword,"");
-    return make_pair(loginState::SuccessLogin,passAndId.second);
-}
-vector<Book*> AbstractApp::search(const map<string,string> &keyword)
-{
-    vector<string> idList = db->search(keyword);
-    vector<Book*> bookList{};
-    for(auto &i:idList){
-        bookList.push_back(new Book(i));
-    }
-    return bookList;
-}
-void AbstractApp::addBook(){
-    map<string,string> mp;
-    mp.clear();
-    mp["name"]="helloworld"+to_string(rand());
-    db->addBook(mp);
-}

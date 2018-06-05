@@ -7,74 +7,47 @@
 #include <abstractapp.h>
 #include <consoleapp.h>
 #include <interface.h>
+#include <rendingcontrol.h>
+#include <shop.h>
+#include <usercontrol.h>
+#include <searcher.h>
 using namespace std;
-enum OrderList{
-    Unknown,
-    Exit,
-    Register,
-    Login,
-    HelpPage
-};
+mongocxx::instance inst{};
 AbstractApp* System;
-void parseParameters(int argc,char* argv[])
+Database *db;
+RendControl *rc;
+Shop* shop;
+UserControl *uc;
+Searcher *sc;
+void parseParameters(int argc,char** argv)
 {
     //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
     QApplication a(argc, argv);
     System = new Interface();
+    System = new ConsoleApp();
+    db = new Database();
+    rc = new RendControl();
+    shop = new Shop();
+    uc = new UserControl();
+    sc = new Searcher();
 }
-OrderList parseOrder(const string &str)
+void end()
 {
-    if(str=="a")
-    {
-        System->addBook();
-        return OrderList::Unknown;
-    }
-    if(str=="s")
-    {
-        map<string,string> mp{};
-        mp["name"]="helloworld";
-        System->search(mp);
-        return OrderList::Unknown;
-    }
-    if(str == "exit")
-        return OrderList::Exit;
-    if(str == "Register")
-        return OrderList::Register;
-    if(str == "help")
-        return OrderList::HelpPage;
-    if(str == "Login")
-        return OrderList::Login;
-
-    return OrderList::Unknown;
+    delete System;
+    delete db;
+    delete rc;
+    delete shop;
+    delete uc;
+    delete sc;
 }
-OrderList get_option()
-{
-    //cout<<"Please input order: ";
-    cout<<23333<<endl;
-    System->showMessage("Please input order: ");
-    static string str;
-    str = System->getInput();
-    while(parseOrder(str)==OrderList::Unknown)
-    {
-        System->showMessage("unexpected order,please try again");
-        str = System->getInput();
-    }
-    return parseOrder(str);
-}
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     //QApplication app(argc, argv);
     parseParameters(argc,argv);
-    OrderList order;
-    while((order = get_option())!=OrderList::Exit)
-    {
-        if(order == OrderList::Register)
-            System->Register();
-        else if(order == OrderList::HelpPage)
-            System->ShowHelpPages();
-        else if(order == OrderList::Login)
-            System->Login();
-    }
-    System->exit();
+    //cout<<"main working"<<endl;
+    bsoncxx::builder::stream::document doc{};
+    doc<<"bookname"<<"santi3";
+    shop->addItem(doc.extract());
+    end();
     return 0;
 }

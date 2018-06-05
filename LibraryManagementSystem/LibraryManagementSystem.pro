@@ -34,7 +34,12 @@ SOURCES += \
     interface.cpp \
     regis.cpp \
     loginpage.cpp \
-    exitt.cpp
+    exitt.cpp\
+    rendingcontrol.cpp \
+    searcher.cpp \
+    shop.cpp \
+    usercontrol.cpp \
+    const.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -42,6 +47,11 @@ HEADERS += \
     user.h \
     books.h \
     database.h \
+    shop.h \
+    const.h \
+    rendingcontrol.h \
+    searcher.h \
+    usercontrol.h\
     helppages.h \
     showmessage.h \
     interface.h \
