@@ -36,12 +36,6 @@ int main(int argc, char *argv[])
     for(auto i:tmp)
         cout<<bsoncxx::to_json(i)<<endl;
     cout<<endl;
-    //for(auto i:tmp2)
-        //cout<<bsoncxx::to_json(i)<<endl;
-    //rc->commitReturn("fuck");
-    //System->main();
-    //delete System;
-    //delete db;
-    //delete rc;
+
     return 0;
 }
