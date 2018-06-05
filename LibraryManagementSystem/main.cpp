@@ -26,10 +26,22 @@ void parseParameters(int argc,char** argv)
     uc = new UserControl();
     sc = new Searcher();
 }
+void end()
+{
+    delete System;
+    delete db;
+    delete rc;
+    delete shop;
+    delete uc;
+    delete sc;
+}
 int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
     //cout<<"main working"<<endl;
-    uc->Register();
+    bsoncxx::builder::stream::document doc{};
+    doc<<"bookname"<<"santi3";
+    shop->addItem(doc.extract());
+    end();
     return 0;
 }

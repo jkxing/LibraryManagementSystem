@@ -7,7 +7,7 @@
 #include <thread>
 #include <queue>
 #include <map>
-using namespace  std;
+using namespace std;
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 
@@ -26,12 +26,15 @@ using bsoncxx::builder::stream::open_document;
 
 using namespace std;
 class Database{
-    mongocxx::pool pool;
     std::queue<thread*> threads;
 public:
+    mongocxx::pool pool;
     Database();
     ~Database();
     void sync();
+    void multiInsert(const string &str,bsoncxx::document::value item);
+    void multiRemove(const string &str,bsoncxx::document::value item);
+    void multiUpdate(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem);
     bsoncxx::document::value get(const string &str,bsoncxx::document::value key);
     mongocxx::cursor getAll(const string &str,bsoncxx::document::value key);
     bool insert(const string &str,bsoncxx::document::value item);
