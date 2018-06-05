@@ -17,7 +17,7 @@ RendControl *rc;
 Shop* shop;
 UserControl *uc;
 Searcher *sc;
-void parseParameters(int argc,char* argv[])
+void parseParameters(int argc,char** argv)
 {
     System = new ConsoleApp();
     db = new Database();
@@ -26,16 +26,10 @@ void parseParameters(int argc,char* argv[])
     uc = new UserControl();
     sc = new Searcher();
 }
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
-    rc->newRendRequest("jkxing","fuck");
-    rc->newReturnRequest("fuck");
-    mongocxx::cursor tmp = rc->getBorrowList("jkxing");
-    mongocxx::cursor tmp2 = rc->getReturnList();
-    for(auto i:tmp)
-        cout<<bsoncxx::to_json(i)<<endl;
-    cout<<endl;
-
+    //cout<<"main working"<<endl;
+    uc->Register();
     return 0;
 }
