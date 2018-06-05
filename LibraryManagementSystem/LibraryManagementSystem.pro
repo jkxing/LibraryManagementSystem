@@ -29,7 +29,11 @@ SOURCES += \
     user.cpp \
     books.cpp \
     database.cpp \
-    bookshop.cpp
+    rendingcontrol.cpp \
+    searcher.cpp \
+    shop.cpp \
+    usercontrol.cpp \
+    const.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -37,6 +41,9 @@ HEADERS += \
     user.h \
     books.h \
     database.h \
-    bookshop.h \
-    shop.h
+    shop.h \
+    const.h \
+    rendingcontrol.h \
+    searcher.h \
+    usercontrol.h
 

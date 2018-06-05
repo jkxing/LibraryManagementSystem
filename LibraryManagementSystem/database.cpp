@@ -1,6 +1,85 @@
 #include <database.h>
-mongocxx::instance Database::inst{};
-mongocxx::client Database::conn{mongocxx::uri{}};
+#include <const.h>
+#include <thread>
+#include <string>
+using namespace std;
+Database::Database():pool(mongocxx::uri{}){
+
+}
+Database::~Database(){
+    //sync();
+}
+void Database::sync(){
+    cout<<"syncing"<<endl;
+    while(!threads.empty()){
+        thread* i=threads.front();
+        threads.pop();
+        i->join();
+    }
+}
+bsoncxx::document::value Database::get(const string &str,bsoncxx::document::value key){
+    //sync();
+    auto client = pool.acquire();
+    auto coll = (*client)[CONST::projectName][str];
+    bsoncxx::stdx::optional<bsoncxx::document::value> ret =  coll.find_one(key.view());
+    return *ret;
+}
+
+mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::value key){
+    //sync();
+    auto client = pool.acquire();
+    auto coll = (*client)[CONST::projectName][str];
+    mongocxx::cursor ret =  coll.find(key.view());
+    return ret;
+}
+bool Database::insert(const string &str,bsoncxx::document::value item){
+
+    std::thread* ins = new thread([&]{
+        auto client = pool.acquire();
+        auto coll = (*client)[CONST::projectName][str];
+        bsoncxx::document::value val{item};
+        coll.insert_one(val.view());
+    });
+    ins->join();
+    //cout<<bsoncxx::to_json(item.view())<<endl;
+    //threads.push(ins);
+    return true;
+}
+bool Database::update(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem){
+    //sync();
+    std::thread *upd = new thread([&]{
+        auto client = pool.acquire();
+        auto coll = (*client)[CONST::projectName][str];
+        bsoncxx::document::value oldval{oldItem};
+        bsoncxx::document::value newval{newItem};
+        coll.update_one(oldval.view(),newval.view());
+    });
+    upd->join();
+    //threads.push(upd);
+    return true;
+}
+bool Database::remove(const string &str,bsoncxx::document::value item){
+    std::thread *rem = new thread([&]{
+        auto client = pool.acquire();
+        auto coll = (*client)[CONST::projectName][str];
+        bsoncxx::document::value val{item};
+        coll.delete_one(val.view());
+    });
+    rem->join();
+    //threads.push(rem);
+    return true;
+}
+
+bool Database::find(const string &str,bsoncxx::document::value key){
+    //sync();
+    auto client = pool.acquire();
+    auto coll = (*client)[CONST::projectName][str];
+    bsoncxx::stdx::optional<bsoncxx::document::value> result =
+      coll.find_one(key.view());
+    if(result)
+        return true;
+    return false;
+}
 
 /*
  *
@@ -8,152 +87,3 @@ mongocxx::client Database::conn{mongocxx::uri{}};
     mongocxx::cursor cursor = bookCollection.find(filter.extract());
     auto tmp = doc["_id"].get_oid().value.to_string();
 */
-
-
-Database::Database(){
-    borrowCollection = conn["LibraryManagementSystem"]["borrowInfo"];
-    returnCollection = conn["LibraryManagementSystem"]["returnInfo"];
-    userCollection = conn["LibraryManagementSystem"]["userInfo"];
-    bookCollection = conn["LibraryManagementSystem"]["bookList"];
-}
-bool Database::existUser(const string &username)
-{
-    bsoncxx::stdx::optional<bsoncxx::document::value> result =
-      userCollection.find_one(document{} << "username" <<username<< finalize);
-    if(result)
-        return false;
-    return true;
-}
-void Database::addUser(const string &username, const string &pass){
-    bsoncxx::builder::stream::document document{};
-    document << "username" <<username
-             << "password" <<pass;
-    userCollection.insert_one(document.view());
-}
-void Database::newBorrow(const string &user_id, const string &book_id){
-    bsoncxx::builder::stream::document document{};
-    document << "user" <<user_id
-             << "book" <<book_id;
-    borrowCollection.insert_one(document.view());
-}
-void Database::addReturn(const string &user_id, const string &book_id){
-    bsoncxx::builder::stream::document document{};
-    document << "user" <<user_id
-             << "book" <<book_id;
-    returnCollection.insert_one(document.view());
-}
-void Database::commitReturn(const string &book_id){
-    bsoncxx::stdx::optional<bsoncxx::document::value> result =
-        returnCollection.find_one(document{} << "_id" << bsoncxx::oid(book_id) << finalize);
-    if(result) {
-        //cout << bsoncxx::to_json(*result) << endl;
-        returnCollection.delete_one(document{} << "_id" << bsoncxx::oid(book_id) << finalize);
-    }
-}
-pair<string,string> Database::getUserPassword(const string &username){
-    bsoncxx::stdx::optional<bsoncxx::document::value> result =
-      userCollection.find_one(document{} << "username" <<username<< finalize);
-    if(result) {
-        cout << bsoncxx::to_json(*result) << endl;
-        bsoncxx::document::view view = result->view();
-        bsoncxx::document::element element = view["password"];
-        string pass = element.get_utf8().value.to_string();
-        auto _id = view["_id"].get_oid().value.to_string();
-        return make_pair(pass,_id);
-    }
-    return make_pair("","");
-}
-vector<string> Database::search(const map<string, string> &keyword){
-    vector<string> idList{};
-    bsoncxx::builder::stream::document filter{};
-    for(auto &i:keyword)
-    {
-        //cout<<i.first<<" "<<i.second<<endl;
-        filter << i.first << i.second;
-    }
-    filter << finalize;
-    mongocxx::cursor cursor = bookCollection.find(filter.extract());
-    for(auto &doc : cursor) {
-        auto tmp = doc["_id"].get_oid().value.to_string();
-        idList.push_back(tmp);
-    }
-    return idList;
-}
-vector<string> Database::getBorrowedList(const string &user_id){
-    vector<string> idList{};
-    bsoncxx::builder::stream::document filter{};
-    filter << "user" << user_id << finalize;
-    mongocxx::cursor cursor = borrowCollection.find(filter.extract());
-    for(auto &doc : cursor) {
-        auto tmp = doc["_id"].get_oid().value.to_string();
-        idList.push_back(tmp);
-    }
-    return idList;
-}
-vector<string> Database::getReturnList(){
-    vector<string> idList{};
-    bsoncxx::builder::stream::document filter{};
-    mongocxx::cursor cursor = returnCollection.find(filter.extract());
-    for(auto &doc : cursor) {
-        auto tmp = doc["_id"].get_oid().value.to_string();
-        idList.push_back(tmp);
-    }
-    return idList;
-}
-void Database::addBook(const map<string,string> &bookInfo){
-    bsoncxx::builder::stream::document doc{};
-    for(auto &i:bookInfo)
-    {
-        //cout<<i.first<<" "<<i.second<<endl;
-        doc << i.first << i.second;
-    }
-    bookCollection.insert_one(doc.view());
-}
-map<string,string> Database::getUserInfo(const string &user_id, const vector<string> &key){
-    bsoncxx::stdx::optional<bsoncxx::document::value> result =
-    userCollection.find_one(document{} << "_id" <<bsoncxx::oid(user_id) << finalize);
-    map<string,string> mp;
-    mp.clear();
-    if(result) {
-        //cout << bsoncxx::to_json(*result) << endl;
-        bsoncxx::document::view view = result->view();
-        for(auto i:key)
-            mp[i]=view[i].get_utf8().value.to_string();
-    }
-    return mp;
-}
-void Database::updateUserInfo(const string &user_id, const map<string, string> &info){
-    bsoncxx::builder::stream::document addInfo{};
-    addInfo << "$set" << open_document;
-    for(auto i:info)
-        addInfo << i.first << i.second;
-    addInfo << close_document;
-    addInfo << finalize;
-    //userCollection.update_one(document{} << "_id" <<bsoncxx::oid(user_id) << finalize, addInfo);
-    userCollection.update_one(document{} << "_id" << bsoncxx::oid(user_id) << finalize,
-                          addInfo.extract());
-}
-map<string,string> Database::getBookInfo(const string &book_id, const vector<string> &key){
-    bsoncxx::stdx::optional<bsoncxx::document::value> result =
-    bookCollection.find_one(document{} << "_id" <<bsoncxx::oid(book_id) << finalize);
-    map<string,string> mp;
-    mp.clear();
-    if(result) {
-        //cout << bsoncxx::to_json(*result) << endl;
-        bsoncxx::document::view view = result->view();
-        for(auto i:key)
-            mp[i]=view[i].get_utf8().value.to_string();
-    }
-    return mp;
-}
-void Database::updateBookInfo(const string &book_id, const map<string, string> &info){
-    bsoncxx::builder::stream::document addInfo{};
-    addInfo << "$set" << open_document;
-    for(auto i:info)
-        addInfo << i.first << i.second;
-    addInfo << close_document;
-    addInfo << finalize;
-    //userCollection.update_one(document{} << "_id" <<bsoncxx::oid(user_id) << finalize, addInfo);
-    bookCollection.update_one(document{} << "_id" << bsoncxx::oid(book_id) << finalize,
-                          addInfo.extract());
-}

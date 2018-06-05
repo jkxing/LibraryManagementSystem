@@ -4,12 +4,14 @@
 class ConsoleApp:public AbstractApp{
     string str;
 public:
+    ConsoleApp();
+    void main();
     string getInput();
     void showMessage(const string &str);
     void ShowHelpPages();
-    void Register();
     void exit();
     string getLoginInfo();
-    //string verifyUser();
+    bsoncxx::document::value getRegisterInfo();
+    ~ConsoleApp();
 };
 #endif // CONSOLEAPP_H

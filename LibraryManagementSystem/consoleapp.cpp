@@ -1,24 +1,69 @@
 #include <consoleapp.h>
+#include <abstractapp.h>
 #include <iostream>
+#include <usercontrol.h>
 using namespace std;
+using bsoncxx::builder::basic::kvp;
+extern AbstractApp* System;
+extern UserControl* uc;
+extern Database* db;
+
+ConsoleApp::ConsoleApp(){
+
+}
+ConsoleApp::~ConsoleApp(){
+
+}
+CONST::OrderList parseOrder(const string &str)
+{
+    if(str == "exit")
+        return CONST::OrderList::Exit;
+    if(str == "Register")
+        return CONST::OrderList::Register;
+    if(str == "help")
+        return CONST::OrderList::HelpPage;
+    if(str == "Login")
+        return CONST::OrderList::Login;
+    return CONST::OrderList::Unknown;
+}
+
+CONST::OrderList get_option()
+{
+    cout<<"Please input order: ";
+    static string str;
+    str = System->getInput();
+    while(parseOrder(str)==CONST::OrderList::Unknown)
+    {
+        System->showMessage("unexpected order,please try again");
+        str = System->getInput();
+    }
+    return parseOrder(str);
+}
+
+void ConsoleApp::main()
+{
+    CONST::OrderList order;
+    while((order = get_option())!=CONST::OrderList::Exit)
+    {
+        if(order == CONST::OrderList::Register)
+            uc->Register();
+        else if(order == CONST::OrderList::HelpPage)
+            ShowHelpPages();
+        else if(order == CONST::OrderList::Login)
+            uc->Login();
+    }
+    exit();
+}
+
 string ConsoleApp::getInput(){
     cin>>str;
     return str;
 }
+
 void ConsoleApp::showMessage(const string &str){
     cout<<str<<endl;
 }
-void ConsoleApp::Register(){
-    this->showMessage("Please input your username:");
-    string Username = getInput();
-    this->showMessage("Please input your password");
-    string Password = getInput();
-    registerState st = addUser(Username,Password);
-    if(st == Success)
-        cout<<"registered Succeed"<<endl;
-    else
-        cout<<"registered failed"<<endl;
-}
+
 void ConsoleApp::ShowHelpPages(){
     //Todo
     cout<<"Fuck you!"<<endl;
@@ -26,30 +71,4 @@ void ConsoleApp::ShowHelpPages(){
 void ConsoleApp::exit(){
     cout<<"Bye!"<<endl;
 }
-string ConsoleApp::getLoginInfo(){
-    showMessage("Please input username or 'exit' to exit");
-    string name = getInput();
-    if(name == "exit")
-        return "";
-    showMessage("Please input password");
-    string pass = getInput();
-    pair<loginState,string> res = verifyUser(name,pass);
-    if(res.first==loginState::SuccessLogin)
-        return res.second;
-    else if(res.first==loginState::WrongPassword)
-    {
-        showMessage("password wrong");
-        showMessage("try again");
-        return getLoginInfo();
-    }
-    else if(res.first == loginState::UserUnexist){
-        showMessage("No such user");
-        showMessage("try again");
-        return getLoginInfo();
-    }
-    else{
-        showMessage("login failed");
-        showMessage("try again");
-        return getLoginInfo();
-    }
-}
+
