@@ -61,6 +61,7 @@ string ConsoleApp::getInput(){
 }
 
 void ConsoleApp::showMessage(const string &str){
+   // cout<<233<<endl;
     cout<<str<<endl;
 }
 

@@ -1,5 +1,5 @@
 QT -= gui
-
+QT+=widgets
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
@@ -29,6 +29,12 @@ SOURCES += \
     user.cpp \
     books.cpp \
     database.cpp \
+    helppages.cpp \
+    showmessage.cpp \
+    interface.cpp \
+    regis.cpp \
+    loginpage.cpp \
+    exitt.cpp\
     rendingcontrol.cpp \
     searcher.cpp \
     shop.cpp \
@@ -45,7 +51,21 @@ HEADERS += \
     const.h \
     rendingcontrol.h \
     searcher.h \
-    usercontrol.h \
     Administrator.h \
     Reader.h
+    usercontrol.h\
+    helppages.h \
+    showmessage.h \
+    interface.h \
+    regis.h \
+    loginpage.h \
+    exitt.h
+
+FORMS += \
+    helppages.ui \
+    showmessage.ui \
+    regis.ui \
+    loginpage.ui \
+    exitt.ui
+
 
