@@ -1,27 +1,21 @@
 #ifndef USER_H
 #define USER_H
 #include <string>
+#include "rendingcontrol.h"
+
 using namespace std;
 class User{
     string id;
-    string name="zhangsan";
-    string identity="reader";
+    string name;
+    string identity;
 public:
-    User(string a, string b){
-        name = a;
-        identity = b;
-    }
-    string getName(){
-        return name;
-    }
-    string getIdentity(){
-        return identity;
-    }
-    string search(string str){}
-    virtual ~User(){}
-    User(const string &id);
-    string getid();
+    User(const string &id,const string& a,const string& b){}
     void main();
+    string getid();
+    string getName(){}
+    string getIdentity(){}
+    string search(const string& str){}
+    virtual ~User(){}
 };
 
 #endif // USER_H

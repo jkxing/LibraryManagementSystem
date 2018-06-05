@@ -39,7 +39,9 @@ SOURCES += \
     searcher.cpp \
     shop.cpp \
     usercontrol.cpp \
-    const.cpp
+    const.cpp \
+    reader.cpp \
+    administrator.cpp
 
 HEADERS += \
     abstractapp.h \

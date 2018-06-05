@@ -5,10 +5,10 @@
 
 class Reader : public User{
 public:
-    Reader(string a, string b):User(a,b){}
-    void borrow(){}
-    void giveback(){}
-    void preview(){}
+    Reader(const string& id,const string& a):User(id,a,"Reader"){}
+    void borrow(const string& id){}
+    void giveback(const string& id){}
+    //void preview(){}
     ~Reader(){}
 };
 #endif
