@@ -45,5 +45,7 @@ HEADERS += \
     const.h \
     rendingcontrol.h \
     searcher.h \
-    usercontrol.h
+    usercontrol.h \
+    Administrator.h \
+    Reader.h
 
