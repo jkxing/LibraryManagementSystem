@@ -22,8 +22,8 @@ Searcher *sc;
 void parseParameters(int argc,char** argv)
 {
     //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
-    QApplication a(argc, argv);
-    System = new Interface();
+   // QApplication a(argc, argv);
+ //   System = new Interface();
     System = new ConsoleApp();
     db = new Database();
     rc = new RendControl();
