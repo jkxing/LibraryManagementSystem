@@ -12,6 +12,10 @@
 #include <mongocxx/pool.hpp>
 #include <mongocxx/uri.hpp>
 #include <mongocxx/cursor.hpp>
+#include <bsoncxx/types.hpp>
+#include <bsoncxx/builder/stream/array.hpp>
+#include <bsoncxx/builder/stream/helpers.hpp>
+#include <bsoncxx/builder/concatenate.hpp>
 using namespace std;
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;

@@ -73,12 +73,15 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
 }
 
 string UserControl::getLoginInfo(){
-    System->showMessage("Please input username or 'exit' to exit");
-    string name = System->getInput();
+    bsoncxx::builder::basic::document doc;
+    map< string,pair<string,string> > mp;
+    mp["username"]=make_pair("","");
+    mp["password"]=make_pair("","");
+    mp = System->getInput(mp);
+    string name = mp["username"].first;
     if(name == "exit")
         return "";
-    System->showMessage("Please input password");
-    string pass = System->getInput();
+    string pass = mp["password"].first;
     pair<CONST::loginState,string> res = verifyUser(name,pass);
     if(res.first==CONST::loginState::SuccessLogin)
         return res.second;
@@ -98,4 +101,12 @@ string UserControl::getLoginInfo(){
         System->showMessage("try again");
         return getLoginInfo();
     }
+}
+void UserControl::updateUserInfo(const string &_id,bsoncxx::document::value info){
+    bsoncxx::builder::stream::document builder{};
+    builder << "_id" << bsoncxx::oid(_id) ;
+    bsoncxx::document::value val = builder.extract();
+    cout<<bsoncxx::to_json(val)<<endl;
+    db->update("User",val,document{} << "$set" <<
+               info << finalize);
 }

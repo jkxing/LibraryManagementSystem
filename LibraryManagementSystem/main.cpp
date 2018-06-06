@@ -46,14 +46,10 @@ int main(int argc, char **argv)
 {
     //QApplication app(argc, argv);
     parseParameters(argc,argv);
-    uc->Register();
-    end();
-    return 0;
-    /*
     bsoncxx::builder::stream::document doc{};
-    doc<<"bookname"<<"santi3";
-    shop->addItem(doc.extract());
-    end();*/
-    Date("2018-6-5-17");
+    doc << "username" << open_document << "$regex" << "^j" <<close_document;
+    mongocxx::cursor ret = sc->search(doc);
+    for(auto item:ret)
+        cout<<bsoncxx::to_json(item)<<endl;
     return 0;
 }
