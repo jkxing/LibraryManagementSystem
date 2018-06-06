@@ -7,9 +7,11 @@
 #include <consoleapp.h>
 #include <rendingcontrol.h>
 #include <shop.h>
+#include <date.h>
 #include <usercontrol.h>
 #include <searcher.h>
 using namespace std;
+using bsoncxx::builder::basic::kvp;
 mongocxx::instance inst{};
 AbstractApp* System;
 Database *db;
@@ -38,10 +40,14 @@ void end()
 int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
-    //cout<<"main working"<<endl;
+    uc->Register();
+    end();
+    return 0;
+    /*
     bsoncxx::builder::stream::document doc{};
     doc<<"bookname"<<"santi3";
     shop->addItem(doc.extract());
-    end();
+    end();*/
+    Date("2018-6-5-17");
     return 0;
 }

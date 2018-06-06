@@ -39,28 +39,31 @@ void UserControl::Login(){
 }
 
 bsoncxx::document::value UserControl::getRegisterInfo(){
-    System->showMessage("Please input your username:");
-    string Username = System->getInput();
+    bsoncxx::builder::basic::document doc;
+    map< string,pair<string,string> > mp;
+    mp["email"]=make_pair("","");
+    mp["username"]=make_pair("","");
+    mp["password"]=make_pair("","");
+    mp["nickname"]=make_pair("","");
+    mp = System->getInput(mp);
+    string Username = mp["username"].first;
     while(Username.length()<6||db->find("User",bsoncxx::builder::basic::make_document(kvp("username", Username)))){
         if(Username.length()<6)
-            System->showMessage("username too short");
+            mp["username"].second = "username too short";
         else
-            System->showMessage("username already exists");
-        System->showMessage("please input your username again");
-        Username = System->getInput();
+            mp["username"].second = "username already exists";
+        mp = System->getInput(mp);
+        Username = mp["username"].first;
     }
-    System->showMessage("username valid!");
-    System->showMessage("Please input your password");
-    string Password = System->getInput();
+    string Password = mp["password"].first;
     while(Password.length()<6){
-        System->showMessage("password too short");
-        System->showMessage("please input your password again");
-        Password = System->getInput();
+        mp["password"].second = "password too short";
+        mp = System->getInput(mp);
+        Password = mp["password"].first;
+        cout << Password <<endl;
     }
-    System->showMessage("Please input your ID");
-    string Id = System->getInput();
-    System->showMessage("Please input your email");
-    string Email = System->getInput();
+    string Id = mp["nickname"].first;
+    string Email = mp["email"].first;
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("username",Username));
     builder.append(kvp("password",Password));

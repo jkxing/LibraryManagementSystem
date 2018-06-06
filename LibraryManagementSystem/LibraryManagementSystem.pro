@@ -33,7 +33,8 @@ SOURCES += \
     searcher.cpp \
     shop.cpp \
     usercontrol.cpp \
-    const.cpp
+    const.cpp \
+    date.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -45,5 +46,6 @@ HEADERS += \
     const.h \
     rendingcontrol.h \
     searcher.h \
-    usercontrol.h
+    usercontrol.h \
+    date.h
 

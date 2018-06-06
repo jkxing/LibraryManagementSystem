@@ -1,3 +1,4 @@
+//
 #include <database.h>
 #include <const.h>
 #include <thread>
@@ -8,6 +9,7 @@ Database::Database():pool(mongocxx::uri{}){}
 Database::~Database(){
     sync();
 }
+
 void Database::sync(){
     cout<<"syncing"<<endl;
     while(!threads.empty()){
