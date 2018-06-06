@@ -1,5 +1,5 @@
 QT -= gui
-
+QT+=widgets
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
@@ -46,6 +46,12 @@ HEADERS += \
     const.h \
     rendingcontrol.h \
     searcher.h \
-    usercontrol.h \
     date.h
+    Administrator.h \
+    Reader.h
+    usercontrol.h\
+
+
+
+
 

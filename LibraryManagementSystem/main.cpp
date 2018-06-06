@@ -1,10 +1,12 @@
-//#include <QCoreApplication>
+#include <QCoreApplication>
+#include <QApplication>
 #include <algorithm>
 #include <iostream>
 #include <cstdio>
 #include <string>
 #include <abstractapp.h>
 #include <consoleapp.h>
+#include <interface.h>
 #include <rendingcontrol.h>
 #include <shop.h>
 #include <date.h>
@@ -21,6 +23,9 @@ UserControl *uc;
 Searcher *sc;
 void parseParameters(int argc,char** argv)
 {
+    //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
+   // QApplication a(argc, argv);
+ //   System = new Interface();
     System = new ConsoleApp();
     db = new Database();
     rc = new RendControl();
@@ -39,6 +44,7 @@ void end()
 }
 int main(int argc, char **argv)
 {
+    //QApplication app(argc, argv);
     parseParameters(argc,argv);
     uc->Register();
     end();

@@ -76,6 +76,7 @@ map<string,pair<string,string> > ConsoleApp::getInput(map<string,pair<string,str
 }
 
 void ConsoleApp::showMessage(const string &str){
+   // cout<<233<<endl;
     cout<<str<<endl;
 }
 
