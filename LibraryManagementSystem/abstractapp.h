@@ -11,7 +11,7 @@ using namespace std;
 class AbstractApp{
 public:
     AbstractApp();
-    virtual void main() = 0;
+    virtual int main() = 0;
     virtual string getInput() = 0;
     virtual map<string,pair<string,string> > getInput(map<string,pair<string,string> > &mp) = 0;
     virtual void ShowHelpPages() = 0;

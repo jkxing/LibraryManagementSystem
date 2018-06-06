@@ -12,6 +12,7 @@
 #include <date.h>
 #include <usercontrol.h>
 #include <searcher.h>
+#include <guiapp.h>
 using namespace std;
 using bsoncxx::builder::basic::kvp;
 mongocxx::instance inst{};
@@ -44,6 +45,10 @@ void end()
 }
 int main(int argc, char **argv)
 {
+    QApplication a(argc,argv);
+    System = new GuiApp();
+    System->main();
+    return a.exec();
     //QApplication app(argc, argv);
     parseParameters(argc,argv);
     bsoncxx::builder::stream::document doc{};
