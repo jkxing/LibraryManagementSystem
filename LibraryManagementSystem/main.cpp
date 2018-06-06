@@ -21,9 +21,9 @@ UserControl *uc;
 Searcher *sc;
 void parseParameters(int argc,char** argv)
 {
-    //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
-   // QApplication a(argc, argv);
- //   System = new Interface();
+ //   ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
+  //  QApplication a(argc, argv);
+//    System = new Interface(argc,argv);
     System = new ConsoleApp();
     db = new Database();
     rc = new RendControl();

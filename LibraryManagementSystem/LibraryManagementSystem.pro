@@ -33,7 +33,15 @@ SOURCES += \
     searcher.cpp \
     shop.cpp \
     usercontrol.cpp \
-    const.cpp
+    const.cpp \
+    exitt.cpp \
+    helppages.cpp \
+    interface.cpp \
+    loginpage.cpp \
+    regis.cpp \
+    showmessage.cpp \
+    mainwindow.cpp \
+    gui.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -46,8 +54,24 @@ HEADERS += \
     rendingcontrol.h \
     searcher.h \
     Administrator.h \
-    Reader.h
-    usercontrol.h\
+    Reader.h \
+    exitt.h \
+    helppages.h \
+    interface.h \
+    loginpage.h \
+    regis.h \
+    showmessage.h \
+    usercontrol.h \
+    mainwindow.h \
+    gui.h
+
+FORMS += \
+    exitt.ui \
+    helppages.ui \
+    loginpage.ui \
+    regis.ui \
+    showmessage.ui \
+    mainwindow.ui
 
 
 

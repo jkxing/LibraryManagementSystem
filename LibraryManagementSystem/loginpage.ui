@@ -82,7 +82,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>return</string>
+    <string>exit</string>
    </property>
   </widget>
  </widget>

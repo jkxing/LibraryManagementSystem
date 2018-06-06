@@ -1,10 +1,14 @@
 #include <abstractapp.h>
-#include "interface.h"
-#include "helppages.h"
-#include "showmessage.h"
-#include "regis.h"
-#include "loginpage.h"
-#include "exitt.h"
+#include <interface.h>
+#include <helppages.h>
+#include <showmessage.h>
+#include <regis.h>
+#include <loginpage.h>
+#include <exitt.h>
+#include <const.h>
+#include <usercontrol.h>
+#include <database.h>
+#include <mainwindow.h>
 #include <QMessageBox>
 #include <QApplication>
 #include <QMainWindow>
@@ -15,6 +19,35 @@
 #include <QWidget>
 //using namespace UI;
 //using namespace std;
+using bsoncxx::builder::basic::kvp;
+extern AbstractApp* System;
+extern UserControl* uc;
+extern Database* db;
+namespace mainw{
+extern CONST::OrderList Order;
+}
+/*
+    void main();
+    string getInput();
+    void showMessage(const string &str);
+    void ShowHelpPages();
+    void exit();
+    string getLoginInfo();
+    bsoncxx::document::value getRegisterInfo();
+ * */
+int arc;
+char **arv;
+Interface::Interface(int argc,char **argv)
+{
+    cout<<233<<endl;
+    arc=argc;
+    arv=argv;
+}
+Interface::~Interface()
+{
+
+}
+
 std::string Interface::getInput(){
 #ifdef _Getinput
     QString Qusername = ui->lineEdit1->text();
@@ -23,11 +56,60 @@ std::string Interface::getInput(){
     std::string username= Qusername.toStdString();
     return username;
 }
+
+void Interface::exit()
+{
+ //   QMessageBox::information(NULL, "Title", "Bye!");
+    exitt bye;
+    bye.exec();
+}
 void Interface::ShowHelpPages()
 {
     HelpPages hp;
-
+    hp.show();
 }
+void Interface::main()
+{
+    /*
+     * QApplication a(argc, argv);
+    Login w;
+    Mainwindow dlg;
+    if(dlg.exec() == QDialog::Accepted)
+    {
+        dlg.close();
+        w.show();
+        return a.exec();
+    }
+    else return 0;
+     * */
+    QApplication a(arc, arv);
+    Mainwindow w;
+    w.exec();
+    while(mainw::Order!=CONST::OrderList::Exit)
+    {
+        if(mainw::Order == CONST::OrderList::Register)
+            uc->Register();
+        else if(mainw::Order == CONST::OrderList::HelpPage)
+            ShowHelpPages();
+        else if(mainw::Order == CONST::OrderList::Login)
+            uc->Login();
+        w.exec();
+    }
+   // w.exec();
+   /* CONST::OrderList order;
+    while((order = get_option())!=CONST::OrderList::Exit)
+    {
+        if(order == CONST::OrderList::Register)
+            uc->Register();
+        else if(order == CONST::OrderList::HelpPage)
+            ShowHelpPages();
+        else if(order == CONST::OrderList::Login)
+            uc->Login();
+    }*/
+
+    exit();
+}
+
 bool contain(const string &str,const string a)
 {
     int len1=str.length(),len2=a.length();
@@ -38,16 +120,10 @@ bool contain(const string &str,const string a)
 void Interface::showMessage(const string &str)
 {
     char* st=(char*)str.data();
-    if(contain(str,"input")){
-        cout<<1<<endl;
-    }
-    else{
-        cout<<2<<endl;
-    //    QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-        QMessageBox::information(NULL, "Title", st);
-        cout<<3<<endl;
-    }
+    //QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    QMessageBox::information(NULL, "Title", st);
 }
+/*
 void Interface::Register()
 {
     Regis r;
@@ -57,50 +133,4 @@ void Interface::Register()
     else QMessageBox::about(NULL, "提示","registered failed");
        // cout<<"registered failed"<<endl;
 }
-void Interface::exit()
-{
- //   QMessageBox::information(NULL, "Title", "Bye!");
-    exitt bye;
-}
-std::string Interface::getLoginInfo()
-{
-    Loginpage k;
-
-    pair<loginState,string> res = verifyUser(k.username,k.password);
-
-    if(res.first==loginState::SuccessLogin)
-    {
-        //login=true;
-       // ps=res.second;
-        return k.password;
-        //return res.second;
-    }
-    else if(res.first==loginState::WrongPassword)
-    {
-       // showMessage("password wrong");
-       // showMessage("try again");
-        QMessageBox::about(NULL, "提示","password wrong\n""try again");
-      //  return getLoginInfo();
-       // loop();
-        return getLoginInfo();
-     //   return ;
-    }
-    else if(res.first == loginState::UserUnexist){
-      //  showMessage("No such user");
-      //  showMessage("try again");
-        QMessageBox::about(NULL, "提示","No such user\n""try again");
-        return getLoginInfo();
-      //  loop();
-       // return ;
-    }
-    else{
-      //  showMessage("login failed");
-      //  showMessage("try again");
-        QMessageBox::about(NULL, "提示","login failed\n""try again");
-        return getLoginInfo();
-      //  loop();
-      //  return ;
-    }
-  //  return k.password;
-    //return a;
-}
+*/

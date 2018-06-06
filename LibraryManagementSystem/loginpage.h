@@ -12,7 +12,7 @@ class Loginpage : public QDialog
     Q_OBJECT
 
 public:
-    bool login;
+    bool ret;
     std::string password,username;
     explicit Loginpage(QWidget *parent = 0);
     ~Loginpage();

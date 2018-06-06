@@ -26,12 +26,11 @@ void Loginpage::on_submitbutton_clicked()
     QString Qpassword = ui->lineEdit2->text();
     username= Qusername.toStdString();
     password= Qpassword.toStdString();
-
     return ;
-
 }
 
 void Loginpage::on_returnbutton_clicked()
 {
+    ret=1;
     close();
 }
