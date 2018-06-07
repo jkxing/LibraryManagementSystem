@@ -2,6 +2,7 @@
 #include <database.h>
 #include <abstractapp.h>
 #include <string>
+#include <QDebug>
 using namespace std;
 extern Database* db;
 extern AbstractApp* System;
@@ -39,28 +40,34 @@ void UserControl::Login(){
 }
 
 bsoncxx::document::value UserControl::getRegisterInfo(){
-    System->showMessage("Please input your username:");
-    string Username = System->getInput();
+    bsoncxx::builder::basic::document doc;
+    map< string,pair<string,string> > mp;
+    mp["email"]=make_pair("","");
+    mp["username"]=make_pair("","");
+    mp["password"]=make_pair("","");
+    mp["nickname"]=make_pair("","");
+    qDebug()<<"hahaha"<<endl;
+    mp = System->getInput(mp);
+    qDebug()<<"hahaha2"<<endl;
+    string Username = mp["username"].first;
+    //cout<<Username<<endl;
     while(Username.length()<6||db->find("User",bsoncxx::builder::basic::make_document(kvp("username", Username)))){
         if(Username.length()<6)
-            System->showMessage("username too short");
+            mp["username"].second = "username too short";
         else
-            System->showMessage("username already exists");
-        System->showMessage("please input your username again");
-        Username = System->getInput();
+            mp["username"].second = "username already exists";
+        mp = System->getInput(mp);
+        Username = mp["username"].first;
     }
-    System->showMessage("username valid!");
-    System->showMessage("Please input your password");
-    string Password = System->getInput();
+    string Password = mp["password"].first;
     while(Password.length()<6){
-        System->showMessage("password too short");
-        System->showMessage("please input your password again");
-        Password = System->getInput();
+        mp["password"].second = "password too short";
+        mp = System->getInput(mp);
+        Password = mp["password"].first;
+        cout << Password <<endl;
     }
-    System->showMessage("Please input your ID");
-    string Id = System->getInput();
-    System->showMessage("Please input your email");
-    string Email = System->getInput();
+    string Id = mp["nickname"].first;
+    string Email = mp["email"].first;
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("username",Username));
     builder.append(kvp("password",Password));
@@ -70,12 +77,15 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
 }
 
 string UserControl::getLoginInfo(){
-    System->showMessage("Please input username or 'exit' to exit");
-    string name = System->getInput();
+    bsoncxx::builder::basic::document doc;
+    map< string,pair<string,string> > mp;
+    mp["username"]=make_pair("","");
+    mp["password"]=make_pair("","");
+    mp = System->getInput(mp);
+    string name = mp["username"].first;
     if(name == "exit")
         return "";
-    System->showMessage("Please input password");
-    string pass = System->getInput();
+    string pass = mp["password"].first;
     pair<CONST::loginState,string> res = verifyUser(name,pass);
     if(res.first==CONST::loginState::SuccessLogin)
         return res.second;
@@ -95,4 +105,12 @@ string UserControl::getLoginInfo(){
         System->showMessage("try again");
         return getLoginInfo();
     }
+}
+void UserControl::updateUserInfo(const string &_id,bsoncxx::document::value info){
+    bsoncxx::builder::stream::document builder{};
+    builder << "_id" << bsoncxx::oid(_id) ;
+    bsoncxx::document::value val = builder.extract();
+    cout<<bsoncxx::to_json(val)<<endl;
+    db->update("User",val,document{} << "$set" <<
+               info << finalize);
 }

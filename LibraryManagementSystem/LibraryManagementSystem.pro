@@ -1,8 +1,7 @@
-QT -= gui
 QT+=widgets
-CONFIG += c++11 console
+CONFIG += c++11
 CONFIG -= app_bundle
-
+CONFIG += resources_big
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -36,6 +35,10 @@ SOURCES += \
     const.cpp \
     reader.cpp \
     administrator.cpp
+    date.cpp \
+    guiapp.cpp \
+    logindialog.cpp \
+    dialog.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -47,11 +50,22 @@ HEADERS += \
     const.h \
     rendingcontrol.h \
     searcher.h \
+    date.h \
+    usercontrol.h \
     Administrator.h \
-    Reader.h
-    usercontrol.h\
+    Reader.h \
+    guiapp.h \
+    logindialog.h \
+    dialog.h
 
+DISTFILES +=
 
+FORMS += \
+    guiapp.ui \
+    logindialog.ui \
+    dialog.ui
 
+RESOURCES += \
+    res.qrc
 
-
+RC_FILE += myico.rc

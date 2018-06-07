@@ -40,7 +40,7 @@ CONST::OrderList get_option()
     return parseOrder(str);
 }
 
-void ConsoleApp::main()
+int ConsoleApp::main()
 {
     CONST::OrderList order;
     while((order = get_option())!=CONST::OrderList::Exit)
@@ -58,6 +58,21 @@ void ConsoleApp::main()
 string ConsoleApp::getInput(){
     cin>>str;
     return str;
+}
+map<string,pair<string,string> > ConsoleApp::getInput(map<string,pair<string,string> > &mp){
+    for(auto &item:mp){
+        string notice = "Please input your " + item.first + " ";
+        if(item.second.second != "")
+            notice = notice + "("+item.second.second+")";
+        notice = notice +": ";
+        showMessage(notice);
+        if(item.second.first!="")
+            showMessage(item.second.first + " (if you input '-' and this will be used) ");
+        string tmp = getInput();
+        if(tmp!="-")
+            item.second.first = tmp;
+    }
+    return mp;
 }
 
 void ConsoleApp::showMessage(const string &str){

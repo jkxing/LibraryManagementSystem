@@ -1,3 +1,4 @@
+//
 #include <database.h>
 #include <const.h>
 #include <thread>
@@ -9,6 +10,7 @@ Database::Database():pool(mongocxx::uri{}){}
 Database::~Database(){
     sync();
 }
+
 void Database::sync(){
     cout<<"syncing"<<endl;
     while(!threads.empty()){
@@ -57,6 +59,7 @@ bool Database::insert(const string &str,bsoncxx::document::value item){
 }
 
 bool Database::update(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem){
+
     std::thread *upd = new thread(&Database::multiUpdate,this,str,oldItem,newItem);
     threads.push(upd);
     return true;

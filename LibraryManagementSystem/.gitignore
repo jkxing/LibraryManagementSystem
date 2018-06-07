@@ -10,6 +10,8 @@
 *.obj
 *.orig
 *.rej
+*.jpg
+*.png
 *.so
 *.so.*
 *_pch.h.cpp
