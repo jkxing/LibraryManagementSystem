@@ -6,6 +6,8 @@ LoginDialog::LoginDialog(QWidget *parent) :
     ui(new Ui::LoginDialog)
 {
     ui->setupUi(this);
+    setWindowTitle("Login");
+    setStyleSheet("#LoginDialog{border-image: url(:/image/bookbg.jpg)}");
 }
 
 LoginDialog::~LoginDialog()
