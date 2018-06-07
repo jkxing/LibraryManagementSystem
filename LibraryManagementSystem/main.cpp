@@ -44,10 +44,11 @@ int main(int argc, char **argv)
 {
     //QApplication app(argc, argv);
     parseParameters(argc,argv);
+    System->main();
     //cout<<"main working"<<endl;
-    bsoncxx::builder::stream::document doc{};
-    doc<<"bookname"<<"santi3";
-    shop->addItem(doc.extract());
+//    bsoncxx::builder::stream::document doc{};
+//    doc<<"bookname"<<"santi3";
+//    shop->addItem(doc.extract());
     end();
     return 0;
 }

@@ -1,11 +1,19 @@
 #include <user.h>
 #include <iostream>
+#include <vector>
+#include <stdio.h>
 using namespace std;
-User::User(const string &id,const string& a,const string& b):id(id),name(a),identity(b) {}
+User::User(const string &id):id(id){
+
+}
+
+User::User(const string& id, const string& name, const string& identity):id(id),name(name),identity(identity){
+
+}
 void User::main(){
-    cout<<"user_id is:"<<this->getid()<<endl;
-    cout<<"user_name is"<<this->getName()<<endl;
-    cout<<"user_identity is"<<this->getIdentity()<<endl;
+//    cout<<"user_id is:"<<this->getid()<<endl;
+//   cout<<"user_name is"<<this->getName()<<endl;
+//    cout<<"user_identity is"<<this->getIdentity()<<endl;
 }
 
 string User::getid(){
@@ -17,24 +25,29 @@ string User::getName(){
 }
 
 string User::getIdentity(){
-    return idetity;
+    return identity;
 }
-
-string User::search(const string& str){
-//    //书名
-//    if(str=="bookname"){
-//        return book(bookname).id;
-//    }
-//    //作者
-//    if(str=="writer"){
-//        return "writer";
-//    }
-//    //书号
-//    if(str=="booknumber"){
-//        return "booknumber";
-//    }
-//    //出版社
-//    if(str=="press"){
-//        return "press";
-//    }
+extern Searcher* sc;
+string User::search(){
+    string bookname,writername="",tags[5];
+    cout << endl << "Please input bookname: ";
+    cin >> bookname;
+    cout << endl << "Please input writername: ";
+    cin >> writername;
+    cout << endl << "If possible, please input some tags of the book; or please inout end: ";
+    for(int i=0;i<5;i++)
+    {
+        cin >> tags[i];
+        if(tags[i]=="end")
+        {
+            tags[i]="";
+            break;
+        }
+    }
+    auto builder = bsoncxx::builder::stream::document{};
+    bsoncxx::document::value doc_value = builder << "bookname" << bookname << "writername" << writername << "tags" << bsoncxx::builder::stream::open_array << tags[0] << tags[1] << tags[2] << tags[3] << tags[4] << bsoncxx::builder::stream::close_array << finalize;
+    auto lia = sc->search(doc_value);
+    for(auto doc : lia)
+        std::cout << bsoncxx::to_json(doc) << "\n";//之后会把所有的信息全都打印出来
+    //让用户继续选择具体是哪一本书，然后我返回一个id；
 }

@@ -4,6 +4,7 @@
 #include <string>
 using namespace std;
 extern Database *db;
+using bsoncxx::builder::basic::kvp;
 Database::Database():pool(mongocxx::uri{}){}
 Database::~Database(){
     sync();
@@ -83,3 +84,25 @@ bool Database::find(const string &str,bsoncxx::document::value key){
     mongocxx::cursor cursor = bookCollection.find(filter.extract());
     auto tmp = doc["_id"].get_oid().value.to_string();
 */
+void Database::test(){
+    bsoncxx::builder::basic::document doc{};
+    doc.append(kvp("bookname","c++bcsx"));
+    doc.append(kvp("tag","c++"));
+
+    bsoncxx::builder::stream::document sdoc{};
+    sdoc << "hello" <<"world";
+
+
+    cout<<"working"<<endl;
+    bsoncxx::document::value info = sdoc.extract();
+    mongocxx::client client{mongocxx::uri{}};
+    mongocxx::database db = client[CONST::projectName];
+    mongocxx::collection coll = db["test"];
+    mongocxx::cursor list = coll.find(bsoncxx::builder::stream::document{}<<"hello"<<"world"<<finalize);
+
+    for(auto item:list){
+        string tmp = item["_id"].get_oid().value.to_string();
+        cout<<tmp<<endl;
+    }
+
+}
