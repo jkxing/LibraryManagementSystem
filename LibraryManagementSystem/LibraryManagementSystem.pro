@@ -34,7 +34,7 @@ SOURCES += \
     usercontrol.cpp \
     const.cpp \
     reader.cpp \
-    administrator.cpp
+    administrator.cpp \
     date.cpp \
     guiapp.cpp \
     logindialog.cpp \

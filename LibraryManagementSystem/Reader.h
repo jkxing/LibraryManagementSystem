@@ -9,7 +9,8 @@ public:
     void main();
     void borrow();
     void giveback();
-    void onlinewatching();
+    void help();
+    //void
     ~Reader();
 };
 #endif
