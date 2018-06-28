@@ -2,6 +2,7 @@
 #include <database.h>
 #include <abstractapp.h>
 #include <string>
+#include <QDebug>
 using namespace std;
 extern Database* db;
 extern AbstractApp* System;
@@ -45,8 +46,11 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     mp["username"]=make_pair("","");
     mp["password"]=make_pair("","");
     mp["nickname"]=make_pair("","");
+    qDebug()<<"hahaha"<<endl;
     mp = System->getInput(mp);
+    qDebug()<<"hahaha2"<<endl;
     string Username = mp["username"].first;
+    //cout<<Username<<endl;
     while(Username.length()<6||db->find("User",bsoncxx::builder::basic::make_document(kvp("username", Username)))){
         if(Username.length()<6)
             mp["username"].second = "username too short";

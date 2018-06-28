@@ -22,12 +22,14 @@ RendControl *rc;
 Shop* shop;
 UserControl *uc;
 Searcher *sc;
+QApplication *a;
 void parseParameters(int argc,char** argv)
 {
     //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
    // QApplication a(argc, argv);
  //   System = new Interface();
-    System = new ConsoleApp();
+    a = new QApplication(argc,argv);
+    System = new GuiApp();
     db = new Database();
     rc = new RendControl();
     shop = new Shop();
@@ -45,16 +47,8 @@ void end()
 }
 int main(int argc, char **argv)
 {
-    QApplication a(argc,argv);
-    System = new GuiApp();
-    System->main();
-    return a.exec();
-    //QApplication app(argc, argv);
     parseParameters(argc,argv);
-    bsoncxx::builder::stream::document doc{};
-    doc << "username" << open_document << "$regex" << "^j" <<close_document;
-    mongocxx::cursor ret = sc->search(doc);
-    for(auto item:ret)
-        cout<<bsoncxx::to_json(item)<<endl;
-    return 0;
+    System->main();
+    end();
+    return a->exec();
 }

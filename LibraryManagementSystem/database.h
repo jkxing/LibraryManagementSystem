@@ -30,6 +30,7 @@ public:
     mongocxx::pool pool;
     Database();
     ~Database();
+    void test();
     void sync();
     void multiInsert(const string &str,bsoncxx::document::value item);
     void multiRemove(const string &str,bsoncxx::document::value item);

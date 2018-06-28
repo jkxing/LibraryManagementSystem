@@ -5,10 +5,11 @@
 
 class Reader : public User{
 public:
-    Reader(string a, string b):User(a,b){}
-    void borrow(){}
-    void giveback(){}
-    void preview(){}
-    ~Reader(){}
+    using User::User;
+    void main();
+    void borrow();
+    void giveback();
+    void onlinewatching();
+    ~Reader();
 };
 #endif
