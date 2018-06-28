@@ -6,7 +6,7 @@ void Reader::borrow() {
 }
 
 void Reader::giveback() {
-    cout << "Please input the bookname: ";
+    /*cout << "Please input the bookname: ";
     string bookname;
     cin >> bookname;
     cout << endl;
@@ -19,7 +19,7 @@ void Reader::giveback() {
     cout << "Please input the writername of the book you want to return： " << endl;
     string writername;
     cin >> writername;
-    //等等其他的一些信息
+    //等等其他的一些信息*/
 
 }
 

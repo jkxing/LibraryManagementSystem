@@ -1,41 +1,7 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
-*~
-*.autosave
-*.a
-*.core
-*.moc
-*.o
-*.obj
-*.orig
-*.rej
-*.jpg
-*.png
-*.so
-*.so.*
-*_pch.h.cpp
-*_resource.rc
-*.qm
-.#*
-*.*#
-core
-!core/
-tags
-.DS_Store
-.directory
-*.debug
-Makefile*
-*.prl
-*.app
-moc_*.cpp
-ui_*.h
-qrc_*.cpp
-Thumbs.db
-*.res
-*.rc
-/.qmake.cache
-/.qmake.stash
+
 
 # qtcreator generated files
 *.pro.user*
@@ -77,3 +43,9 @@ Thumbs.db
 mongo-cxx-driver/
 boost/
 ../build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Debug/
+../build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Release/
+../build-LibraryManagementSystem-Desktop_Qt_5_10_0_MSVC2017_64bit-Debug/
+../build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Debug/
+../build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Release/
+../interface.cpp
+../interface.h

@@ -13,6 +13,9 @@
 #include <usercontrol.h>
 #include <searcher.h>
 #include <guiapp.h>
+#include <unistd.h>
+#include <cstdlib>
+
 using namespace std;
 using bsoncxx::builder::basic::kvp;
 mongocxx::instance inst{};
@@ -25,11 +28,17 @@ Searcher *sc;
 QApplication *a;
 void parseParameters(int argc,char** argv)
 {
-    //ShowWindow(FindWindow("ConsoleWindowClass",argv[0]),0);
-   // QApplication a(argc, argv);
- //   System = new Interface();
     a = new QApplication(argc,argv);
-    System = new GuiApp();
+    while( ( c = getopt (argc, argv, "m:") ) != -1 )
+    {
+        switch(c)
+        {
+        case 'm':
+            if(optarg=="gui") System = new GuiApp();
+            if(optarg=="console") System = new ConsoleApp();
+            break;
+        }
+    }
     db = new Database();
     rc = new RendControl();
     shop = new Shop();

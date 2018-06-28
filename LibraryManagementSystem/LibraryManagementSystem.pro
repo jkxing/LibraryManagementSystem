@@ -1,5 +1,5 @@
 QT+=widgets
-CONFIG += c++11
+CONFIG += c++11 console
 CONFIG -= app_bundle
 CONFIG += resources_big
 # The following define makes your compiler emit warnings if you use
@@ -17,12 +17,12 @@ INCLUDEPATH += mongo-cxx-driver/include/mongocxx/v_noabi
 INCLUDEPATH += mongo-cxx-driver/include/libmongoc-1.0
 INCLUDEPATH += mongo-cxx-driver/include/bsoncxx/v_noabi
 INCLUDEPATH += mongo-cxx-driver/include/libbson-1.0
-INCLUDEPATH += boost\include\boost-1_67
+INCLUDEPATH += boost/include/boost-1_67
 LIBS += -L"mongo-cxx-driver/lib" -lmongocxx -lbsoncxx
-LIBS += -L"boost\lib"
+
 
 SOURCES += \
-        main.cpp \
+    main.cpp \
     abstractapp.cpp \
     consoleapp.cpp \
     user.cpp \
@@ -34,7 +34,7 @@ SOURCES += \
     usercontrol.cpp \
     const.cpp \
     reader.cpp \
-    administrator.cpp
+    administrator.cpp \
     date.cpp \
     guiapp.cpp \
     logindialog.cpp \
