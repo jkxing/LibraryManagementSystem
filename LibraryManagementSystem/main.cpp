@@ -29,6 +29,7 @@ QApplication *a;
 void parseParameters(int argc,char** argv)
 {
     a = new QApplication(argc,argv);
+    int c;
     while( ( c = getopt (argc, argv, "m:") ) != -1 )
     {
         switch(c)
