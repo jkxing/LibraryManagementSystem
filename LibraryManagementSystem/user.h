@@ -13,7 +13,7 @@ class User{
 public:
     User(const string &id);
     User(const string &id ,const string &name ,const string &identity);
-    virtual void main() = 0;
+    virtual void Main() = 0;
     string getid();
     string getName();
     string getIdentity();

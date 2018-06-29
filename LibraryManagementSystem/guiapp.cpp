@@ -36,16 +36,16 @@ int GuiApp::main()
 void GuiApp::on_Login_clicked()
 {
     ld = new LoginDialog(this);
-    if(ld->exec()==QDialog::Accepted)
+    pair<string,string> pa = ld->work();
+    if(pa.first!="")
     {
-        QPixmap pixmap(":/image/book2.jpg");
-        QSplashScreen splash(pixmap);
-        splash.show();
-        for(int i=0;i<1000;i++)
-            splash.repaint();
-        splash.finish(this);
-        User* user = new userGui(this,"this");
-        user->main();
+        pair<CONST::loginState,string> tmp = uc->verifyUser(pa.first,pa.second);
+        if(tmp.first == CONST::loginState::SuccessLogin)
+        {
+            User* user = new userGui(this,tmp.second);
+            user->Main();
+            qDebug()<<"logout";
+        }
     }
 }
 

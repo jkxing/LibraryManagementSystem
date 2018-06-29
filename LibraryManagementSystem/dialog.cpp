@@ -42,5 +42,10 @@ map<string, pair<string, string> > Dialog::work(map<string, pair<string, string>
         mp["password"].first = str4.toStdString();
         return mp;
     }
+    else {
+        map<string, pair<string, string> > tmp;
+        tmp.clear();
+        return tmp;
+    }
 }
 

@@ -6,7 +6,7 @@
 class Reader : public User{
 public:
     using User::User;
-    void main();
+    void Main();
     void borrow();
     void giveback();
     void help();

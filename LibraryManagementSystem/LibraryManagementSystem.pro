@@ -39,7 +39,8 @@ SOURCES += \
     guiapp.cpp \
     logindialog.cpp \
     dialog.cpp \
-    usergui.cpp
+    usergui.cpp \
+    searchui.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -58,7 +59,8 @@ HEADERS += \
     guiapp.h \
     logindialog.h \
     dialog.h \
-    usergui.h
+    usergui.h \
+    searchui.h
 
 DISTFILES +=
 
@@ -66,7 +68,8 @@ FORMS += \
     guiapp.ui \
     logindialog.ui \
     dialog.ui \
-    usergui.ui
+    usergui.ui \
+    searchui.ui
 
 RESOURCES += \
     res.qrc

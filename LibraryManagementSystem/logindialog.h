@@ -2,7 +2,8 @@
 #define LOGINDIALOG_H
 
 #include <QDialog>
-
+#include <string>
+using namespace std;
 namespace Ui {
 class LoginDialog;
 }
@@ -14,6 +15,7 @@ class LoginDialog : public QDialog
 public:
     explicit LoginDialog(QWidget *parent = 0);
     ~LoginDialog();
+    pair<string,string> work();
 
 private:
     Ui::LoginDialog *ui;

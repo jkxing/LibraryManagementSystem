@@ -1,6 +1,6 @@
 #include "logindialog.h"
 #include "ui_logindialog.h"
-
+#include <QString>
 LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LoginDialog)
@@ -13,4 +13,11 @@ LoginDialog::LoginDialog(QWidget *parent) :
 LoginDialog::~LoginDialog()
 {
     delete ui;
+}
+pair<string,string> LoginDialog::work(){
+    if(exec()==QDialog::Accepted){
+        string str1 = ui->lineEdit->text().toStdString();
+        string str2 = ui->lineEdit_2->text().toStdString();
+        return make_pair(str1,str2);
+    }
 }

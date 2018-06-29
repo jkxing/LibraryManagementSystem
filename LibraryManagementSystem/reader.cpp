@@ -19,7 +19,7 @@ void Reader::help() {
     cout << endl << "Now you can input your order to start using it." << endl;
 }
 
-void Reader::main() {
+void Reader::Main() {
     cout<<"user_id is:"<<this->getid()<<endl;
     cout<<"user_name is"<<this->getName()<<endl;
     cout<<"user_identity is"<<this->getIdentity()<<endl;

@@ -26,3 +26,8 @@ void Shop::editItem(const string &_id,bsoncxx::document::value info){
     db->update("Item",builder.extract(),document{} << "$set" << open_document <<
                "state" << "storing" << close_document << finalize);
 }
+bsoncxx::document::value Shop::getallinfo(const string &id){
+    bsoncxx::builder::stream::document builder{};
+    builder << "_id" << bsoncxx::oid(id) <<finalize;
+    return db->get("Item",builder.extract());
+}

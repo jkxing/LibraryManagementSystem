@@ -10,7 +10,7 @@ User::User(const string &id):id(id){
 User::User(const string& id, const string& name, const string& identity):id(id),name(name),identity(identity){
 
 }
-void User::main(){
+void User::Main(){
 //    cout<<"user_id is:"<<this->getid()<<endl;
 //    cout<<"user_name is"<<this->getName()<<endl;
 //    cout<<"user_identity is"<<this->getIdentity()<<endl;

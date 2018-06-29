@@ -5,6 +5,7 @@
 #include <time.h>
 #include <date.h>
 #include <boost/algorithm/string.hpp>
+#include <QDebug>
 using namespace std;
 using namespace boost;
 bool checkYear(int x)
@@ -34,7 +35,8 @@ string Date::toString(){
     tmp = tmp+to_string(year)+"-";
     tmp = tmp+to_string(month)+"-";
     tmp = tmp+to_string(day)+"-";
-    tmp = tmp+to_string(hour)+"-";
+    tmp = tmp+to_string(hour);
+    return tmp;
 }
 Date::Date()
 {
@@ -43,8 +45,8 @@ Date::Date()
 	year = 1900 + stime->tm_year;
 	month = 1 + stime->tm_mon;
 	day = stime->tm_mday;
-	hour = stime->tm_hour;
-	init();
+    hour = stime->tm_hour;
+    init();
 }
 Date::Date(int y, int m, int d, int h)
 {
