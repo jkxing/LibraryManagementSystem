@@ -1,4 +1,7 @@
 #include "Administrator.h"
+#include <sstream>
+extern Shop* shop;
+extern Searcher* sc;
 
 void Administrator::add_book(){
     string str;
@@ -48,8 +51,8 @@ void Administrator::add_book(){
     cin >> str;
     basic_builder.append(kvp("ISBN", str));
     bsoncxx::document::value document = basic_builder.extract();
-    if(searcher::search(document) == nullptr)
-        shop::addItem(document);
+    if(sc->search(document).begin() == sc->search(document).end())
+        shop->addItem(document);
     else cout << "This book has already been added." << endl;
 }
 
@@ -117,26 +120,30 @@ void Administrator::delete_book(){
     }
 
     bsoncxx::document::value document = basic_builder.extract();
-    mongocxx::cursor found = searcher::search(document);
-    if(found == nullptr)
+    mongocxx::cursor found = sc->search(document);
+    if(found.begin() == found.end())
         cout << "This book does not exist." << endl;
     else
     {
-        int num = found.count();
-        string* info = new string[num];
-        int i=0;
+        auto iter1 = found.begin();
+        auto iter2 = found.end();
+        int num = 0;
+        while (iter1 != iter2)
+        {
+            iter1++;
+            num++;
+        }
+        string* book = new string[num];
+        int i = 0;
         for (auto doc : found)
         {
-            string bookname, authorname;
+            cout << endl;
             stringstream str;
-            str << bsoncxx::to_json(doc["bookname"]);
-            str >> bookname;
-            str.clear();
-            str << bsoncxx::to_json(doc["authorname"]);
-            str >> authorname;
-            *info[i] = bookname;
+            str << bsoncxx::to_json(doc);
+            str >> book[i];
             i++;
-            cout << i << ". " << bookname << "   author: " << authorname << endl;
+            cout << i << "." << endl;
+            cout << bsoncxx::to_json(doc) << endl;
         }
         cout << endl;
         cout << "Choose one... (0 for quit)" << endl;
@@ -155,7 +162,7 @@ void Administrator::delete_book(){
         else
         {
             i--;
-            db->delete_one(document{} << "bookname" << *info << finalize);
+            //shop->delete(document{} << "bookname" << book[i] << finalize);
         }
     }
 }
