@@ -20,7 +20,7 @@ bsoncxx::document::value find_book(){
     while (cin >> choice)
     {
         cout << endl;
-        if (!choosed[choice])
+        if (choosed[choice])
         {
             cout << "You have input this already. Choose again." << endl;
             continue;
@@ -71,8 +71,15 @@ bsoncxx::document::value find_book(){
 }
 
 bsoncxx::document::value check_book(mongocxx::cursor& list){
+    auto builder = bsoncxx::builder::stream::document{};
     if(list.begin() == list.end())
+    {
         cout << "No request is waiting for confirmation yet." << endl;
+        bsoncxx::document::value key = builder
+                << "wtf" << "wtf"
+                << bsoncxx::builder::stream::finalize;
+        return db->get("Item", key);
+    }
     else
     {
         auto iter1 = list.begin();
@@ -113,14 +120,12 @@ bsoncxx::document::value check_book(mongocxx::cursor& list){
         if (i == 0)
         {
             cout << "Search failed." << endl;
-            auto builder = bsoncxx::builder::stream::document{};
             bsoncxx::document::value key = builder
                     << "wtf" << "wtf"
                     << bsoncxx::builder::stream::finalize;
             return db->get("Item", key);
         }
         i--;
-        auto builder = bsoncxx::builder::stream::document{};
         bsoncxx::document::value key = builder
                 << "bookname" << bookname[i]
                 << "authorname" << authorname[i]
