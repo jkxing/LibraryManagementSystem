@@ -3,6 +3,7 @@
 #include <abstractapp.h>
 #include <string>
 #include <QDebug>
+#include <Reader.h>
 using namespace std;
 extern Database* db;
 extern AbstractApp* System;
@@ -34,7 +35,7 @@ void UserControl::Login(){
     string id = getLoginInfo();
     if(id=="")
         return;
-    User* new_user = new User(id);
+    User* new_user = new Reader(id);
     new_user->main();
     delete new_user;
 }

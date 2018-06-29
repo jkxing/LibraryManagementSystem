@@ -38,7 +38,8 @@ SOURCES += \
     date.cpp \
     guiapp.cpp \
     logindialog.cpp \
-    dialog.cpp
+    dialog.cpp \
+    usergui.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -56,14 +57,16 @@ HEADERS += \
     Reader.h \
     guiapp.h \
     logindialog.h \
-    dialog.h
+    dialog.h \
+    usergui.h
 
 DISTFILES +=
 
 FORMS += \
     guiapp.ui \
     logindialog.ui \
-    dialog.ui
+    dialog.ui \
+    usergui.ui
 
 RESOURCES += \
     res.qrc

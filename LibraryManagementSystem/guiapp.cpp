@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QSplashScreen>
 #include <QPropertyAnimation>
+#include <usergui.h>
 extern UserControl* uc;
 GuiApp::GuiApp(QWidget *parent) :
     QMainWindow(parent),
@@ -43,6 +44,8 @@ void GuiApp::on_Login_clicked()
         for(int i=0;i<1000;i++)
             splash.repaint();
         splash.finish(this);
+        User* user = new userGui(this,"this");
+        user->main();
     }
 }
 
