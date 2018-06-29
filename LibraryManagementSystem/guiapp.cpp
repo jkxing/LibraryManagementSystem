@@ -40,11 +40,10 @@ void GuiApp::on_Login_clicked()
     if(pa.first!="")
     {
         pair<CONST::loginState,string> tmp = uc->verifyUser(pa.first,pa.second);
-        if(tmp.first == CONST::loginState::SuccessLogin)
+        if(tmp.first == CONST::loginState::SuccessReaderLogin)
         {
             User* user = new userGui(this,tmp.second);
             user->Main();
-            qDebug()<<"logout";
         }
     }
 }

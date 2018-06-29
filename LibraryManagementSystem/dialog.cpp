@@ -7,6 +7,7 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+    ui->lineEdit_4->setEchoMode(QLineEdit::PasswordEchoOnEdit);
     this->setWindowTitle("Register");
 }
 Dialog::Dialog(int w,int h,QWidget *parent) :

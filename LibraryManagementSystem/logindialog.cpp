@@ -6,6 +6,7 @@ LoginDialog::LoginDialog(QWidget *parent) :
     ui(new Ui::LoginDialog)
 {
     ui->setupUi(this);
+    ui->lineEdit_2->setEchoMode(QLineEdit::Password);
     setWindowTitle("Login");
     setStyleSheet("#LoginDialog{border-image: url(:/image/bookbg.jpg)}");
 }
@@ -20,4 +21,5 @@ pair<string,string> LoginDialog::work(){
         string str2 = ui->lineEdit_2->text().toStdString();
         return make_pair(str1,str2);
     }
+    return make_pair("","");
 }

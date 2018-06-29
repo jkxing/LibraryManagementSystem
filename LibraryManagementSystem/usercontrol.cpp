@@ -19,7 +19,10 @@ pair<CONST::loginState,string> UserControl::verifyUser(const string &username, c
     passAndId = db->get("User",builder.extract());
     if(passAndId["_id"].get_oid().value.to_string()=="")
         return make_pair(CONST::loginState::WrongPassword,"");
-    return make_pair(CONST::loginState::SuccessLogin,passAndId["_id"].get_oid().value.to_string());
+    if(passAndId["identity"].get_utf8().value.to_string()=="reader")
+        return make_pair(CONST::loginState::SuccessReaderLogin,passAndId["_id"].get_oid().value.to_string());
+    if(passAndId["identity"].get_utf8().value.to_string()=="administrator")
+        return make_pair(CONST::loginState::SuccessAdminLogin,passAndId["_id"].get_oid().value.to_string());
 }
 
 void UserControl::Register(){
@@ -79,6 +82,7 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     builder.append(kvp("password",Password));
     builder.append(kvp("nickname",Id));
     builder.append(kvp("email",Email));
+    builder.append(kvp("identity","reader"));
     return builder.extract();
 }
 
@@ -93,7 +97,7 @@ string UserControl::getLoginInfo(){
         return "";
     string pass = mp["password"].first;
     pair<CONST::loginState,string> res = verifyUser(name,pass);
-    if(res.first==CONST::loginState::SuccessLogin)
+    if(res.first==CONST::loginState::SuccessReaderLogin||res.first==CONST::loginState::SuccessAdminLogin)
         return res.second;
     else if(res.first==CONST::loginState::WrongPassword)
     {

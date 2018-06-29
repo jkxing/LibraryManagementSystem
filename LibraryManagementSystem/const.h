@@ -5,7 +5,8 @@
 using namespace std;
 namespace CONST{
     enum loginState{
-        SuccessLogin,
+        SuccessReaderLogin,
+        SuccessAdminLogin,
         WrongPassword,
         UserUnexist,
         Other
