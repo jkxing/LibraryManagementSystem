@@ -14,8 +14,7 @@
 #include <searcher.h>
 #include <guiapp.h>
 #include <unistd.h>
-#include <cstdlib>
-
+#include <QDebug>
 using namespace std;
 using bsoncxx::builder::basic::kvp;
 mongocxx::instance inst{};
@@ -35,8 +34,10 @@ void parseParameters(int argc,char** argv)
         switch(c)
         {
         case 'm':
-            if(optarg=="gui") System = new GuiApp();
-            if(optarg=="console") System = new ConsoleApp();
+            if(optarg[0]=='g')
+                System = new GuiApp();
+            if(optarg[0]=='c')
+                System = new ConsoleApp();
             break;
         }
     }
@@ -59,6 +60,5 @@ int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
     System->main();
-    end();
     return a->exec();
 }
