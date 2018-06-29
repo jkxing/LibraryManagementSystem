@@ -3,6 +3,7 @@
 #include <string>
 #include <rendingcontrol.h>
 #include <searcher.h>
+#include <usercontrol.h>
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::sub_array;
 using namespace std;
