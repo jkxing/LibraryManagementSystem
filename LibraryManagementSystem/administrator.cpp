@@ -3,6 +3,137 @@
 extern Shop* shop;
 extern Searcher* sc;
 extern RendControl* rc;
+extern Database* db;
+
+bsoncxx::document::value find_book(){
+    string str;
+    int choice;
+    string info[6] = {"bookname", "authorname", "translator", "press",
+                    "ISBN", "that's all"};
+    bool choosed[6] = {0, 0, 0, 0, 0, 0};
+    bsoncxx::builder::basic::document basic_builder{};
+
+    cout << "Let's find the book first." << endl;
+    cout << "What infomation do you have about the book?" << endl;
+    for (int i = 0; i < 6; i++)
+        cout << (i+1) << ". " << info[i] << endl;
+    while (cin >> choice)
+    {
+        cout << endl;
+        if (choosed[choice])
+        {
+            cout << "You have input this already. Choose again." << endl;
+            continue;
+        }
+        if (choice == 6) break;
+        if (choice >= 7 || choice <= 0)
+        {
+            cout << "Invalid number. Choose again." << endl;
+            continue;
+        }
+        if (choice == 1)
+        {
+            cout << "Please input the name of the book..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("bookname", str));
+        }
+        if (choice == 2)
+        {
+            cout << "Please input the name of the author..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("authorname", str));
+        }
+        if (choice == 3)
+        {
+            cin >> str;
+            cout << "Please input the name(s) of the translator(s)..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("translator", str));
+        }
+        if (choice == 4)
+        {
+            cout << "Please input the press..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("press", str));
+        }
+        if (choice == 5)
+        {
+            cout << "Please input the ISBN number..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("ISBN", str));
+        }
+        choosed[choice] = true;
+        cout << "What infomation do you have about the book?" << endl;
+        for (int i = 0; i < 6; i++)
+            cout << (i+1) << ". " << info[i] << endl;
+    }
+    return basic_builder.extract();
+}
+
+bsoncxx::document::value check_book(mongocxx::cursor& list){
+    auto builder = bsoncxx::builder::stream::document{};
+    if(list.begin() == list.end())
+    {
+        cout << "No request is waiting for confirmation yet." << endl;
+        bsoncxx::document::value key = builder
+                << "wtf" << "wtf"
+                << bsoncxx::builder::stream::finalize;
+        return db->get("Item", key);
+    }
+    else
+    {
+        auto iter1 = list.begin();
+        auto iter2 = list.end();
+        int num = 0;
+        while (iter1 != iter2)
+        {
+            iter1++;
+            num++;
+        }
+        string* bookname = new string[num];
+        string* authorname = new string[num];
+        string* ISBN = new string[num];
+        int i = 0;
+        bsoncxx::document::element tmp;
+        for (auto doc : list)
+        {
+            cout << endl;
+            tmp = doc["bookname"];
+            bookname[i] = tmp.get_utf8().value.to_string();
+            tmp = doc["authorname"];
+            authorname[i] = tmp.get_utf8().value.to_string();
+            tmp = doc["ISBN"];
+            ISBN[i] = tmp.get_utf8().value.to_string();
+            i++;
+            cout << i << "." << endl;
+            cout << bsoncxx::to_json(doc) << endl;
+        }
+        cout << endl;
+        cout << "Choose one... (0 for quit)" << endl;
+        cin >> i;
+        while (!(i >= 0 && i <= num))
+        {
+            cout << "Invalid number." << endl;
+            cout << "Please choose again..." << endl;
+            cin >> i;
+        }
+        if (i == 0)
+        {
+            cout << "Search failed." << endl;
+            bsoncxx::document::value key = builder
+                    << "wtf" << "wtf"
+                    << bsoncxx::builder::stream::finalize;
+            return db->get("Item", key);
+        }
+        i--;
+        bsoncxx::document::value key = builder
+                << "bookname" << bookname[i]
+                << "authorname" << authorname[i]
+                << "ISBN" << ISBN[i]
+                << bsoncxx::builder::stream::finalize;
+        return db->get("Item", key);
+    }
+}
 
 void Administrator::add_book(){
     string str;
@@ -58,69 +189,7 @@ void Administrator::add_book(){
 }
 
 void Administrator::delete_book(){
-    string str;
-    int choice;
-    string info[6] = {"bookname", "authorname", "translator", "press",
-                    "ISBN", "that's all"};
-    bool choosed[6] = {0, 0, 0, 0, 0, 0};
-    bsoncxx::builder::basic::document basic_builder{};
-
-    cout << "Let's find the book first." << endl;
-    cout << "What infomation do you have about the book?" << endl;
-    for (int i = 0; i < 6; i++)
-        cout << (i+1) << ". " << info[i] << endl;
-    while (cin >> choice)
-    {
-        cout << endl;
-        if (!choosed[choice])
-        {
-            cout << "You have input this already. Choose again." << endl;
-            continue;
-        }
-        if (choice == 6) break;
-        if (choice >= 7 || choice <= 0)
-        {
-            cout << "Invalid number. Choose again." << endl;
-            continue;
-        }
-        if (choice == 1)
-        {
-            cout << "Please input the name of the book..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("bookname", str));
-        }
-        if (choice == 2)
-        {
-            cout << "Please input the name of the author..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("authorname", str));
-        }
-        if (choice == 3)
-        {
-            cin >> str;
-            cout << "Please input the name(s) of the translator(s)..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("translator", str));
-        }
-        if (choice == 4)
-        {
-            cout << "Please input the press..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("press", str));
-        }
-        if (choice == 5)
-        {
-            cout << "Please input the ISBN number..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("ISBN", str));
-        }
-        choosed[choice] = true;
-        cout << "What infomation do you have about the book?" << endl;
-        for (int i = 0; i < 6; i++)
-            cout << (i+1) << ". " << info[i] << endl;
-    }
-
-    bsoncxx::document::value document = basic_builder.extract();
+    bsoncxx::document::value document = find_book();
     mongocxx::cursor found = sc->search(document);
     if(found.begin() == found.end())
         cout << "This book does not exist." << endl;
@@ -169,208 +238,60 @@ void Administrator::delete_book(){
 }
 
 void Administrator::modify_book(){
-    string str;
-    int choice;
-    string info[6] = {"bookname", "authorname", "translator", "press",
-                    "ISBN", "that's all"};
-    bool choosed[6] = {0, 0, 0, 0, 0, 0};
-    bsoncxx::builder::basic::document basic_builder{};
-
-    cout << "Let's find the book first." << endl;
-    cout << "What infomation do you have about the book?" << endl;
-    for (int i = 0; i < 6; i++)
-        cout << (i+1) << ". " << info[i] << endl;
-    while (cin >> choice)
-    {
-        cout << endl;
-        if (!choosed[choice])
-        {
-            cout << "You have input this already. Choose again." << endl;
-            continue;
-        }
-        if (choice == 6) break;
-        if (choice >= 7 || choice <= 0)
-        {
-            cout << "Invalid number. Choose again." << endl;
-            continue;
-        }
-        if (choice == 1)
-        {
-            cout << "Please input the name of the book..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("bookname", str));
-        }
-        if (choice == 2)
-        {
-            cout << "Please input the name of the author..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("authorname", str));
-        }
-        if (choice == 3)
-        {
-            cin >> str;
-            cout << "Please input the name(s) of the translator(s)..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("translator", str));
-        }
-        if (choice == 4)
-        {
-            cout << "Please input the press..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("press", str));
-        }
-        if (choice == 5)
-        {
-            cout << "Please input the ISBN number..." << endl;
-            cin >> str;
-            basic_builder.append(kvp("ISBN", str));
-        }
-        choosed[choice] = true;
-        cout << "What infomation do you have about the book?" << endl;
-        for (int i = 0; i < 6; i++)
-            cout << (i+1) << ". " << info[i] << endl;
-    }
-
-    bsoncxx::document::value document = basic_builder.extract();
+    bsoncxx::document::value document = find_book();
     mongocxx::cursor found = sc->search(document);
-    if(found.begin() == found.end())
-        cout << "This book does not exist." << endl;
-    else
-    {
-        auto iter1 = found.begin();
-        auto iter2 = found.end();
-        int num = 0;
-        while (iter1 != iter2)
-        {
-            iter1++;
-            num++;
-        }
-        string* book = new string[num];
-        int i = 0;
-        for (auto doc : found)
-        {
-            cout << endl;
-            stringstream str;
-            str << bsoncxx::to_json(doc);
-            str >> book[i];
-            i++;
-            cout << i << "." << endl;
-            cout << bsoncxx::to_json(doc) << endl;
-        }
-        cout << endl;
-        cout << "Choose one... (0 for quit)" << endl;
-        cin >> i;
-        while (!(i >= 0 && i <= num))
-        {
-            cout << "Invalid number." << endl;
-            cout << "Please choose again..." << endl;
-            cin >> i;
-        }
-        if (i == 0)
-        {
-            cout << "Search failed." << endl;
-            return;
-        }
-        else
-        {
-            i--;
-            //修改
-        }
-    }
+    bsoncxx::document::value book = check_book(found);
+    shop->editItem(book.view()["id"].get_utf8().value.to_string(), document);
 }
 //审核借阅
 void Administrator::check_borrow(const string &user_id){
     mongocxx::cursor list = rc->getBorrowList(user_id);
-    if(list.begin() == list.end())
-        cout << "No request is waiting for confirmation." << endl;
-    else
-    {
-        auto iter1 = list.begin();
-        auto iter2 = list.end();
-        int num = 0;
-        while (iter1 != iter2)
-        {
-            iter1++;
-            num++;
-        }
-        string* book = new string[num];
-        int i = 0;
-        for (auto doc : list)
-        {
-            cout << endl;
-            stringstream str;
-            str << bsoncxx::to_json(doc);
-            str >> book[i];
-            i++;
-            cout << i << "." << endl;
-            cout << bsoncxx::to_json(doc) << endl;
-        }
-        cout << endl;
-        cout << "Choose one... (0 for quit)" << endl;
-        cin >> i;
-        while (!(i >= 0 && i <= num))
-        {
-            cout << "Invalid number." << endl;
-            cout << "Please choose again..." << endl;
-            cin >> i;
-        }
-        if (i == 0)
-        {
-            cout << "Search failed." << endl;
-            return;
-        }
-        else
-        {
-            i--;
-            //确认
-        }
-    }
+    bsoncxx::document::value book = check_book(list);
+    //确认
 };
 //审核归还
 void Administrator::check_giveback(){
     mongocxx::cursor list = rc->getReturnList();
-    if(list.begin() == list.end())
-        cout << "No request is waiting for confirmation." << endl;
-    else
-    {
-        auto iter1 = list.begin();
-        auto iter2 = list.end();
-        int num = 0;
-        while (iter1 != iter2)
-        {
-            iter1++;
-            num++;
-        }
-        string* book = new string[num];
-        int i = 0;
-        for (auto doc : list)
-        {
-            cout << endl;
-            stringstream str;
-            str << bsoncxx::to_json(doc);
-            str >> book[i];
-            i++;
-            cout << i << "." << endl;
-            cout << bsoncxx::to_json(doc) << endl;
-        }
-        cout << endl;
-        cout << "Choose one... (0 for quit)" << endl;
-        cin >> i;
-        while (!(i >= 0 && i <= num))
-        {
-            cout << "Invalid number." << endl;
-            cout << "Please choose again..." << endl;
-            cin >> i;
-        }
-        if (i == 0)
-        {
-            cout << "Search failed." << endl;
-            return;
-        }
-        else
-        {
-            i--;
-            //确认
-        }
-    }
+    bsoncxx::document::value book = check_book(list);
+    rc->commitReturn(book.view()["id"].get_utf8().value.to_string());
 };
+
+void Administrator::help(){
+    cout << "------------------------------------------------------------------------------" << endl;
+    cout << "Welcome back!" << endl;
+    cout << "You are an administrator." << endl;
+    cout << "You can manage our library's operation using the following statements." << endl;
+    cout << "0) quit: Log out." << endl;
+    cout << "1) add a book: Add books to our database." << endl;
+    cout << "2) delete a book: Delete books from our database." << endl;
+    cout << "3) modify a book: Modify books' information in our database." << endl;
+    cout << "4) check borrow: Check the borrow-request list." << endl;
+    cout << "5) check return: Check the return-request list." << endl;
+    cout << "------------------------------------------------------------------------------" << endl;
+}
+
+void Administrator::main(){
+    cout<<"user_id is:"<<this->getid()<<endl;
+    cout<<"user_name is"<<this->getName()<<endl;
+    cout<<"user_identity is"<<this->getIdentity()<<endl;
+    cout<<"Please input orders...(input 'help' to see help page)" << endl;
+    string str;
+    while (cin >> str)
+    {
+        if (str == "quit" || str == "0" || str == "0)") break;
+        if (str == "add a book" || str == "1" || str == "1)") add_book();
+        if (str == "delete a book" || str == "2" || str == "2)") delete_book();
+        if (str == "modify a book" || str == "3" || str == "3)") modify_book();
+        if (str == "check borrow" || str == "4" || str == "4)")
+        {
+            string id;
+            cout << "Please input your user id..." << endl;
+            cin >> id;
+            check_borrow(id);
+        }
+        if (str == "check return" || str == "5" || str == "5)") check_giveback();
+        cout<<"Please input orders...(input 'help' to see help page)" << endl;
+    }
+    cout << "Your work helps make us better and better." << endl;
+    cout << "Goodbye!" << endl;
+}

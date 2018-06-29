@@ -9,6 +9,8 @@ class Administrator : public User{
 public:
     Administrator(string &id) : User(id){}
     Administrator(string &id, const string &name) : User(id, name, "Administrator"){}
+    void main();
+    void help();
     //添加书
     void add_book();
     //删除书

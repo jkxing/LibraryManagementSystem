@@ -10,6 +10,7 @@ public:
     void borrow();
     void giveback();
     void help();
+    void changepassword();
     //void
     ~Reader();
 };
