@@ -1,5 +1,5 @@
 QT+=widgets
-CONFIG += c++11 console
+CONFIG += c++11
 CONFIG -= app_bundle
 CONFIG += resources_big
 # The following define makes your compiler emit warnings if you use
@@ -68,4 +68,3 @@ FORMS += \
 RESOURCES += \
     res.qrc
 
-RC_FILE += myico.rc
