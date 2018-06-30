@@ -89,23 +89,17 @@ bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& li
             iter1++;
             num++;
         }
-        string* bookname = new string[num];
-        string* authorname = new string[num];
-        string* ISBN = new string[num];
+        string* bookname = new string[num+1];
+        string* authorname = new string[num+1];
+        string* ISBN = new string[num+1];
         int i = 0;
-        bsoncxx::document::element tmp;
         for (auto doc : list)
         {
-            cout << endl;
-            tmp = doc["bookname"];
-            bookname[i] = tmp.get_utf8().value.to_string();
-            tmp = doc["authorname"];
-            authorname[i] = tmp.get_utf8().value.to_string();
-            tmp = doc["ISBN"];
-            ISBN[i] = tmp.get_utf8().value.to_string();
             i++;
-            cout << i << "." << endl;
-            cout << bsoncxx::to_json(doc) << endl;
+            bookname[i] = doc["书名"].get_utf8().value.to_string();
+            authorname[i] = doc["作者"].get_utf8().value.to_string();
+            ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
+            cout<<i<<"."<<ISBN[i]<<endl;
         }
         cout << endl;
         cout << "Choose one... (0 for quit)" << endl;
@@ -119,15 +113,11 @@ bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& li
         if (i == 0)
         {
             cout << "Search failed." << endl;
-            bsoncxx::document::value key = builder
-                    << "wtf" << "wtf"
-                    << bsoncxx::builder::stream::finalize;
-            return db->get("Item", key);
+            bsoncxx::document::value x = document{}.extract();
+            return x;
         }
-        i--;
+        builder.clear();
         bsoncxx::document::value key = builder
-                << "bookname" << bookname[i]
-                << "authorname" << authorname[i]
                 << "ISBN" << ISBN[i]
                 << bsoncxx::builder::stream::finalize;
         return db->get("Item", key);
@@ -190,7 +180,8 @@ void Administrator::modify_book(){
     mongocxx::cursor found = sc->search(document);
     mongocxx::cursor found2 = sc->search(document);
     bsoncxx::document::value book = check_book(found, found2);
-    shop->editItem(book.view()["id"].get_utf8().value.to_string(), document);
+    shop->editItem(book.view()["_id"].get_oid().value.to_string(), document);
+    cout<<"haha"<<endl;
 }
 //审核归还
 void Administrator::check_giveback(){
