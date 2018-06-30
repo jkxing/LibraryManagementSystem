@@ -3,6 +3,7 @@
 #include <const.h>
 #include <thread>
 #include <string>
+#include <QDebug>
 using namespace std;
 extern Database *db;
 using bsoncxx::builder::basic::kvp;
@@ -38,10 +39,11 @@ void Database::multiUpdate(const string &str,bsoncxx::document::value oldItem,bs
     coll.update_one(oldItem.view(),newItem.view());
     //<<"finish"<<endl;
 }
-bsoncxx::document::value Database::get(const string &str,bsoncxx::document::value key){
+bsoncxx::document::value Database::get(const string &str,bsoncxx::document::view key){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    bsoncxx::stdx::optional<bsoncxx::document::value> ret =  coll.find_one(key.view());
+    qDebug()<<"hahaha"<<QString::fromStdString(bsoncxx::to_json(key));
+    bsoncxx::stdx::optional<bsoncxx::document::value> ret =  coll.find_one(key);
     return *ret;
 }
 

@@ -45,9 +45,7 @@ void AdminGui::on_pushButton_clicked()
     model = new QStandardItemModel(cnt,3,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("borrow date"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("return date"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("state"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
     int tmp = 0;
     list = rc->getReturnList();
     for(auto doc:list)
@@ -71,6 +69,9 @@ void AdminGui::on_pushButton_clicked()
 void AdminGui::on_tableView_clicked(const QModelIndex &index)
 {
     if(nowShow == 0){
+        ConfirmDialog confirm(this,"是否确认书籍已归还");
+        if(confirm.exec()!=QDialog::Accepted)
+            return;
         qDebug()<<"handling return";
         QModelIndex bookId = model->index(index.row(),0);
         QString qstr = model->data(bookId).toString();
@@ -135,10 +136,10 @@ void AdminGui::on_pushButton_2_clicked()
         cnt++;
     qDebug()<<cnt<<endl;
     model = new QStandardItemModel(cnt,6,this);
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("bookname"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("author"));
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("书名"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("作者"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("ISBN"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("publisher"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("出版社"));
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
     int tmp = 0;

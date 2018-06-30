@@ -74,10 +74,14 @@ void userGui::on_Record_clicked()
     ui->tableView->setModel(model);
 }
 
-void userGui::on_tableView_doubleClicked(const QModelIndex &index)
+void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
 {
     if(nowShow == 0){
+        ConfirmDialog confirm(this,"是否确认还书");
+        if(confirm.exec()!=QDialog::Accepted)
+            return;
         qDebug()<<"handling return";
+        QModelIndex index = model->index(Index.row(),0);
         QString qstr = model->data(index).toString();
         qDebug()<<qstr;
         QModelIndex t = model->index(index.row(),4);
@@ -95,6 +99,10 @@ void userGui::on_tableView_doubleClicked(const QModelIndex &index)
         }
     }
     else{
+        ConfirmDialog confirm(this,"是否确认借书");
+        if(confirm.exec()!=QDialog::Accepted)
+            return;
+        QModelIndex index = model->index(Index.row(),4);
         qDebug()<<"handling borrow";
         QString qstr = model->data(index).toString();
         qDebug()<<qstr;
@@ -134,10 +142,10 @@ void userGui::on_Search_clicked()
         cnt++;
     qDebug()<<cnt<<endl;
     model = new QStandardItemModel(cnt,6,this);
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("bookname"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("author"));
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("书名"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("作者"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("ISBN"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("publisher"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("出版社"));
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
     int tmp = 0;

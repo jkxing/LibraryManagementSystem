@@ -42,7 +42,8 @@ SOURCES += \
     usergui.cpp \
     searchui.cpp \
     admingui.cpp \
-    editdialog.cpp
+    editdialog.cpp \
+    confirmdialog.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -64,7 +65,8 @@ HEADERS += \
     usergui.h \
     searchui.h \
     admingui.h \
-    editdialog.h
+    editdialog.h \
+    confirmdialog.h
 
 DISTFILES +=
 
@@ -75,7 +77,8 @@ FORMS += \
     usergui.ui \
     searchui.ui \
     admingui.ui \
-    editdialog.ui
+    editdialog.ui \
+    confirmdialog.ui
 
 RESOURCES += \
     res.qrc

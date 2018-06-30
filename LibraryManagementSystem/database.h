@@ -35,7 +35,7 @@ public:
     void multiInsert(const string &str,bsoncxx::document::value item);
     void multiRemove(const string &str,bsoncxx::document::value item);
     void multiUpdate(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem);
-    bsoncxx::document::value get(const string &str,bsoncxx::document::value key);
+    bsoncxx::document::value get(const string &str,bsoncxx::document::view key);
     mongocxx::cursor getAll(const string &str,bsoncxx::document::value key);
     bool insert(const string &str,bsoncxx::document::value item);
     bool update(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem);
