@@ -40,7 +40,7 @@ void RendControl::commitReturn(const string &item_id){
     builder.clear();
     builder.append(kvp("_id",bsoncxx::oid(item_id)));
     db->update("Item",builder.extract(),document{} << "$set" << open_document <<
-                                                          "state" << "borrowed" << close_document << finalize);
+                                                          "state" << "storing" << close_document << finalize);
 }
 
 mongocxx::cursor RendControl::getBorrowList(const string &user_id){
