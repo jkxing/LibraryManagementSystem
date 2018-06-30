@@ -19,13 +19,12 @@ bsoncxx::document::value find_book(){
         cout << (i+1) << ". " << info[i] << endl;
     while (cin >> choice)
     {
-        cout << endl;
+        if (choice == 6) break;
         if (choosed[choice])
         {
             cout << "You have input this already. Choose again." << endl;
             continue;
         }
-        if (choice == 6) break;
         if (choice >= 7 || choice <= 0)
         {
             cout << "Invalid number. Choose again." << endl;
@@ -183,9 +182,7 @@ void Administrator::add_book(){
     cin >> str;
     basic_builder.append(kvp("ISBN", str));
     bsoncxx::document::value document = basic_builder.extract();
-    if(sc->search(document).begin() == sc->search(document).end())
-        shop->addItem(document);
-    else cout << "This book has already been added." << endl;
+    shop->addItem(document);
 }
 //修改信息
 void Administrator::modify_book(){
