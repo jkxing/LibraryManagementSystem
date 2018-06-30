@@ -4,6 +4,10 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <user.h>
+#include <map>
+#include <vector>
+#include <string>
+using namespace std;
 namespace Ui {
 class AdminGui;
 }
@@ -23,6 +27,8 @@ private slots:
 
     void Main();
     void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
 
 private:
     Ui::AdminGui *ui;

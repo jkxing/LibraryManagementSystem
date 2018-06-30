@@ -12,16 +12,20 @@ pair<CONST::loginState,string> UserControl::verifyUser(const string &username, c
     bsoncxx::builder::basic::document builder{};
     bsoncxx::document::view passAndId{};
     builder.append(kvp("username",username));
-    passAndId = db->get("User",builder.extract());
-    if(passAndId["_id"].get_oid().value.to_string()=="")
+    passAndId = db->get("User",builder.extract()).view();
+    if(passAndId.empty())
         return make_pair(CONST::loginState::UserUnexist,"");
+    builder.clear();
+    builder.append(kvp("username",username));
     builder.append(kvp("password",password));
     passAndId = db->get("User",builder.extract());
-    if(passAndId["_id"].get_oid().value.to_string()=="")
+    if(passAndId.empty())
+    {
         return make_pair(CONST::loginState::WrongPassword,"");
-    if(passAndId["identity"].get_utf8().value.to_string()=="reader")
+    }
+    else if(passAndId["identity"].get_utf8().value.to_string()=="reader")
         return make_pair(CONST::loginState::SuccessReaderLogin,passAndId["_id"].get_oid().value.to_string());
-    if(passAndId["identity"].get_utf8().value.to_string()=="administrator")
+    else if(passAndId["identity"].get_utf8().value.to_string()=="administrator")
         return make_pair(CONST::loginState::SuccessAdminLogin,passAndId["_id"].get_oid().value.to_string());
 }
 

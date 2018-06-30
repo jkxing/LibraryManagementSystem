@@ -10,6 +10,7 @@
 #include <search.h>
 #include <QPropertyAnimation>
 #include <editdialog.h>
+#include <addbookdialog.h>
 using namespace std;
 extern RendControl *rc;
 extern Shop *shop;
@@ -171,4 +172,16 @@ void AdminGui::on_pushButton_2_clicked()
         tmp++;
     }
     ui->tableView->setModel(model);
+}
+
+void AdminGui::on_pushButton_3_clicked()
+{
+    AddBookDialog a(this);
+    map<string,string> res = a.work();
+    if(res.size()==0) return;
+    bsoncxx::builder::stream::document doc{};
+    for(auto i:res){
+        doc << i.first << i.second;
+    }
+    shop->addItem(doc.extract());
 }

@@ -42,9 +42,13 @@ void Database::multiUpdate(const string &str,bsoncxx::document::value oldItem,bs
 bsoncxx::document::value Database::get(const string &str,bsoncxx::document::view key){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    qDebug()<<"hahaha"<<QString::fromStdString(bsoncxx::to_json(key));
     bsoncxx::stdx::optional<bsoncxx::document::value> ret =  coll.find_one(key);
-    return *ret;
+    if(ret)
+        return *ret;
+    qDebug()<<"fuck";
+    document doc{};
+    bsoncxx::document::value val = doc.extract();
+    return val;
 }
 
 mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::value key){
