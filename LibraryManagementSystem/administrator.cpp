@@ -126,51 +126,95 @@ bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& li
 
 bsoncxx::document::value get_book(){
     string str;
-    int label;
+    int choice;
+    string info[9] = {"bookname", "authorname", "translator", "press",
+                    "publication time", "label", "introduction", "ISBN", "that's all"};
+    bool choosed[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     bsoncxx::builder::basic::document basic_builder{};
-    cout << "Please input the name of the book..." << endl;
-    cin >> str;
-    basic_builder.append(kvp("bookname", str));
-    cout << "Please input the name of the author..." << endl;
-    cin >> str;
-    basic_builder.append(kvp("authorname", str));
 
-    cout << "If there's any translator... (Y/N)" << endl;
-    cin >> str;
-    if (str == "Y" || str == "y")
+    cout << "Let's find the book first." << endl;
+    cout << "What infomation do you have about the book?" << endl;
+    for (int i = 0; i < 9; i++)
+        cout << (i+1) << ". " << info[i] << endl;
+    while (cin >> choice)
     {
-        cout << "Please input the name(s) of the translator(s)..." << endl;
-        cin >> str;
-        basic_builder.append(kvp("translator", str));
+        if (choice == 9) break;
+        if (choosed[choice])
+        {
+            cout << "You have input this already. Choose again." << endl;
+            continue;
+        }
+        if (choice >= 10 || choice <= 0)
+        {
+            cout << "Invalid number. Choose again." << endl;
+            continue;
+        }
+        if (choice == 1)
+        {
+            cout << "Please input the name of the book..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("bookname", str));
+        }
+        if (choice == 2)
+        {
+            cout << "Please input the name of the author..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("authorname", str));
+        }
+        if (choice == 3)
+        {
+            cin >> str;
+            cout << "Please input the name(s) of the translator(s)..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("translator", str));
+        }
+        if (choice == 4)
+        {
+            cout << "Please input the press..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("press", str));
+        }
+        if (choice == 5)
+        {
+            cout << "Please input publication time..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("time", str));
+        }
+        if (choice == 6)
+        {
+            int num;
+            bsoncxx::builder::basic::document another_builder{};
+            cout << "Please input the number of the labels..." << endl;
+            cin >> num;
+            for (int j=0; j<num; j++)
+            {
+                cout << "Please input a label..." << endl;
+                cin >> str;
+                string str2;
+                stringstream s;
+                s << j;
+                s >> str2;
+                another_builder.append(kvp(str2, str));
+            }
+            basic_builder.append(kvp("label", another_builder));
+        }
+        if (choice == 7)
+        {
+            cout << "Please input introduction..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("introduction", str));
+        }
+        if (choice == 8)
+        {
+            cout << "Please input the ISBN number..." << endl;
+            cin >> str;
+            basic_builder.append(kvp("ISBN", str));
+        }
+        choosed[choice] = true;
+        cout << "What infomation do you have about the book?" << endl;
+        for (int i = 0; i < 6; i++)
+            cout << (i+1) << ". " << info[i] << endl;
     }
-
-    cout << "Please input the number of label(s)..." << endl;
-    cin >> label;
-    bsoncxx::builder::basic::document another_builder{};
-    for (int i=0; i<label; i++)
-    {
-        cout << "Please input a label..." << endl;
-        cin >> str;
-        stringstream stream;
-        string count;
-        stream << i;
-        stream >> count;
-        another_builder.append(kvp(count, str));
-    }
-    basic_builder.append(kvp("label", another_builder));
-
-    cout << "Please input the press..." << endl;
-    cin >> str;
-    basic_builder.append(kvp("press", str));
-    cout << "Please input the time of publication..." << endl;
-    cin >> str;
-    basic_builder.append(kvp("time", str));
-    cout << "please input the introduction..." << endl;
-    cin >> str;
-    basic_builder.append(kvp("introduction", str));
-    cout << "Please input the ISBN number..." << endl;
-    cin >> str;
-    basic_builder.append(kvp("ISBN", str));
     return basic_builder.extract();
 }
 
