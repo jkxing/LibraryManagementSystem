@@ -49,11 +49,16 @@ void Reader::changepassword() {
 
 void Reader::Main() {
     cout<<"user_id is:"<<this->getid()<<endl;
-    cout<<"Please input order or you can see our help page by entering 'Help' at first: ";
     while(1)
     {
+        cout<<"Please input order or you can see our help page by entering 'Help' at first: ";
         string str;
         cin >> str;
+        if(str!="Exit"&&str!="Borrowbook"&&str!="Returnbook"&&str!="ChangePassword"&&str!="Help")
+        {
+            cout << "You've entered a wrong order.You may want to see the help page.";
+            help();
+        }
         if(str=="Exit")
             return;
         else if(str=="Borrowbook")
@@ -65,5 +70,4 @@ void Reader::Main() {
         else if(str=="Help")
             help();
     }
-
 }

@@ -5,6 +5,7 @@
 #include <searcher.h>
 #include <usercontrol.h>
 #include <confirmdialog.h>
+#include <cstdio>
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::sub_array;
 using namespace std;
