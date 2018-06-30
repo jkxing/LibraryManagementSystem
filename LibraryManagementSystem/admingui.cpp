@@ -1,5 +1,5 @@
-#include "usergui.h"
-#include "ui_usergui.h"
+#include "admingui.h"
+#include "ui_admingui.h"
 #include <user.h>
 #include <rendingcontrol.h>
 #include <QStandardItemModel>
@@ -9,18 +9,20 @@
 #include <searchui.h>
 #include <search.h>
 #include <QPropertyAnimation>
+#include <editdialog.h>
+#include <addbookdialog.h>
 using namespace std;
 extern RendControl *rc;
 extern Shop *shop;
 extern Searcher *sc;
-userGui::userGui(QWidget *parent,const string &str) :
+AdminGui::AdminGui(QWidget *parent,const string &str) :
     QMainWindow(parent),
-    ui(new Ui::userGui),
+    ui(new Ui::AdminGui),
     User(str)
 {
     ui->setupUi(this);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    setStyleSheet("#userGui{border-image: url(:/image/bookbg.jpg)}");
+    setStyleSheet("#AdminGui{border-image: url(:/image/bookbg.jpg)}");
     qDebug()<<QString::fromStdString(str);
     QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
     animation->setDuration(1000);
@@ -28,28 +30,25 @@ userGui::userGui(QWidget *parent,const string &str) :
     animation->setEndValue(1);
     animation->start();
 }
-void userGui::Main(){
-    this->show();
-}
-userGui::~userGui()
+
+AdminGui::~AdminGui()
 {
     delete ui;
 }
-void userGui::on_Record_clicked()
+
+void AdminGui::on_pushButton_clicked()
 {
     nowShow = 0;
-    mongocxx::cursor list = rc->getBorrowList(getid());
+    mongocxx::cursor list = rc->getReturnList();
     int cnt = 0;
     for(auto doc:list)
         cnt++;
-    model = new QStandardItemModel(cnt,5,this);
+    model = new QStandardItemModel(cnt,3,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("borrow date"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("return date"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("state"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
     int tmp = 0;
-    list = rc->getBorrowList(getid());
+    list = rc->getReturnList();
     for(auto doc:list)
     {
         QModelIndex index = model->index(tmp,0,QModelIndex());
@@ -61,69 +60,65 @@ void userGui::on_Record_clicked()
         str = vie["书名"].get_utf8().value.to_string();
         model->setData(index,QString::fromStdString(str));
         index = model->index(tmp,2,QModelIndex());
-        str = doc["borrow date"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,3,QModelIndex());
-        str = doc["return date"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,4,QModelIndex());
-        str = doc["state"].get_utf8().value.to_string();
+        str = vie["state"].get_utf8().value.to_string();
         model->setData(index,QString::fromStdString(str));
         tmp++;
     }
     ui->tableView->setModel(model);
 }
 
-void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
+void AdminGui::on_tableView_clicked(const QModelIndex &index)
 {
     if(nowShow == 0){
-        ConfirmDialog confirm(this,"是否确认还书");
+        ConfirmDialog confirm(this,"是否确认书籍已归还");
         if(confirm.exec()!=QDialog::Accepted)
             return;
         qDebug()<<"handling return";
-        QModelIndex index = model->index(Index.row(),0);
-        QString qstr = model->data(index).toString();
+        QModelIndex bookId = model->index(index.row(),0);
+        QString qstr = model->data(bookId).toString();
         qDebug()<<qstr;
-        QModelIndex t = model->index(index.row(),4);
-        QString qtmp = model->data(t).toString();
-        string stmp = qtmp.toStdString();
-        if(stmp=="borrowing")
-        {
-            string str = qstr.toStdString();
-            model->setData(t,"returning");
-            rc->newReturnRequest(str);
-            qDebug()<<"new return";
-        }
-        else{
-            qDebug()<<"already returning or finish";
-        }
-    }
-    else{
-        ConfirmDialog confirm(this,"是否确认借书");
-        if(confirm.exec()!=QDialog::Accepted)
-            return;
-        QModelIndex index = model->index(Index.row(),4);
-        qDebug()<<"handling borrow";
-        QString qstr = model->data(index).toString();
-        qDebug()<<qstr;
-        QModelIndex t = model->index(index.row(),5);
-        QString qtmp = model->data(t).toString();
+        QModelIndex bookStateIndex = model->index(index.row(),2);
+        QString qtmp = model->data(bookStateIndex).toString();
         string stmp = qtmp.toStdString();
         qDebug()<<qtmp;
-        if(stmp=="storing")
+        if(stmp!="storing")
         {
             string str = qstr.toStdString();
-            model->setData(t,"borrowed");
-            rc->newRendRequest(getid(),str);
-            qDebug()<<"new borrow";
+            model->setData(bookStateIndex,"storing");
+            rc->commitReturn(str);
+            qDebug()<<"new commit";
         }
         else{
-            qDebug()<<"already borrowed or sale";
+            qDebug()<<"already back";
+        }
+    }
+    else if(nowShow == 1){
+        qDebug()<<"handling edit";
+        QString qstr = model->data(index).toString();
+        qDebug()<<qstr;
+        EditDialog tmp(this,qstr);
+        qstr = tmp.work();
+        qDebug()<<qstr;
+        string str = qstr.toStdString();
+        if(str!="")
+        {
+            model->setData(index,qstr);
+            QModelIndex bookIDIndex = model->index(index.row(),4);
+            string id = model->data(bookIDIndex).toString().toStdString();
+            string header = model->headerData(index.column(),Qt::Horizontal).toString().toStdString();
+            bsoncxx::builder::stream::document doc{};
+            doc<<header<<str;
+            shop->editItem(id,doc.extract());
         }
     }
 }
 
-void userGui::on_Search_clicked()
+void AdminGui::Main(){
+    this->show();
+    return;
+}
+
+void AdminGui::on_pushButton_2_clicked()
 {
     nowShow = 1;
     Searchui* se = new Searchui(this);
@@ -177,4 +172,16 @@ void userGui::on_Search_clicked()
         tmp++;
     }
     ui->tableView->setModel(model);
+}
+
+void AdminGui::on_pushButton_3_clicked()
+{
+    AddBookDialog a(this);
+    map<string,string> res = a.work();
+    if(res.size()==0) return;
+    bsoncxx::builder::stream::document doc{};
+    for(auto i:res){
+        doc << i.first << i.second;
+    }
+    shop->addItem(doc.extract());
 }

@@ -6,6 +6,7 @@
 #include <QSplashScreen>
 #include <QPropertyAnimation>
 #include <usergui.h>
+#include <admingui.h>
 extern UserControl* uc;
 GuiApp::GuiApp(QWidget *parent) :
     QMainWindow(parent),
@@ -27,7 +28,7 @@ GuiApp::~GuiApp()
     delete ui;
 }
 extern QApplication* a;
-int GuiApp::main()
+int GuiApp::Main()
 {
     show();
     return 0;
@@ -40,9 +41,15 @@ void GuiApp::on_Login_clicked()
     if(pa.first!="")
     {
         pair<CONST::loginState,string> tmp = uc->verifyUser(pa.first,pa.second);
+        qDebug()<<"verify ok";
         if(tmp.first == CONST::loginState::SuccessReaderLogin)
         {
             User* user = new userGui(this,tmp.second);
+            user->Main();
+        }
+        else if(tmp.first == CONST::loginState::SuccessAdminLogin)
+        {
+            User *user = new AdminGui(this,tmp.second);
             user->Main();
         }
     }
@@ -64,4 +71,8 @@ map<string, pair<string, string> > GuiApp::getInput(map<string, pair<string, str
     mp = dia->work(mp);
     qDebug()<<"finish"<<endl;
     return mp;
+}
+
+void GuiApp::showMessage(const string &str){
+
 }

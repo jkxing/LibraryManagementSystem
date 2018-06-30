@@ -33,6 +33,8 @@ void RendControl::commitReturn(const string &item_id){
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("item_id",item_id));
     db->remove("ReturnList",builder.extract());
+    builder.clear();
+    builder.append(kvp("item_id",item_id));
     db->update("BorrowList",builder.extract(),document{} << "$set" << open_document <<
                "state" << "finish" << close_document << finalize);
     builder.clear();

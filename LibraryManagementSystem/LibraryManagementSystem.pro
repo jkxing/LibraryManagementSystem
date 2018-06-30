@@ -40,7 +40,11 @@ SOURCES += \
     logindialog.cpp \
     dialog.cpp \
     usergui.cpp \
-    searchui.cpp
+    searchui.cpp \
+    admingui.cpp \
+    editdialog.cpp \
+    confirmdialog.cpp \
+    addbookdialog.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -60,7 +64,11 @@ HEADERS += \
     logindialog.h \
     dialog.h \
     usergui.h \
-    searchui.h
+    searchui.h \
+    admingui.h \
+    editdialog.h \
+    confirmdialog.h \
+    addbookdialog.h
 
 DISTFILES +=
 
@@ -69,7 +77,11 @@ FORMS += \
     logindialog.ui \
     dialog.ui \
     usergui.ui \
-    searchui.ui
+    searchui.ui \
+    admingui.ui \
+    editdialog.ui \
+    confirmdialog.ui \
+    addbookdialog.ui
 
 RESOURCES += \
     res.qrc
