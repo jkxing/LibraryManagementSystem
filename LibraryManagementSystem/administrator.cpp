@@ -187,74 +187,19 @@ void Administrator::add_book(){
         shop->addItem(document);
     else cout << "This book has already been added." << endl;
 }
-
-void Administrator::delete_book(){
-    bsoncxx::document::value document = find_book();
-    mongocxx::cursor found = sc->search(document);
-    if(found.begin() == found.end())
-        cout << "This book does not exist." << endl;
-    else
-    {
-        auto iter1 = found.begin();
-        auto iter2 = found.end();
-        int num = 0;
-        while (iter1 != iter2)
-        {
-            iter1++;
-            num++;
-        }
-        string* book = new string[num];
-        int i = 0;
-        for (auto doc : found)
-        {
-            cout << endl;
-            stringstream str;
-            str << bsoncxx::to_json(doc);
-            str >> book[i];
-            i++;
-            cout << i << "." << endl;
-            cout << bsoncxx::to_json(doc) << endl;
-        }
-        cout << endl;
-        cout << "Choose one... (0 for quit)" << endl;
-        cin >> i;
-        while (!(i >= 0 && i <= num))
-        {
-            cout << "Invalid number." << endl;
-            cout << "Please choose again..." << endl;
-            cin >> i;
-        }
-        if (i == 0)
-        {
-            cout << "Search failed." << endl;
-            return;
-        }
-        else
-        {
-            i--;
-            //删除
-        }
-    }
-}
-
+//修改信息
 void Administrator::modify_book(){
     bsoncxx::document::value document = find_book();
     mongocxx::cursor found = sc->search(document);
     bsoncxx::document::value book = check_book(found);
     shop->editItem(book.view()["id"].get_utf8().value.to_string(), document);
 }
-//审核借阅
-void Administrator::check_borrow(const string &user_id){
-    mongocxx::cursor list = rc->getBorrowList(user_id);
-    bsoncxx::document::value book = check_book(list);
-    //确认
-};
 //审核归还
 void Administrator::check_giveback(){
     mongocxx::cursor list = rc->getReturnList();
     bsoncxx::document::value book = check_book(list);
     rc->commitReturn(book.view()["id"].get_utf8().value.to_string());
-};
+}
 
 void Administrator::help(){
     cout << "------------------------------------------------------------------------------" << endl;
@@ -263,14 +208,12 @@ void Administrator::help(){
     cout << "You can manage our library's operation using the following statements." << endl;
     cout << "0) quit: Log out." << endl;
     cout << "1) add a book: Add books to our database." << endl;
-    cout << "2) delete a book: Delete books from our database." << endl;
-    cout << "3) modify a book: Modify books' information in our database." << endl;
-    cout << "4) check borrow: Check the borrow-request list." << endl;
-    cout << "5) check return: Check the return-request list." << endl;
+    cout << "2) modify a book: Modify books' information in our database." << endl;
+    cout << "3) check return: Check the return-request list." << endl;
     cout << "------------------------------------------------------------------------------" << endl;
 }
 
-void Administrator::main(){
+void Administrator::Main(){
     cout<<"user_id is:"<<this->getid()<<endl;
     cout<<"user_name is"<<this->getName()<<endl;
     cout<<"user_identity is"<<this->getIdentity()<<endl;
@@ -280,16 +223,9 @@ void Administrator::main(){
     {
         if (str == "quit" || str == "0" || str == "0)") break;
         if (str == "add a book" || str == "1" || str == "1)") add_book();
-        if (str == "delete a book" || str == "2" || str == "2)") delete_book();
-        if (str == "modify a book" || str == "3" || str == "3)") modify_book();
-        if (str == "check borrow" || str == "4" || str == "4)")
-        {
-            string id;
-            cout << "Please input your user id..." << endl;
-            cin >> id;
-            check_borrow(id);
-        }
-        if (str == "check return" || str == "5" || str == "5)") check_giveback();
+        if (str == "modify a book" || str == "2" || str == "2)") modify_book();
+        if (str == "check return" || str == "3" || str == "3)") check_giveback();
+        if (str == "help") help();
         cout<<"Please input orders...(input 'help' to see help page)" << endl;
     }
     cout << "Your work helps make us better and better." << endl;
