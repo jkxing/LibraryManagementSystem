@@ -40,7 +40,7 @@ CONST::OrderList get_option()
     return parseOrder(str);
 }
 
-int ConsoleApp::main()
+int ConsoleApp::Main()
 {
     CONST::OrderList order;
     while((order = get_option())!=CONST::OrderList::Exit)

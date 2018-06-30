@@ -19,11 +19,11 @@ class GuiApp : public QMainWindow,public AbstractApp
     LoginDialog *ld;
 public:
     explicit GuiApp(QWidget *parent = 0);
-    int main();
+    int Main();
     string getInput(){return "";};
     map<string,pair<string,string> > getInput(map<string,pair<string,string> > &mp);
     void ShowHelpPages(){};
-    void showMessage(const string &str){};
+    void showMessage(const string &str);
     void exit(){};
     ~GuiApp();
 private slots:

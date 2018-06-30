@@ -47,6 +47,8 @@ void UserControl::Login(){
 }
 
 bsoncxx::document::value UserControl::getRegisterInfo(){
+
+    qDebug()<<"hahaha"<<endl;
     bsoncxx::builder::basic::document doc;
     bsoncxx::builder::basic::document fail{};
     map< string,pair<string,string> > mp;
@@ -55,6 +57,7 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     mp["password"]=make_pair("","");
     mp["nickname"]=make_pair("","");
     mp = System->getInput(mp);
+    qDebug()<<"lalala"<<endl;
     if(mp.size()==0) return fail.extract();
     string Username = mp["username"].first;
     //cout<<Username<<endl;

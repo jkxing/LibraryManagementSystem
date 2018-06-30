@@ -5,7 +5,7 @@ class ConsoleApp:public AbstractApp{
     string str;
 public:
     ConsoleApp();
-    int main();
+    int Main();
     string getInput();
     map<string,pair<string,string> > getInput(map<string,pair<string,string> > &mp);
     void showMessage(const string &str);

@@ -59,6 +59,6 @@ void end()
 int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
-    System->main();
+    System->Main();
     return a->exec();
 }

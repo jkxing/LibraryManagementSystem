@@ -1,5 +1,5 @@
 QT+=widgets
-CONFIG += c++11
+CONFIG += c++11 console
 CONFIG -= app_bundle
 CONFIG += resources_big
 # The following define makes your compiler emit warnings if you use
@@ -40,7 +40,9 @@ SOURCES += \
     logindialog.cpp \
     dialog.cpp \
     usergui.cpp \
-    searchui.cpp
+    searchui.cpp \
+    admingui.cpp \
+    editdialog.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -60,7 +62,9 @@ HEADERS += \
     logindialog.h \
     dialog.h \
     usergui.h \
-    searchui.h
+    searchui.h \
+    admingui.h \
+    editdialog.h
 
 DISTFILES +=
 
@@ -69,7 +73,9 @@ FORMS += \
     logindialog.ui \
     dialog.ui \
     usergui.ui \
-    searchui.ui
+    searchui.ui \
+    admingui.ui \
+    editdialog.ui
 
 RESOURCES += \
     res.qrc
