@@ -69,7 +69,7 @@ bsoncxx::document::value find_book(){
     return basic_builder.extract();
 }
 
-bsoncxx::document::value check_book(mongocxx::cursor& list){
+bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& list2){
     auto builder = bsoncxx::builder::stream::document{};
     if(list.begin() == list.end())
     {
@@ -81,8 +81,8 @@ bsoncxx::document::value check_book(mongocxx::cursor& list){
     }
     else
     {
-        auto iter1 = list.begin();
-        auto iter2 = list.end();
+        auto iter1 = list2.begin();
+        auto iter2 = list2.end();
         int num = 0;
         while (iter1 != iter2)
         {
@@ -188,13 +188,15 @@ void Administrator::add_book(){
 void Administrator::modify_book(){
     bsoncxx::document::value document = find_book();
     mongocxx::cursor found = sc->search(document);
-    bsoncxx::document::value book = check_book(found);
+    mongocxx::cursor found2 = sc->search(document);
+    bsoncxx::document::value book = check_book(found, found2);
     shop->editItem(book.view()["id"].get_utf8().value.to_string(), document);
 }
 //审核归还
 void Administrator::check_giveback(){
     mongocxx::cursor list = rc->getReturnList();
-    bsoncxx::document::value book = check_book(list);
+    mongocxx::cursor list2 = rc->getReturnList();
+    bsoncxx::document::value book = check_book(list, list2);
     rc->commitReturn(book.view()["id"].get_utf8().value.to_string());
 }
 
@@ -204,9 +206,9 @@ void Administrator::help(){
     cout << "You are an administrator." << endl;
     cout << "You can manage our library's operation using the following statements." << endl;
     cout << "0) quit: Log out." << endl;
-    cout << "1) add a book: Add books to our database." << endl;
-    cout << "2) modify a book: Modify books' information in our database." << endl;
-    cout << "3) check return: Check the return-request list." << endl;
+    cout << "1) add: Add books to our database." << endl;
+    cout << "2) modify: Modify books' information in our database." << endl;
+    cout << "3) check: Check the return-request list." << endl;
     cout << "------------------------------------------------------------------------------" << endl;
 }
 
@@ -219,9 +221,9 @@ void Administrator::Main(){
     while (cin >> str)
     {
         if (str == "quit" || str == "0" || str == "0)") break;
-        if (str == "add a book" || str == "1" || str == "1)") add_book();
-        if (str == "modify a book" || str == "2" || str == "2)") modify_book();
-        if (str == "check return" || str == "3" || str == "3)") check_giveback();
+        if (str == "add" || str == "1" || str == "1)") add_book();
+        if (str == "modify" || str == "2" || str == "2)") modify_book();
+        if (str == "check" || str == "3" || str == "3)") check_giveback();
         if (str == "help") help();
         cout<<"Please input orders...(input 'help' to see help page)" << endl;
     }
