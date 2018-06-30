@@ -132,7 +132,6 @@ bsoncxx::document::value get_book(){
     bool choosed[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     bsoncxx::builder::basic::document basic_builder{};
 
-    cout << "Let's find the book first." << endl;
     cout << "What infomation do you have about the book?" << endl;
     for (int i = 0; i < 9; i++)
         cout << (i+1) << ". " << info[i] << endl;
