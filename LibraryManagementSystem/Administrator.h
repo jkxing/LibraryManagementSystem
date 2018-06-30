@@ -14,11 +14,9 @@ public:
     //添加书
     void add_book();
     //删除书
-    void delete_book();
     //修改书的信息
     void modify_book();
     //审核借阅
-    void check_borrow(const string& user_id);
     //审核归还
     void check_giveback();
     ~Administrator(){}
