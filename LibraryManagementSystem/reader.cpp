@@ -48,8 +48,6 @@ void Reader::changepassword() {
 
 void Reader::Main() {
     cout<<"user_id is:"<<this->getid()<<endl;
-    cout<<"user_name is"<<this->getName()<<endl;
-    cout<<"user_identity is"<<this->getIdentity()<<endl;
     cout<<"Please input order or you can see our help page by entering 'Help' at first: ";
     string str;
     cin >> str;
