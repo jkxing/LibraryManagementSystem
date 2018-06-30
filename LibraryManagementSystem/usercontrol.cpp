@@ -4,6 +4,7 @@
 #include <string>
 #include <QDebug>
 #include <Reader.h>
+#include <Administrator.h>
 using namespace std;
 extern Database* db;
 extern AbstractApp* System;
@@ -42,10 +43,14 @@ void UserControl::Register(){
 }
 
 void UserControl::Login(){
-    string id = getLoginInfo();
-    if(id=="")
+    pair<string,int> id = getLoginInfo();
+    User * new_user;
+    if(id.first=="")
         return;
-    User* new_user = new Reader(id);
+    if(id.second==0)
+        new_user = new Reader(id.first);
+    else
+        new_user = new Administrator(id.first);
     new_user->Main();
     delete new_user;
 }
@@ -93,7 +98,7 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     return builder.extract();
 }
 
-string UserControl::getLoginInfo(){
+pair<string,int> UserControl::getLoginInfo(){
     bsoncxx::builder::basic::document doc;
     map< string,pair<string,string> > mp;
     mp["username"]=make_pair("","");
@@ -101,11 +106,13 @@ string UserControl::getLoginInfo(){
     mp = System->getInput(mp);
     string name = mp["username"].first;
     if(name == "exit")
-        return "";
+        return make_pair("",0);
     string pass = mp["password"].first;
     pair<CONST::loginState,string> res = verifyUser(name,pass);
-    if(res.first==CONST::loginState::SuccessReaderLogin||res.first==CONST::loginState::SuccessAdminLogin)
-        return res.second;
+    if(res.first==CONST::loginState::SuccessReaderLogin)
+        return make_pair(res.second,0);
+    else if(res.first==CONST::loginState::SuccessAdminLogin)
+        return make_pair(res.second,1);
     else if(res.first==CONST::loginState::WrongPassword)
     {
         System->showMessage("password wrong");

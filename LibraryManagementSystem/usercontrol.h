@@ -8,7 +8,7 @@ extern Database* db;
 class UserControl{
 public:
     bsoncxx::document::value getRegisterInfo();
-    string getLoginInfo();
+    pair<string,int> getLoginInfo();
     void Login();
     void Register();
     pair<CONST::loginState,string> verifyUser(const string &username, const string &password);

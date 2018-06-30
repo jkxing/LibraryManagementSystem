@@ -270,7 +270,7 @@ void Administrator::help(){
     cout << "------------------------------------------------------------------------------" << endl;
 }
 
-void Administrator::main(){
+void Administrator::Main(){
     cout<<"user_id is:"<<this->getid()<<endl;
     cout<<"user_name is"<<this->getName()<<endl;
     cout<<"user_identity is"<<this->getIdentity()<<endl;
