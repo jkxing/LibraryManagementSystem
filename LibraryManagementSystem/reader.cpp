@@ -17,6 +17,7 @@ void Reader::help() {
     cout << "(1) Enter 'Borrowbook', you can initiate a request to borrow a book." << endl;
     cout << "(2) Enter 'Returnbook', you can initiate a request to return a book." << endl;
     cout << "(3) Enter 'ChangePassword', you can initiate a request to change your password." << endl;
+    cout << "(4) Enter 'Exit', you can exit our system." << endl;
     cout << "These are what we offer now. Don't be worried, we are constantly updating our system to give you a better experience. Thanks for using." << endl;
     cout << endl << "Now you can input your order to start using it." << endl;
 }
@@ -49,19 +50,20 @@ void Reader::changepassword() {
 void Reader::Main() {
     cout<<"user_id is:"<<this->getid()<<endl;
     cout<<"Please input order or you can see our help page by entering 'Help' at first: ";
-    string str;
-    cin >> str;
-    if(str=="Borrowbook")
-        borrow();
-    else if(str=="Returnbook")
-        giveback();
-    else if(str=="ChangePassword")
-        changepassword();
-    else if(str=="Help")
-        help();
+    while(1)
+    {
+        string str;
+        cin >> str;
+        if(str=="Exit")
+            return;
+        else if(str=="Borrowbook")
+            borrow();
+        else if(str=="Returnbook")
+            giveback();
+        else if(str=="ChangePassword")
+            changepassword();
+        else if(str=="Help")
+            help();
+    }
 
-    /*拓展功能
-    else if(str=="Score")
-        score();
-    */
 }
