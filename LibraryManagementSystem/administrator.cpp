@@ -225,6 +225,7 @@ void Administrator::Main(){
         if (str == "add a book" || str == "1" || str == "1)") add_book();
         if (str == "modify a book" || str == "2" || str == "2)") modify_book();
         if (str == "check return" || str == "3" || str == "3)") check_giveback();
+        if (str == "help") help();
         cout<<"Please input orders...(input 'help' to see help page)" << endl;
     }
     cout << "Your work helps make us better and better." << endl;
