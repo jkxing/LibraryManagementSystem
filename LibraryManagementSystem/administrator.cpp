@@ -124,7 +124,7 @@ bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& li
     }
 }
 
-void Administrator::add_book(){
+bsoncxx::document::value get_book(){
     string str;
     int label;
     bsoncxx::builder::basic::document basic_builder{};
@@ -171,7 +171,11 @@ void Administrator::add_book(){
     cout << "Please input the ISBN number..." << endl;
     cin >> str;
     basic_builder.append(kvp("ISBN", str));
-    bsoncxx::document::value document = basic_builder.extract();
+    return basic_builder.extract();
+}
+
+void Administrator::add_book(){
+    bsoncxx::document::value document = get_book();
     shop->addItem(document);
 }
 //修改信息
@@ -180,7 +184,8 @@ void Administrator::modify_book(){
     mongocxx::cursor found = sc->search(document);
     mongocxx::cursor found2 = sc->search(document);
     bsoncxx::document::value book = check_book(found, found2);
-    shop->editItem(book.view()["_id"].get_oid().value.to_string(), document);
+    bsoncxx::document::value newbook = get_book();
+    shop->editItem(book.view()["_id"].get_oid().value.to_string(), newbook);
     cout<<"haha"<<endl;
 }
 //审核归还
