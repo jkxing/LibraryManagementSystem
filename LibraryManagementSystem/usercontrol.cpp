@@ -51,14 +51,13 @@ void UserControl::Register(){
         System->showMessage("Internal Error.Please try again");
 }
 
-void UserControl::addReader(){
-    bsoncxx::document::value usr = getRegisterInfo();
-    db->insert("User",usr.view());
+void UserControl::addReader(bsoncxx::document::view usr){
+    db->insert("User",usr);
 }
 
 void UserControl::removeReader(string id){
     bsoncxx::builder::stream::document builder{};
-    builder << "_id" << bsoncxx::oid(item_id) ;
+    builder << "_id" << bsoncxx::oid(id) ;
     db->remove("User",builder.view());
 }
 

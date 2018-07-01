@@ -8,6 +8,7 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->lineEdit_4->setEchoMode(QLineEdit::PasswordEchoOnEdit);
+    setStyleSheet("#Dialog{border-image: url(:/image/bookbg.jpg)}");
     this->setWindowTitle("Register");
 }
 Dialog::Dialog(int w,int h,QWidget *parent) :
@@ -19,6 +20,7 @@ Dialog::Dialog(int w,int h,QWidget *parent) :
     setWindowTitle("Register");
     setStyleSheet("#Dialog{border-image: url(:/image/bookbg.jpg)}");
 
+    ui->lineEdit_4->setEchoMode(QLineEdit::PasswordEchoOnEdit);
     QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
     animation->setDuration(1000);
     animation->setStartValue(0);

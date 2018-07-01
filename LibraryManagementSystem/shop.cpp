@@ -34,6 +34,14 @@ void Shop::editItem(const string _id,bsoncxx::document::view info){
                bsoncxx::builder::concatenate(info) << close_document << finalize);
     qDebug()<<"finish";
 }
+
+
+void Shop::removeItem(const string &_id){
+    bsoncxx::builder::stream::document builder{};
+    builder << "_id" << bsoncxx::oid(_id) ;
+    db->remove("Item",builder.view());
+}
+
 bsoncxx::document::value Shop::getallinfo(const string id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(id);

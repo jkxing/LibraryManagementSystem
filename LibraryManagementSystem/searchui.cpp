@@ -27,15 +27,15 @@ map<string,string> Searchui::work()
     if(exec()==QDialog::Accepted)
     {
         string str;
-        map<string,string> v;
+        map<string,string> v{};
         str = ui->name->text().toStdString();
         if(str!="") v["书名"]=str;
         str = ui->author->text().toStdString();
         if(str!="") v["作者"]=str;
         str = ui->ISBN->text().toStdString();
         if(str!="") v["ISBN"]=str;
-        qDebug()<<"hahahaa";
-        qDebug()<<v.size()<<endl;
+        if(v.size()==0)
+            v["all"] = 1;
         return v;
      }
     else{
