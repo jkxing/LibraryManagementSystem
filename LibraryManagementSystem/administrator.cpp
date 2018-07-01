@@ -3,6 +3,7 @@
 extern Shop* shop;
 extern Searcher* sc;
 extern RendControl* rc;
+extern UserControl* uc;
 
 //输入搜索一本书的信息
 bsoncxx::document::value find_book(){                  
@@ -162,6 +163,7 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list, bool 
         {
             while (state[i] != "checking")
             {
+                if (i == 0) return document().extract();
                 qDebug() << "It is not to be lent.";
                 qDebug() << "Please choose again...";
                 cin >> i;
@@ -171,11 +173,13 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list, bool 
         {
             while (state[i] != "waiting")
             {
+                if (i == 0) return document().extract();
                 qDebug() << "It is not to be returned.";
                 qDebug() << "Please choose again...";
                 cin >> i;
             }
         }
+        cout << 1 << endl;
         return list[i-1];
     }
 }
@@ -312,8 +316,8 @@ void Administrator::check_borrow(){
     //选择一本书
     bsoncxx::document::value book = check_book(list, 1, 0);
     if (book.view() == bsoncxx::document::view{}) return;
-    cout << book.view()["item_id"].get_oid().value.to_string() << endl;
-    rc->commitBorrow(book.view()["_id"].get_oid().value.to_string());
+    string tmp = book.view()["item_id"].get_utf8().value.to_string();
+    rc->commitBorrow(tmp);
     qDebug() << "Request commited.";
 }
 //审核归还
@@ -323,7 +327,7 @@ void Administrator::check_giveback(){
     //选择一本书
     bsoncxx::document::value book = check_book(list, 0, 1);
     if (book.view() == bsoncxx::document::view{}) return;    
-    rc->commitReturn(book.view()["item_id"].get_oid().value.to_string());
+    rc->commitReturn(book.view()["item_id"].get_utf8().value.to_string());
     qDebug() << "Request commited.";
 }
 //帮助页面
@@ -337,7 +341,31 @@ void Administrator::help(){
     qDebug() << "3) delete: Delete a book from our database.";
     qDebug() << "4) check: Check the return-request list.";
     qDebug() << "5) lend: Check the borrow-request list.";
+    qDebug() << "6) addreader: Add a new reader.";
+    qDebug() << "7) romovereader: Remove a reader.";
     qDebug() << "------------------------------------------------------------------------------";
+}
+//添加读者
+void Administrator::add_reader(){
+    string str;
+    bsoncxx::builder::basic::document basic_builder{};
+    qDebug() << "Please input the reader's name...";
+    cin >> str;
+    basic_builder.append(kvp("UserName", str));
+    qDebug() << "Please input the reader's password...";
+    cin >> str;
+    basic_builder.append(kvp("pasword", str));
+    basic_builder.append(kvp("Identity", "Reader"));
+    uc->addReader(basic_builder.extract().view());
+    qDebug() << "Adding succeeded.";
+}
+//删除读者
+void Administrator::delete_reader(){
+    string str;
+    qDebug() << "Please input the reader's ID...";
+    cin >> str;
+    uc->removeReader(str);
+    qDebug() << "Delete succeeded.";
 }
 //主界面
 void Administrator::Main(){
@@ -360,6 +388,10 @@ void Administrator::Main(){
         if (str == "check" || str == "4" || str == "4)") check_giveback();
         //审核借书申请
         if (str == "lend" || str == "5" || str == "5)") check_borrow();
+        //添加读者信息
+        if (str == "addreader" || str == "6" || str == "6)") add_reader();
+        //删除读者
+        if (str == "removereader" || str == "7" || str == "7)") delete_reader();
         //帮助页面
         if (str == "help") help();
         qDebug()<<"Please input orders...(input 'help' to see help page)";
