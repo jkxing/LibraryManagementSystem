@@ -16,7 +16,6 @@ void RendControl::newRendRequest(const string &user_id,const string &item_id){
     builder.append(kvp("return date",(dat+CONST::defaultBorrowTime).toString()));
 
     db->insert("BorrowList",builder.view());
-    shop->rend(item_id);
 }
 
 void RendControl::newReturnRequest(const string &item_id){

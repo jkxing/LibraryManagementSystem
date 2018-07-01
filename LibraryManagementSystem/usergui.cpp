@@ -81,7 +81,7 @@ void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
         QModelIndex t = model->index(index.row(),4);
         QString qtmp = model->data(t).toString();
         string stmp = qtmp.toStdString();
-        if(stmp=="borrowing")
+        if(stmp!="returning")
         {
             string str = qstr.toStdString();
             model->setData(t,"returning");
@@ -109,7 +109,7 @@ void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
             QString qtmp = model->data(t).toString();
             string stmp = qtmp.toStdString();
             qDebug()<<qtmp;
-            if(stmp=="storing")
+            if(stmp!="0")
             {
                 string str = qstr.toStdString();
                 model->setData(t,"borrowed");
@@ -132,10 +132,13 @@ void userGui::on_Search_clicked()
     if(v.size()==0)
         return;
     bsoncxx::builder::stream::document dd;
-    for(auto i:v){
-        dd<<i.first<<i.second;
-        qDebug()<<QString::fromStdString(i.first);
-        qDebug()<<QString::fromStdString(i.second);
+    if(!v.count("all"))
+    {
+        for(auto i:v){
+            dd<<i.first<<i.second;
+            qDebug()<<QString::fromStdString(i.first);
+            qDebug()<<QString::fromStdString(i.second);
+        }
     }
     vector<bsoncxx::document::value> list = sc->search(dd.view());
     model = new QStandardItemModel(list.size(),6,this);
@@ -144,7 +147,7 @@ void userGui::on_Search_clicked()
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("ISBN"));
     model->setHeaderData(3, Qt::Horizontal, QObject::tr("出版社"));
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
-    model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
+    model->setHeaderData(5, Qt::Horizontal, QObject::tr("number"));
     int tmp = 0;
     for(auto doc:list)
     {      
@@ -153,7 +156,7 @@ void userGui::on_Search_clicked()
         setData(tmp,2,doc.view(),"ISBN");
         setData(tmp,3,doc.view(),"出版社");
         setData(tmp,4,doc.view(),"_id");
-        setData(tmp,5,doc.view(),"state");
+        setData(tmp,5,doc.view(),"number");
         tmp++;
     }
     ui->tableView->setModel(model);
