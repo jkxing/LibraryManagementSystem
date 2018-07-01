@@ -11,15 +11,16 @@ using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::sub_array;
 using namespace std;
 class User{
-    string now_book_id;
+    string now_book_id[10];//记录用户现在借阅的书
     string id;
     string name;
     string identity;
 public:
+    static int number;//记录当前借书量
     User(const string &id);
     User(const string &id ,const string &name ,const string &identity);
     virtual void Main() = 0;
-    string& getNowBookId();
+    string& getNowBookId(int i);
     string getid();
     string getName();
     string getIdentity();

@@ -1,12 +1,10 @@
 #include <searcher.h>
 #include <database.h>
-#include <QDebug>
-#include <string>
-#include <iostream>
+#include <stdafx.h>
 using namespace std;
 extern Database *db;
 
-vector<bsoncxx::document::value> Searcher::searchByAdmin(string str,bsoncxx::document::view info){
+vector<bsoncxx::document::value> Searcher::searchByAdmin(const string &str,bsoncxx::document::view info){
     vector<bsoncxx::document::value> v{};
 #ifdef __Database
     mongocxx::cursor ret = db->getAll(str,info);

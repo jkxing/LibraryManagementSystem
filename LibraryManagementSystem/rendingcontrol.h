@@ -9,8 +9,14 @@ class RendControl{//control rending/returning/commiting
     //when administrator confirm a book is returned,use this to handle it
     void commitReturn(const string &id);
 
+    //when administrator confirm a book is going to be borrowed,use this to handle it
+    void commitBorrow(const string &id);
+
     //admin use this to  get what books is returned but not confirmed
     vector<bsoncxx::document::value> getReturnList();
+
+    //admin use this to  get what books is waiting to be borrowed
+    vector<bsoncxx::document::value> getBorrowList();
 
     friend class Administrator;
     friend class AdminGui;

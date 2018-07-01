@@ -12,6 +12,7 @@ Database::Database():pool(mongocxx::uri{}){
 
 Database::~Database(){
     sync();
+    qDebug()<<"endl";
 }
 
 void Database::sync(){

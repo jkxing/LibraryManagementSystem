@@ -1,14 +1,12 @@
 #include "usergui.h"
 #include "ui_usergui.h"
+#include <stdafx.h>
 #include <user.h>
 #include <rendingcontrol.h>
-#include <QStandardItemModel>
-#include <QDebug>
-#include <iostream>
 #include <shop.h>
 #include <searchui.h>
 #include <search.h>
-#include <QPropertyAnimation>
+#include <previewbookdialog.h>
 using namespace std;
 extern RendControl *rc;
 extern Shop *shop;
@@ -23,6 +21,7 @@ userGui::userGui(QWidget *parent,const string &str) :
     setStyleSheet("#userGui{border-image: url(:/image/bookbg.jpg)}");
     qDebug()<<QString::fromStdString(str);
     QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
+    setWindowTitle("Welcome, reader");
     animation->setDuration(1000);
     animation->setStartValue(0);
     animation->setEndValue(1);
@@ -94,26 +93,32 @@ void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
         }
     }
     else{
-        ConfirmDialog confirm(this,"是否确认借书");
-        if(confirm.exec()!=QDialog::Accepted)
-            return;
         QModelIndex index = model->index(Index.row(),4);
-        qDebug()<<"handling borrow";
-        QString qstr = model->data(index).toString();
-        qDebug()<<qstr;
-        QModelIndex t = model->index(index.row(),5);
-        QString qtmp = model->data(t).toString();
-        string stmp = qtmp.toStdString();
-        qDebug()<<qtmp;
-        if(stmp=="storing")
+        string str = model->data(index).toString().toStdString();
+        PreviewBookDialog pre(this,shop->getallinfo(str));
+        if(pre.exec()==QDialog::Accepted)
         {
-            string str = qstr.toStdString();
-            model->setData(t,"borrowed");
-            rc->newRendRequest(getid(),str);
-            qDebug()<<"new borrow";
-        }
-        else{
-            qDebug()<<"already borrowed or sale";
+            ConfirmDialog confirm(this,"是否确认借书");
+            if(confirm.exec()!=QDialog::Accepted)
+                return;
+            QModelIndex index = model->index(Index.row(),4);
+            qDebug()<<"handling borrow";
+            QString qstr = model->data(index).toString();
+            qDebug()<<qstr;
+            QModelIndex t = model->index(index.row(),5);
+            QString qtmp = model->data(t).toString();
+            string stmp = qtmp.toStdString();
+            qDebug()<<qtmp;
+            if(stmp=="storing")
+            {
+                string str = qstr.toStdString();
+                model->setData(t,"borrowed");
+                rc->newRendRequest(getid(),str);
+                qDebug()<<"new borrow";
+            }
+            else{
+                qDebug()<<"already borrowed or sale";
+            }
         }
     }
     qDebug()<<"finish";

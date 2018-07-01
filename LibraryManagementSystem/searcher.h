@@ -6,7 +6,8 @@
 using namespace std;
 class Searcher{//search engine
     friend class Administrator;
-    vector<bsoncxx::document::value> searchByAdmin(string str,bsoncxx::document::view info);
+    friend class AdminGui;
+    vector<bsoncxx::document::value> searchByAdmin(const string &str,bsoncxx::document::view info);
 public:
     //basic search
     vector<bsoncxx::document::value> search(bsoncxx::document::view info);

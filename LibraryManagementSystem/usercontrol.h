@@ -7,7 +7,8 @@ using namespace std;
 extern Database* db;
 class UserControl{//control user info,function name is almost what is does
     friend class Administrator;
-    void addReader();
+    friend class AdminGui;
+    void addReader(bsoncxx::document::view usr);
     void removeReader(string id);
 public:
     bsoncxx::document::value getRegisterInfo();
