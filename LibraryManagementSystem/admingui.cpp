@@ -34,7 +34,9 @@ AdminGui::AdminGui(QWidget *parent,const string &str) :
     setWindowTitle("Welcome, administrator");
     ui->tabWidget->setAttribute(Qt::WA_TranslucentBackground);
     ui->tabWidget->setStyleSheet("background-color: transparent");
-    page = 0;
+
+    ui->pushButton->setText("编辑图书");
+    ui->pushButton_2->setText("添加图书");
 }
 
 AdminGui::~AdminGui()
