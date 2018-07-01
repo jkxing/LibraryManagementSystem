@@ -4,7 +4,7 @@ extern Shop* shop;
 extern Searcher* sc;
 extern RendControl* rc;
 extern Database* db;
-
+//输入搜索一本书的信息
 bsoncxx::document::view find_book(){
     string str;
     int choice;
@@ -68,7 +68,7 @@ bsoncxx::document::view find_book(){
     }
     return basic_builder.view();
 }
-
+//从列表中选择一本书
 bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
     auto builder = bsoncxx::builder::stream::document{};
     if(list.begin() == list.end())
@@ -157,28 +157,37 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
                 }
                 else
                 {
-                    bsoncxx::document::value key = builder
-                            << "出版社" << press[i]
-                            << bsoncxx::builder::stream::finalize;
-                    return db->get("Item", key);
+                    if (authorname[i] != "")
+                    {
+                        bsoncxx::document::value key = builder
+                                << "出版社" << press[i]
+                                << bsoncxx::builder::stream::finalize;
+                        return db->get("Item", key);
+                    }
+                    else
+                    {
+                        return bsoncxx::document::view{};
+                    }
                 }
             }
         }
     }
 }
-
+//新建一本书
 bsoncxx::document::view get_book(){
     string str;
     int choice;
     string info[9] = {"书名", "作者", "译者", "出版社",
                     "出版时间", "标签", "编辑推荐", "ISBN", "that's all"};
     bool choosed[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    //用于保存书籍信息
     bsoncxx::builder::basic::document basic_builder{};
+    //用于保存标签
+    bsoncxx::builder::basic::document another_builder{};
 
     cout << "What infomation do you have about the book?" << endl;
     for (int i = 0; i < 9; i++)
         cout << (i+1) << ". " << info[i] << endl;
-    bsoncxx::builder::basic::document another_builder{};
     while (cin >> choice)
     {
         if (choice == 9) break;
@@ -256,10 +265,10 @@ bsoncxx::document::view get_book(){
         for (int i = 0; i < 9; i++)
             cout << (i+1) << ". " << info[i] << endl;
     }
-    basic_builder.append(kvp("标签", another_builder));
+    //basic_builder.append(kvp("标签", another_builder));
     return basic_builder.view();
 }
-
+//添加书
 void Administrator::add_book(){
     bsoncxx::document::view document = get_book();
     shop->addItem(document);
@@ -276,7 +285,10 @@ void Administrator::modify_book(){
     if (book == bsoncxx::document::view{}) return;
     bsoncxx::document::view newbook = get_book();
     cout<<"finish modify_2"<<endl;
-    shop->editItem(book["_id"].get_oid().value.to_string(), newbook);
+    cout << book["_id"].get_oid().value.to_string() << endl;
+    string tmp = book["_id"].get_oid().value.to_string();
+    cout << bsoncxx::to_json(newbook) << endl;
+    shop->editItem(tmp, newbook);
     cout<<"haha"<<endl;
 }
 //审核归还
@@ -286,7 +298,7 @@ void Administrator::check_giveback(){
     if (book == bsoncxx::document::view{}) return;
     rc->commitReturn(book["id"].get_utf8().value.to_string());
 }
-
+//帮助页面
 void Administrator::help(){
     cout << "------------------------------------------------------------------------------" << endl;
     cout << "Welcome back!" << endl;
@@ -298,7 +310,7 @@ void Administrator::help(){
     cout << "3) check: Check the return-request list." << endl;
     cout << "------------------------------------------------------------------------------" << endl;
 }
-
+//主界面
 void Administrator::Main(){
     cout<<"user_id is:"<<this->getid()<<endl;
     cout<<"user_name is"<<this->getName()<<endl;
@@ -307,10 +319,15 @@ void Administrator::Main(){
     string str;
     while (cin >> str)
     {
+        //退出
         if (str == "quit" || str == "0" || str == "0)") break;
+        //添加书籍
         if (str == "add" || str == "1" || str == "1)") add_book();
+        //修改书籍信息
         if (str == "modify" || str == "2" || str == "2)") modify_book();
+        //审核还书申请
         if (str == "check" || str == "3" || str == "3)") check_giveback();
+        //帮助页面
         if (str == "help") help();
         cout<<"Please input orders...(input 'help' to see help page)" << endl;
     }
