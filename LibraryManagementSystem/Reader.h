@@ -11,6 +11,7 @@ public:
     void giveback();
     void help();
     void changepassword();
+    void getborrowlist();
     //void
     ~Reader();
 };
