@@ -20,14 +20,14 @@ bsoncxx::document::value find_book(){
     while (cin >> choice)
     {
         if (choice == 6) break;
-        if (choosed[choice])
-        {
-            qDebug() << "You have input this already. Choose again.";
-            continue;
-        }
         if (choice >= 7 || choice <= 0)
         {
             qDebug() << "Invalid number. Choose again.";
+            continue;
+        }
+        if (choosed[choice])
+        {
+            qDebug() << "You have input this already. Choose again.";
             continue;
         }
         if (choice == 1)
@@ -69,7 +69,7 @@ bsoncxx::document::value find_book(){
     return basic_builder.extract();
 }
 //从列表中选择一本书
-bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
+bsoncxx::document::value check_book(vector<bsoncxx::document::value> list, bool borrow, bool giveback){
     auto builder = bsoncxx::builder::stream::document{};
     if(list.begin() == list.end())//列表为空
     {
@@ -85,12 +85,17 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
         string* time = new string[list.size()+1];
         string* introduction = new string[list.size()+1];
         string* translator = new string[list.size()+1];
+        string* state = new string[list.size()+1];
         for (int i=1; i<(int)list.size(); i++)
         {
             bookname[i] = "";
             authorname[i] = "";
             ISBN[i] = "";
             press[i] = "";
+            time[i] = "";
+            introduction[i] = "";
+            translator[i] = "";
+            state[i] = "";
         }
         int i = 0;
         for (auto doc1 : list)
@@ -133,6 +138,11 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
                 introduction[i] = doc["编辑推荐"].get_utf8().value.to_string();
                 qDebug() << QString::fromStdString(introduction[i]);
             }
+            if (doc.find("state") != doc.end())
+            {
+                state[i] = doc["state"].get_utf8().value.to_string();
+                qDebug() << QString::fromStdString(state[i]);
+            }
         }
         qDebug();
         qDebug() << "Choose one... (0 for quit)";
@@ -148,7 +158,25 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
             qDebug() << "Search failed.";
             return document().extract();
         }
-        return shop->getallinfo(list[i-1].view()["_id"].get_oid().value.to_string());
+        if (borrow)
+        {
+            while (state[i] != "checking")
+            {
+                qDebug() << "It is not to be lent.";
+                qDebug() << "Please choose again...";
+                cin >> i;
+            }
+        }
+        if (giveback)
+        {
+            while (state[i] != "waiting")
+            {
+                qDebug() << "It is not to be returned.";
+                qDebug() << "Please choose again...";
+                cin >> i;
+            }
+        }
+        return list[i-1];
     }
 }
 //新建一本书
@@ -258,7 +286,7 @@ void Administrator::modify_book(){
     qDebug()<<"finish modify_0.5"<<endl;
     vector<bsoncxx::document::value> found = sc->search(document);
     qDebug()<<"finish modify_1"<<endl;
-    bsoncxx::document::value book = check_book(found);
+    bsoncxx::document::value book = check_book(found, 0, 0);
     qDebug()<<"finish modify_1.5"<<endl;
     if (book.view() == bsoncxx::document::view{}) return;
     bsoncxx::document::value newbook = get_book();
@@ -268,14 +296,35 @@ void Administrator::modify_book(){
     shop->editItem(tmp, newbook.view());
     qDebug()<<"#end of modify"<<endl;
 }
+//删除书籍
+void Administrator::delete_book(){
+    bsoncxx::document::value document = find_book();
+    vector<bsoncxx::document::value> found = sc->search(document);
+    bsoncxx::document::value book = check_book(found, 0, 0);
+    if (book.view() == bsoncxx::document::view{}) return;
+    string tmp = book.view()["_id"].get_oid().value.to_string();
+    shop->removeItem(tmp);
+}
+//审核借书
+void Administrator::check_borrow(){
+    //获得等待审核的请求列表
+    vector<bsoncxx::document::value> list = rc->getBorrowList();
+    //选择一本书
+    bsoncxx::document::value book = check_book(list, 1, 0);
+    if (book.view() == bsoncxx::document::view{}) return;
+    cout << book.view()["item_id"].get_oid().value.to_string() << endl;
+    rc->commitBorrow(book.view()["_id"].get_oid().value.to_string());
+    qDebug() << "Request commited.";
+}
 //审核归还
 void Administrator::check_giveback(){
     //获得等待审核的请求列表
     vector<bsoncxx::document::value> list = rc->getReturnList();
     //选择一本书
-    bsoncxx::document::value book = check_book(list);
-    if (book.view() == bsoncxx::document::view{}) return;
-    rc->commitReturn(book.view()["id"].get_utf8().value.to_string());
+    bsoncxx::document::value book = check_book(list, 0, 1);
+    if (book.view() == bsoncxx::document::view{}) return;    
+    rc->commitReturn(book.view()["item_id"].get_oid().value.to_string());
+    qDebug() << "Request commited.";
 }
 //帮助页面
 void Administrator::help(){
@@ -285,7 +334,9 @@ void Administrator::help(){
     qDebug() << "0) quit: Log out.";
     qDebug() << "1) add: Add books to our database.";
     qDebug() << "2) modify: Modify books' information in our database.";
-    qDebug() << "3) check: Check the return-request list.";
+    qDebug() << "3) delete: Delete a book from our database.";
+    qDebug() << "4) check: Check the return-request list.";
+    qDebug() << "5) lend: Check the borrow-request list.";
     qDebug() << "------------------------------------------------------------------------------";
 }
 //主界面
@@ -303,8 +354,12 @@ void Administrator::Main(){
         if (str == "add" || str == "1" || str == "1)") add_book();
         //修改书籍信息
         if (str == "modify" || str == "2" || str == "2)") modify_book();
+        //删除书籍
+        if (str == "delete" || str == "3" || str == "3)") delete_book();
         //审核还书申请
-        if (str == "check" || str == "3" || str == "3)") check_giveback();
+        if (str == "check" || str == "4" || str == "4)") check_giveback();
+        //审核借书申请
+        if (str == "lend" || str == "5" || str == "5)") check_borrow();
         //帮助页面
         if (str == "help") help();
         qDebug()<<"Please input orders...(input 'help' to see help page)";
