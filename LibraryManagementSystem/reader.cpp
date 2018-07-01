@@ -34,7 +34,7 @@ void Reader::changepassword() {
             cout << "Success! Now you can change your password. Please enter your new password." << endl;
             string newpassword;
             cin >> newpassword;
-            bsoncxx::document::value tmpdoc = bsoncxx::builder::stream::document{} << "password" << newpassword << bsoncxx::builder::stream::finalize;
+            bsoncxx::document::view tmpdoc = bsoncxx::builder::stream::document{} << "password" << newpassword << bsoncxx::builder::stream::finalize;
             uc->updateUserInfo(getid(),tmpdoc);
             cout << "Congratulations! You've finished changing your password." << endl;
         }

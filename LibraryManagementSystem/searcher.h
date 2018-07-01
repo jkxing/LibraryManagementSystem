@@ -1,9 +1,11 @@
 #ifndef SEARCHER_H
 #define SEARCHER_H
 #include <database.h>
+#include <vector>
+using namespace std;
 class Searcher{
 public:
-    mongocxx::cursor search(bsoncxx::document::value info);
-    mongocxx::cursor search(bsoncxx::builder::stream::document &doc);
+    vector<bsoncxx::document::view> search(bsoncxx::document::view info);
+    vector<bsoncxx::document::view> search(bsoncxx::builder::stream::document &doc);
 };
 #endif // SEARCHER_H

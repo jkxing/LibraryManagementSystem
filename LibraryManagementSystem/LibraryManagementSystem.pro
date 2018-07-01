@@ -26,7 +26,6 @@ SOURCES += \
     abstractapp.cpp \
     consoleapp.cpp \
     user.cpp \
-    books.cpp \
     database.cpp \
     rendingcontrol.cpp \
     searcher.cpp \
@@ -50,7 +49,6 @@ HEADERS += \
     abstractapp.h \
     consoleapp.h \
     user.h \
-    books.h \
     database.h \
     shop.h \
     const.h \

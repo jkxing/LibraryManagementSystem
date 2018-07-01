@@ -15,9 +15,9 @@
 #include <guiapp.h>
 #include <unistd.h>
 #include <QDebug>
+#include <Administrator.h>
 using namespace std;
 using bsoncxx::builder::basic::kvp;
-mongocxx::instance inst{};
 AbstractApp* System;
 Database *db;
 RendControl *rc;
@@ -59,6 +59,10 @@ void end()
 int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
-    System->Main();
+    string str = "5b35eabe8726e31128006422";
+    User * user = new Administrator(str);
+    user->Main();
+    //uc->test();
+    //System->Main();
     return a->exec();
 }

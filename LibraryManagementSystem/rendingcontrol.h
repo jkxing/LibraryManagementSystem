@@ -6,8 +6,8 @@ class RendControl{
 public:
     void newRendRequest(const string &user_id,const string &item_id);
     void newReturnRequest(const string &item_id);
-    mongocxx::cursor getBorrowList(const string &user_id);
-    mongocxx::cursor getReturnList();
+    vector<bsoncxx::document::view> getBorrowList(const string &user_id);
+    vector<bsoncxx::document::view> getReturnList();
     void commitReturn(const string &id);
 };
 #endif // RENDINGCONTROL_H

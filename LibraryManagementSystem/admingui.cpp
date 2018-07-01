@@ -39,24 +39,19 @@ AdminGui::~AdminGui()
 void AdminGui::on_pushButton_clicked()
 {
     nowShow = 0;
-    mongocxx::cursor list = rc->getReturnList();
-    int cnt = 0;
-    for(auto doc:list)
-        cnt++;
-    model = new QStandardItemModel(cnt,3,this);
+    vector<bsoncxx::document::view> list = rc->getReturnList();
+    model = new QStandardItemModel(list.size(),3,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
     int tmp = 0;
-    list = rc->getReturnList();
     for(auto doc:list)
     {
         QModelIndex index = model->index(tmp,0,QModelIndex());
         string str = doc["item_id"].get_utf8().value.to_string();
         model->setData(index,QString::fromStdString(str));
         index = model->index(tmp,1,QModelIndex());
-        bsoncxx::document::value val = shop->getallinfo(str);
-        bsoncxx::document::view vie = val.view();
+        bsoncxx::document::view vie = shop->getallinfo(str);
         str = vie["书名"].get_utf8().value.to_string();
         model->setData(index,QString::fromStdString(str));
         index = model->index(tmp,2,QModelIndex());
@@ -108,7 +103,7 @@ void AdminGui::on_tableView_clicked(const QModelIndex &index)
             string header = model->headerData(index.column(),Qt::Horizontal).toString().toStdString();
             bsoncxx::builder::stream::document doc{};
             doc<<header<<str;
-            shop->editItem(id,doc.extract());
+            shop->editItem(id,doc.view());
         }
     }
 }
@@ -131,12 +126,8 @@ void AdminGui::on_pushButton_2_clicked()
         qDebug()<<QString::fromStdString(i.first);
         qDebug()<<QString::fromStdString(i.second);
     }
-    mongocxx::cursor list = sc->search(dd.extract());
-    int cnt = 0;
-    for(auto doc:list)
-        cnt++;
-    qDebug()<<cnt<<endl;
-    model = new QStandardItemModel(cnt,6,this);
+    vector<bsoncxx::document::view> list = sc->search(dd.view());
+    model = new QStandardItemModel(list.size(),6,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("书名"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("作者"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("ISBN"));
@@ -144,11 +135,6 @@ void AdminGui::on_pushButton_2_clicked()
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
     int tmp = 0;
-    dd.clear();
-    for(auto i:v){
-        dd<<i.first<<i.second;
-    }
-    list = sc->search(dd.extract());
     for(auto doc:list)
     {
         QModelIndex index = model->index(tmp,0,QModelIndex());
@@ -183,5 +169,5 @@ void AdminGui::on_pushButton_3_clicked()
     for(auto i:res){
         doc << i.first << i.second;
     }
-    shop->addItem(doc.extract());
+    shop->addItem(doc.view());
 }

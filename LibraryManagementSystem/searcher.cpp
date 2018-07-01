@@ -2,15 +2,24 @@
 #include <database.h>
 #include <QDebug>
 #include <string>
+#include <iostream>
 using namespace std;
 extern Database *db;
-mongocxx::cursor Searcher::search(bsoncxx::document::value info){
+vector<bsoncxx::document::view> Searcher::search(bsoncxx::document::view info){
     mongocxx::cursor ret = db->getAll("Item",info);
-    string str = bsoncxx::to_json(info.view());
-    return ret;
+    cout<<"insearch"<<endl;
+    string str = bsoncxx::to_json(info);
+    cout<<str<<endl;
+    vector<bsoncxx::document::view> v{};
+    for(auto i:ret)
+        v.push_back(i);
+    return v;
 }
-mongocxx::cursor Searcher::search(bsoncxx::builder::stream::document &doc){
+vector<bsoncxx::document::view> Searcher::search(bsoncxx::builder::stream::document &doc){
     mongocxx::cursor ret = db->getAll("Item",doc.extract());
     string str = bsoncxx::to_json(doc.extract().view());
-    return ret;
+    vector<bsoncxx::document::view> v{};
+    for(auto i:ret)
+        v.push_back(i);
+    return v;
 }

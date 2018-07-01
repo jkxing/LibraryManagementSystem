@@ -15,26 +15,25 @@ void Shop::Return(const string &item_id){
     db->update("Item",builder.extract(),document{} << "$set" << open_document <<
                "state" << "storing" << close_document << finalize);
 }
-void Shop::addItem(bsoncxx::document::value val){
+void Shop::addItem(bsoncxx::document::view val){
     db->insert("Item",val);
     db->update("Item",val,document{} << "$set" << open_document <<
                "state" << "storing" << close_document << finalize);
 }
 
-void Shop::editItem(const string &_id,bsoncxx::document::value info){
+void Shop::editItem(const string &_id,bsoncxx::document::view info){
     qDebug()<<QString::fromStdString(_id);
-    qDebug()<<QString::fromStdString(bsoncxx::to_json(info.view()));
+    qDebug()<<QString::fromStdString(bsoncxx::to_json(info));
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(_id) ;
     qDebug()<<"medium";
     bsoncxx::builder::stream::document doc{};
-    db->update("Item",builder.extract(),document{} << "$set" << open_document <<
-               bsoncxx::builder::concatenate(info.view()) << close_document << finalize);
+    db->update("Item",builder.view(),document{} << "$set" << open_document <<
+               bsoncxx::builder::concatenate(info) << close_document << finalize);
     qDebug()<<"finish";
 }
-bsoncxx::document::value Shop::getallinfo(const string &id){
+bsoncxx::document::view Shop::getallinfo(const string &id){
     bsoncxx::builder::stream::document builder{};
-    builder << "_id" << bsoncxx::oid(id) ;
-    qDebug()<<QString::fromStdString(id);
-    return db->get("Item",builder.extract().view());
+    builder << "_id" << bsoncxx::oid(id);
+    return db->get("Item",builder.view());
 }

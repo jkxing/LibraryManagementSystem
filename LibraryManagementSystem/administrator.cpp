@@ -5,10 +5,10 @@ extern Searcher* sc;
 extern RendControl* rc;
 extern Database* db;
 
-bsoncxx::document::value find_book(){
+bsoncxx::document::view find_book(){
     string str;
     int choice;
-    string info[6] = {"bookname", "authorname", "translator", "press",
+    string info[6] = {"书名", "作者", "译者", "出版社",
                     "ISBN", "that's all"};
     bool choosed[6] = {0, 0, 0, 0, 0, 0};
     bsoncxx::builder::basic::document basic_builder{};
@@ -66,45 +66,36 @@ bsoncxx::document::value find_book(){
         for (int i = 0; i < 6; i++)
             cout << (i+1) << ". " << info[i] << endl;
     }
-    return basic_builder.extract();
+    return basic_builder.view();
 }
 
-bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& list2){
+bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
     auto builder = bsoncxx::builder::stream::document{};
+    for (auto doc : list)
+        cout<<doc["ISBN"].get_utf8().value.to_string()<<endl;
     if(list.begin() == list.end())
     {
         cout << "No request is waiting for confirmation yet." << endl;
-        bsoncxx::document::value key = builder
-                << "wtf" << "wtf"
-                << bsoncxx::builder::stream::finalize;
-        return db->get("Item", key);
+        return bsoncxx::document::view{};
     }
     else
     {
-        auto iter1 = list2.begin();
-        auto iter2 = list2.end();
-        int num = 0;
-        while (iter1 != iter2)
-        {
-            iter1++;
-            num++;
-        }
-        string* bookname = new string[num+1];
-        string* authorname = new string[num+1];
-        string* ISBN = new string[num+1];
+        string* bookname = new string[list.size()+1];
+        string* authorname = new string[list.size()+1];
+        string* ISBN = new string[list.size()+1];
         int i = 0;
         for (auto doc : list)
         {
             i++;
-            bookname[i] = doc["书名"].get_utf8().value.to_string();
-            authorname[i] = doc["作者"].get_utf8().value.to_string();
+            //bookname[i] = doc["书名"].get_utf8().value.to_string();
+            //authorname[i] = doc["作者"].get_utf8().value.to_string();
             ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
             cout<<i<<"."<<ISBN[i]<<endl;
         }
         cout << endl;
         cout << "Choose one... (0 for quit)" << endl;
         cin >> i;
-        while (!(i >= 0 && i <= num))
+        while (!(i >= 0 && i <= list.size()))
         {
             cout << "Invalid number." << endl;
             cout << "Please choose again..." << endl;
@@ -124,7 +115,7 @@ bsoncxx::document::value check_book(mongocxx::cursor& list, mongocxx::cursor& li
     }
 }
 
-bsoncxx::document::value get_book(){
+bsoncxx::document::view get_book(){
     string str;
     int label;
     bsoncxx::builder::basic::document basic_builder{};
@@ -171,29 +162,32 @@ bsoncxx::document::value get_book(){
     cout << "Please input the ISBN number..." << endl;
     cin >> str;
     basic_builder.append(kvp("ISBN", str));
-    return basic_builder.extract();
+    return basic_builder.view();
 }
 
 void Administrator::add_book(){
-    bsoncxx::document::value document = get_book();
+    bsoncxx::document::view document = get_book();
     shop->addItem(document);
 }
 //修改信息
 void Administrator::modify_book(){
-    bsoncxx::document::value document = find_book();
-    mongocxx::cursor found = sc->search(document);
-    mongocxx::cursor found2 = sc->search(document);
-    bsoncxx::document::value book = check_book(found, found2);
-    bsoncxx::document::value newbook = get_book();
-    shop->editItem(book.view()["_id"].get_oid().value.to_string(), newbook);
+    cout<<"finish modify_0"<<endl;
+    bsoncxx::document::view document = find_book();
+    cout<<"finish modify_0.5"<<endl;
+    vector<bsoncxx::document::view> found = sc->search(document);
+    cout<<"finish modify_1"<<endl;
+    bsoncxx::document::view book = check_book(found);
+    cout<<"finish modify_1.5"<<endl;
+    bsoncxx::document::view newbook = get_book();
+    cout<<"finish modify_2"<<endl;
+    shop->editItem(book["_id"].get_oid().value.to_string(), newbook);
     cout<<"haha"<<endl;
 }
 //审核归还
 void Administrator::check_giveback(){
-    mongocxx::cursor list = rc->getReturnList();
-    mongocxx::cursor list2 = rc->getReturnList();
-    bsoncxx::document::value book = check_book(list, list2);
-    rc->commitReturn(book.view()["id"].get_utf8().value.to_string());
+    vector<bsoncxx::document::view> list = rc->getReturnList();
+    bsoncxx::document::view book = check_book(list);
+    rc->commitReturn(book["id"].get_utf8().value.to_string());
 }
 
 void Administrator::help(){

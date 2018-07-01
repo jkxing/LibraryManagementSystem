@@ -13,35 +13,30 @@ pair<CONST::loginState,string> UserControl::verifyUser(const string &username, c
     bsoncxx::builder::basic::document builder{};
     bsoncxx::document::view passAndId{};
     builder.append(kvp("username",username));
-    passAndId = db->get("User",builder.extract()).view();
+    passAndId = db->get("User",builder.view());
     if(passAndId.empty())
         return make_pair(CONST::loginState::UserUnexist,"");
-    builder.clear();
-    builder.append(kvp("username",username));
     builder.append(kvp("password",password));
-    passAndId = db->get("User",builder.extract());
-    qDebug()<<"normal";
+    passAndId = db->get("User",builder.view());
     if(passAndId.empty())
-    {
-        qDebug()<<"normal1";
         return make_pair(CONST::loginState::WrongPassword,"");
-    }
-    else if(passAndId["identity"].get_utf8().value.to_string()=="reader")
+    else
     {
-        qDebug()<<"normal2";
-        return make_pair(CONST::loginState::SuccessReaderLogin,passAndId["_id"].get_oid().value.to_string());
-    }
-    else if(passAndId["identity"].get_utf8().value.to_string()=="administrator")
-    {
-        qDebug()<<"normal3";
-        return make_pair(CONST::loginState::SuccessAdminLogin,passAndId["_id"].get_oid().value.to_string());
+        auto tmp = passAndId.find("identity");
+        while(tmp == passAndId.end())
+            return verifyUser(username,password);
+        if(passAndId["identity"].get_utf8().value.to_string()=="reader")
+            return make_pair(CONST::loginState::SuccessReaderLogin,passAndId["_id"].get_oid().value.to_string());
+
+        else if(passAndId["identity"].get_utf8().value.to_string()=="administrator")
+            return make_pair(CONST::loginState::SuccessAdminLogin,passAndId["_id"].get_oid().value.to_string());
+
     }
 }
 
 void UserControl::Register(){
-    bsoncxx::document::value info = getRegisterInfo();
-    bsoncxx::document::view tmp = info.view();
-    if(tmp.empty())
+    bsoncxx::document::view info = getRegisterInfo();
+    if(info.empty())
        return;
     bool st = db->insert("User",info);
     if(st)
@@ -63,7 +58,7 @@ void UserControl::Login(){
     delete new_user;
 }
 
-bsoncxx::document::value UserControl::getRegisterInfo(){
+bsoncxx::document::view UserControl::getRegisterInfo(){
 
     qDebug()<<"hahaha"<<endl;
     bsoncxx::builder::basic::document doc;
@@ -75,23 +70,22 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     mp["nickname"]=make_pair("","");
     mp = System->getInput(mp);
     qDebug()<<"lalala"<<endl;
-    if(mp.size()==0) return fail.extract();
+    if(mp.size()==0) return fail.view();
     string Username = mp["username"].first;
-    //cout<<Username<<endl;
     while(Username.length()<6||db->find("User",bsoncxx::builder::basic::make_document(kvp("username", Username)))){
         if(Username.length()<6)
             mp["username"].second = "username too short";
         else
             mp["username"].second = "username already exists";
         mp = System->getInput(mp);
-        if(mp.size()==0) return fail.extract();
+        if(mp.size()==0) return fail.view();
         Username = mp["username"].first;
     }
     string Password = mp["password"].first;
     while(Password.length()<6){
         mp["password"].second = "password too short";
         mp = System->getInput(mp);
-        if(mp.size()==0) return fail.extract();
+        if(mp.size()==0) return fail.view();
         Password = mp["password"].first;
         cout << Password <<endl;
     }
@@ -103,7 +97,7 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     builder.append(kvp("nickname",Id));
     builder.append(kvp("email",Email));
     builder.append(kvp("identity","reader"));
-    return builder.extract();
+    return builder.view();
 }
 
 pair<string,int> UserControl::getLoginInfo(){
@@ -138,17 +132,21 @@ pair<string,int> UserControl::getLoginInfo(){
         return getLoginInfo();
     }
 }
-void UserControl::updateUserInfo(const string &_id,bsoncxx::document::value info){
+void UserControl::updateUserInfo(const string &_id,bsoncxx::document::view info){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(_id) ;
-    bsoncxx::document::value val = builder.extract();
-    cout<<bsoncxx::to_json(val)<<endl;
-    db->update("User",val,document{} << "$set" <<
+    db->update("User",builder.view(),document{} << "$set" <<
                info << finalize);
 }
-mongocxx::cursor UserControl::getUserInfo(const string &user_id){
+vector<bsoncxx::document::view> UserControl::getUserInfo(const string &user_id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(user_id) ;
-    bsoncxx::document::value val = builder.extract();
-    return db->getAll("User",val);
+    mongocxx::cursor res = db->getAll("User",builder.view());
+    vector<bsoncxx::document::view> v{};
+    for(auto i:res)
+        v.push_back(i);
+    return v;
+}
+void UserControl::test(){
+
 }

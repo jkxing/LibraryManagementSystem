@@ -1,6 +1,5 @@
 #ifndef ABSTRACTAPP_H
 #define ABSTRACTAPP_H
-#include <books.h>
 #include <database.h>
 #include <user.h>
 #include <algorithm>
