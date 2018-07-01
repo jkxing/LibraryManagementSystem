@@ -1,15 +1,13 @@
 #ifndef SEARCHUI_H
 #define SEARCHUI_H
 
-#include <QDialog>
-#include <vector>
-#include <string>
+#include <stdafx.h>
 using namespace std;
 namespace Ui {
 class Searchui;
 }
 
-class Searchui : public QDialog
+class Searchui : public QDialog//Search gui
 {
     Q_OBJECT
 

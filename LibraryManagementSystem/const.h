@@ -1,9 +1,10 @@
 #ifndef CONST_H
 #define CONST_H
-#include <string>
+
 #include <date.h>
+
 using namespace std;
-namespace CONST{
+namespace CONST{//some const thing
     enum loginState{
         SuccessReaderLogin,
         SuccessAdminLogin,

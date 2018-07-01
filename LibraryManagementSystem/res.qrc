@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/image">
-        <file alias="eli_maki">image/Maki_Eli_ur_combined_t.png</file>
         <file alias="logo">image/logo.ico</file>
-        <file>image/bg.jpg</file>
         <file alias="bookbg.jpg">image/book.jpg</file>
         <file alias="book2.jpg">image/book2.jpg</file>
     </qresource>

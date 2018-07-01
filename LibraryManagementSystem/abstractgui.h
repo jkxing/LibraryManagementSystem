@@ -1,13 +1,8 @@
 #ifndef ABSTRACTGUI_H
 #define ABSTRACTGUI_H
 
-#include <QMainWindow>
+#include <stdafx.h>
 #include <user.h>
-#include <database.h>
-#include <QStandardItemModel>
-namespace Ui {
-class AbstractGui;
-}
 
 class AbstractGui : public User
 {
@@ -15,9 +10,9 @@ public:
     AbstractGui(string str);
     virtual void Main() = 0;
 protected:
-    QStandardItemModel *model;
-    int nowShow;
-    string setData(int r,int c,bsoncxx::document::view v,QString qstr);
+    int nowShow;//what is display on the screen
+    QStandardItemModel *model;//tableview widget
+    string setData(int r,int c,bsoncxx::document::view v,QString qstr);//set tableview data
 };
 
 #endif // ABSTRACTGUI_H

@@ -1,13 +1,13 @@
 #ifndef CONFIRMDIALOG_H
 #define CONFIRMDIALOG_H
 
-#include <QDialog>
+#include <stdafx.h>
 
 namespace Ui {
 class ConfirmDialog;
 }
 
-class ConfirmDialog : public QDialog
+class ConfirmDialog : public QDialog //confirm borrowing/returning/commiting
 {
     Q_OBJECT
 

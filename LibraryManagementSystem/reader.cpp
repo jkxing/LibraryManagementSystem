@@ -2,6 +2,10 @@
 extern Searcher* sc;
 extern RendControl* rc;
 extern UserControl *uc;
+
+Reader::~Reader(){
+
+}
 void Reader::borrow() {
     rc->newRendRequest(getid(),search());
     cout << "id: " << getid() << " has initiated a request to borrow the book." << endl;

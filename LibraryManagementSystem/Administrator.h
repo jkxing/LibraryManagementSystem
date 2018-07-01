@@ -1,9 +1,9 @@
 #ifndef ADMINISTRAOE_H
 #define ADMINISTRAOR_H
 
-#include "User.h"
-#include "shop.h"
-#include "searcher.h"
+#include <User.h>
+#include <shop.h>
+#include <searcher.h>
 
 class Administrator : public User{
 public:

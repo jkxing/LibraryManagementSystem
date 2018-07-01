@@ -1,14 +1,14 @@
 #ifndef EDITDIALOG_H
 #define EDITDIALOG_H
 
-#include <QDialog>
-#include <string>
+#include <stdafx.h>
+
 using namespace std;
 namespace Ui {
 class EditDialog;
 }
 
-class EditDialog : public QDialog
+class EditDialog : public QDialog//edit book info
 {
     Q_OBJECT
 

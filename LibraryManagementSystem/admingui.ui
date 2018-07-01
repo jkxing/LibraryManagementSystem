@@ -33,9 +33,9 @@
    <widget class="QSplitter" name="splitter">
     <property name="geometry">
      <rect>
-      <x>131</x>
+      <x>70</x>
       <y>490</y>
-      <width>491</width>
+      <width>651</width>
       <height>51</height>
      </rect>
     </property>
@@ -43,6 +43,11 @@
      <enum>Qt::Horizontal</enum>
     </property>
     <widget class="QPushButton" name="pushButton">
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgba(255, 255, 255, 100);</string>
      </property>
@@ -51,6 +56,11 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_2">
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgba(255, 255, 255, 100);</string>
      </property>
@@ -59,6 +69,11 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_3">
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgba(255, 255, 255, 100);</string>
      </property>

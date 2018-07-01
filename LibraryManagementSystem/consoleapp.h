@@ -1,7 +1,8 @@
 #ifndef CONSOLEAPP_H
 #define CONSOLEAPP_H
 #include <abstractapp.h>
-class ConsoleApp:public AbstractApp{
+using namespace std;
+class ConsoleApp:public AbstractApp{//using command line to interactive
     string str;
 public:
     ConsoleApp();

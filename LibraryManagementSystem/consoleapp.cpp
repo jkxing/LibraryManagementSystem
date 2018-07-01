@@ -1,9 +1,9 @@
-#include <consoleapp.h>
-#include <abstractapp.h>
-#include <iostream>
+
 #include <usercontrol.h>
+#include <consoleapp.h>
+
 using namespace std;
-using bsoncxx::builder::basic::kvp;
+
 extern AbstractApp* System;
 extern UserControl* uc;
 extern Database* db;
@@ -29,7 +29,7 @@ CONST::OrderList parseOrder(const string &str)
 
 CONST::OrderList get_option()
 {
-    cout<<"Please input order: ";
+    cout<<"Please input order(Login,Register,exit): ";
     static string str;
     str = System->getInput();
     while(parseOrder(str)==CONST::OrderList::Unknown)
@@ -53,12 +53,14 @@ int ConsoleApp::Main()
             uc->Login();
     }
     exit();
+    return 0;
 }
 
 string ConsoleApp::getInput(){
     cin>>str;
     return str;
 }
+
 map<string,pair<string,string> > ConsoleApp::getInput(map<string,pair<string,string> > &mp){
     for(auto &item:mp){
         string notice = "Please input your " + item.first + " ";
@@ -76,13 +78,11 @@ map<string,pair<string,string> > ConsoleApp::getInput(map<string,pair<string,str
 }
 
 void ConsoleApp::showMessage(const string &str){
-   // cout<<233<<endl;
     cout<<str<<endl;
 }
 
 void ConsoleApp::ShowHelpPages(){
-    //Todo
-    cout<<"Fuck you!"<<endl;
+
 }
 void ConsoleApp::exit(){
     cout<<"Bye!"<<endl;
