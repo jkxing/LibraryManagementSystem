@@ -9,7 +9,6 @@ using bsoncxx::builder::basic::kvp;
 Database::Database(){
     client = mongocxx::client{mongocxx::uri{}};
     db = client[CONST::projectName];
-    mongocxx::collection coll = db["Item"];
     cout<<"Db init finish"<<endl;
 }
 Database::~Database(){
@@ -55,6 +54,7 @@ bsoncxx::document::view Database::get(const string &str,bsoncxx::document::view 
     qDebug()<<"get over ";
     if(ret)
         return *ret;
+    qDebug()<<"get unfind ";
     document doc{};
     return doc.view();
 }

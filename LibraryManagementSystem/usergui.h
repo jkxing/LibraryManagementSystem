@@ -2,13 +2,14 @@
 #define USERGUI_H
 
 #include <QMainWindow>
+#include <abstractgui.h>
 #include <user.h>
 #include <QStandardItemModel>
 namespace Ui {
 class userGui;
 }
 
-class userGui : public QMainWindow,public User
+class userGui : public QMainWindow,public AbstractGui
 {
     Q_OBJECT
 
@@ -26,8 +27,6 @@ private slots:
 
 private:
     Ui::userGui *ui;
-    QStandardItemModel *model;
-    int nowShow;
 };
 
 #endif // USERGUI_H
