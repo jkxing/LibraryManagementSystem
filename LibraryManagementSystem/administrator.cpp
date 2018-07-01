@@ -71,8 +71,6 @@ bsoncxx::document::view find_book(){
 
 bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
     auto builder = bsoncxx::builder::stream::document{};
-    for (auto doc : list)
-        cout<<doc["ISBN"].get_utf8().value.to_string()<<endl;
     if(list.begin() == list.end())
     {
         cout << "No request is waiting for confirmation yet." << endl;
@@ -104,14 +102,11 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         if (i == 0)
         {
             cout << "Search failed." << endl;
-            bsoncxx::document::value x = document{}.extract();
-            return x;
+            return document{}.view();
         }
         builder.clear();
-        bsoncxx::document::value key = builder
-                << "ISBN" << ISBN[i]
-                << bsoncxx::builder::stream::finalize;
-        return db->get("Item", key);
+        builder<< "ISBN" << ISBN[i];
+        return db->get("Item", builder.view());
     }
 }
 
@@ -126,6 +121,7 @@ bsoncxx::document::view get_book(){
     cout << "What infomation do you have about the book?" << endl;
     for (int i = 0; i < 9; i++)
         cout << (i+1) << ". " << info[i] << endl;
+    bsoncxx::builder::basic::document another_builder{};
     while (cin >> choice)
     {
         if (choice == 9) break;
@@ -173,7 +169,6 @@ bsoncxx::document::view get_book(){
         if (choice == 6)
         {
             int num;
-            bsoncxx::builder::basic::document another_builder{};
             cout << "Please input the number of the labels..." << endl;
             cin >> num;
             for (int j=0; j<num; j++)
@@ -206,7 +201,6 @@ bsoncxx::document::view get_book(){
             cout << (i+1) << ". " << info[i] << endl;
     }
     basic_builder.append(kvp("label", another_builder));
-
     cout << "Please input the press..." << endl;
     cin >> str;
     basic_builder.append(kvp("press", str));
