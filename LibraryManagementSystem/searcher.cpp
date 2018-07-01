@@ -5,21 +5,19 @@
 #include <iostream>
 using namespace std;
 extern Database *db;
-vector<bsoncxx::document::view> Searcher::search(bsoncxx::document::view info){
+vector<bsoncxx::document::value> Searcher::search(bsoncxx::document::view info){
     mongocxx::cursor ret = db->getAll("Item",info);
-    cout<<"insearch"<<endl;
     string str = bsoncxx::to_json(info);
-    cout<<str<<endl;
-    vector<bsoncxx::document::view> v{};
+    vector<bsoncxx::document::value> v{};
     for(auto i:ret)
-        v.push_back(i);
+        v.push_back(document{}<<concatenate(i)<<finalize);
     return v;
 }
-vector<bsoncxx::document::view> Searcher::search(bsoncxx::builder::stream::document &doc){
+vector<bsoncxx::document::value> Searcher::search(bsoncxx::builder::stream::document &doc){
     mongocxx::cursor ret = db->getAll("Item",doc.extract());
-    string str = bsoncxx::to_json(doc.extract().view());
-    vector<bsoncxx::document::view> v{};
+    string str = bsoncxx::to_json(doc.view());
+    vector<bsoncxx::document::value> v{};
     for(auto i:ret)
-        v.push_back(i);
+        v.push_back(document{}<<concatenate(i)<<finalize);
     return v;
 }

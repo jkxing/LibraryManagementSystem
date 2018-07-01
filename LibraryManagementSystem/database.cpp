@@ -6,10 +6,9 @@
 #include <QDebug>
 using namespace std;
 using bsoncxx::builder::basic::kvp;
-Database::Database(){
-    client = mongocxx::client{mongocxx::uri{}};
-    db = client[CONST::projectName];
-    cout<<"Db init finish"<<endl;
+Database::Database():pool(mongocxx::uri{}){
+   // client = mongocxx::client{mongocxx::uri{}};
+    //db = client[CONST::projectName];
 }
 Database::~Database(){
     sync();
@@ -24,31 +23,31 @@ void Database::sync(){
     }
 }
 
-void Database::multiInsert(const string &str,bsoncxx::document::value item){
+void Database::multiInsert(const string &str,bsoncxx::document::view item){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    coll.insert_one(item.view());
+    coll.insert_one(item);
 }
 
-void Database::multiRemove(const string &str,bsoncxx::document::value item){
+void Database::multiRemove(const string &str,bsoncxx::document::view item){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    coll.delete_one(item.view());
+    coll.delete_one(item);
 }
 
-void Database::multiUpdate(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem){
+void Database::multiUpdate(const string &str,bsoncxx::document::view oldItem,bsoncxx::document::view newItem){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    coll.update_one(oldItem.view(),newItem.view());
+    coll.update_one(oldItem,newItem);
     //<<"finish"<<endl;
 }
-bsoncxx::document::view Database::get(const string &str,bsoncxx::document::view key){
-    //auto client = pool.acquire();
-    //auto coll = (*client)[CONST::projectName][str];
+bsoncxx::document::value Database::get(const string &str,bsoncxx::document::view key){
+    auto client = pool.acquire();
+    auto coll = (*client)[CONST::projectName][str];
 
     qDebug()<<"get "<<QString::fromStdString(bsoncxx::to_json(key));
     qDebug()<<"get from "<<QString::fromStdString(str);
-    mongocxx::collection coll = db[str];
+    //mongocxx::collection coll = db[str];
     qDebug()<<"get working ";
     bsoncxx::stdx::optional<bsoncxx::document::value> ret =  coll.find_one(key);
     qDebug()<<"get over ";
@@ -56,16 +55,16 @@ bsoncxx::document::view Database::get(const string &str,bsoncxx::document::view 
         return *ret;
     qDebug()<<"get unfind ";
     document doc{};
-    return doc.view();
+    return doc.extract();
 }
 
 mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::view key){
 
     qDebug()<<"get all "<<QString::fromStdString(bsoncxx::to_json(key));
     qDebug()<<"get all from "<<QString::fromStdString(str);
-    //auto client = pool.acquire();
-    //auto coll = (*client)[CONST::projectName][str];
-    mongocxx::collection coll = db[str];
+    auto client = pool.acquire();
+    auto coll = (*client)[CONST::projectName][str];
+    //mongocxx::collection coll = db[str];
     qDebug()<<"get all medium ";
     mongocxx::cursor ret =  coll.find(key);
     qDebug()<<"get all over ";
@@ -75,12 +74,12 @@ mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::view key)
 bool Database::insert(const string &str,bsoncxx::document::view item){
     qDebug()<<"insert "<<QString::fromStdString(bsoncxx::to_json(item));
     qDebug()<<"insert to "<<QString::fromStdString(str);
-    mongocxx::collection coll = db[str];;
+    //mongocxx::collection coll = db[str];;
     qDebug()<<"insert working ";
-    coll.insert_one(item);;
+    //coll.insert_one(item);;
     qDebug()<<"insert over ";
-    //std::thread* inst = new thread(&Database::multiInsert,this,str,item);
-    //threads.push(inst);
+    std::thread* inst = new thread(&Database::multiInsert,this,str,item);
+    threads.push(inst);
     return true;
 }
 
@@ -89,33 +88,33 @@ bool Database::update(const string &str,bsoncxx::document::view oldItem,bsoncxx:
     qDebug()<<"updateold "<<QString::fromStdString(bsoncxx::to_json(oldItem));
     qDebug()<<"update new "<<QString::fromStdString(bsoncxx::to_json(newItem));
     qDebug()<<"update the "<<QString::fromStdString(str);
-    //std::thread *upd = new thread(&Database::multiUpdate,this,str,oldItem,newItem);
-    //threads.push(upd);
-    mongocxx::collection coll = db[str];
+    std::thread *upd = new thread(&Database::multiUpdate,this,str,oldItem,newItem);
+    threads.push(upd);
+    //mongocxx::collection coll = db[str];
     qDebug()<<"update working ";
-    coll.update_one(oldItem,newItem);
+    //coll.update_one(oldItem,newItem);
     qDebug()<<"update over ";
     return true;
 }
 
 bool Database::remove(const string &str,bsoncxx::document::view item){
-    //std::thread *rem = new thread(&Database::multiRemove,this,str,item);
-    //threads.push(rem);
+    std::thread *rem = new thread(&Database::multiRemove,this,str,item);
+    threads.push(rem);
     qDebug()<<"remove "<<QString::fromStdString(bsoncxx::to_json(item));
     qDebug()<<"remove from "<<QString::fromStdString(str);
-    mongocxx::collection coll = db[str];
+    //mongocxx::collection coll = db[str];
     qDebug()<<"remove working";
-    coll.delete_one(item);
+    //coll.delete_one(item);
     qDebug()<<"remove over";
     return true;
 }
 
 bool Database::find(const string &str,bsoncxx::document::view key){
-   // auto client = pool.acquire();
-    //auto coll = (*client)[CONST::projectName][str];
+    auto client = pool.acquire();
+    auto coll = (*client)[CONST::projectName][str];
     qDebug()<<"find "<<QString::fromStdString(bsoncxx::to_json(key));
     qDebug()<<"find from "<<QString::fromStdString(str);
-    mongocxx::collection coll = db[str];
+    //mongocxx::collection coll = db[str];
     qDebug()<<"find working";
     bsoncxx::stdx::optional<bsoncxx::document::value> result =
         coll.find_one(key);

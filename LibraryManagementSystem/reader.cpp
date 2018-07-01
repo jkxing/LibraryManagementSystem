@@ -27,8 +27,9 @@ void Reader::changepassword() {
     string password;
     cin >> password;
     auto lia = uc->getUserInfo(getid());
-    for(auto doc : lia)
+    for(auto doc1 : lia)
     {
+        auto doc = doc1.view();
         if(password==doc["password"].get_utf8().value.to_string())
         {
             cout << "Success! Now you can change your password. Please enter your new password." << endl;

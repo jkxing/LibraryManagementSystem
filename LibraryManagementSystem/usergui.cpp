@@ -38,7 +38,7 @@ userGui::~userGui()
 void userGui::on_Record_clicked()
 {
     nowShow = 0;
-    vector<bsoncxx::document::view> list = rc->getBorrowList(getid());
+    vector<bsoncxx::document::value> list = rc->getBorrowList(getid());
     qDebug()<<list.size();
     model = new QStandardItemModel(list.size(),5,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
@@ -47,14 +47,15 @@ void userGui::on_Record_clicked()
     model->setHeaderData(3, Qt::Horizontal, QObject::tr("return date"));
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("state"));
     int tmp = 0;
-    for(auto doc:list)
+    for(auto doc1:list)
     {
+        auto doc = doc1.view();
         string str = setData(tmp,0,doc,"item_id");
         qDebug()<<"0";
         if(str!="")
         {
-            bsoncxx::document::view vie = shop->getallinfo(str);
-            setData(tmp,1,vie,"书名");
+            bsoncxx::document::value vie = shop->getallinfo(str);
+            setData(tmp,1,vie.view(),"书名");
             qDebug()<<"1";
         }
         setData(tmp,2,doc,"borrow date");
@@ -130,7 +131,7 @@ void userGui::on_Search_clicked()
         qDebug()<<QString::fromStdString(i.first);
         qDebug()<<QString::fromStdString(i.second);
     }
-    vector<bsoncxx::document::view> list = sc->search(dd.view());
+    vector<bsoncxx::document::value> list = sc->search(dd.view());
     model = new QStandardItemModel(list.size(),6,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("书名"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("作者"));
@@ -140,13 +141,13 @@ void userGui::on_Search_clicked()
     model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
     int tmp = 0;
     for(auto doc:list)
-    {
-        setData(tmp,0,doc,"书名");
-        setData(tmp,1,doc,"作者");
-        setData(tmp,2,doc,"ISBN");
-        setData(tmp,3,doc,"出版社");
-        setData(tmp,4,doc,"_id");
-        setData(tmp,5,doc,"state");
+    {      
+        setData(tmp,0,doc.view(),"书名");
+        setData(tmp,1,doc.view(),"作者");
+        setData(tmp,2,doc.view(),"ISBN");
+        setData(tmp,3,doc.view(),"出版社");
+        setData(tmp,4,doc.view(),"_id");
+        setData(tmp,5,doc.view(),"state");
         tmp++;
     }
     ui->tableView->setModel(model);

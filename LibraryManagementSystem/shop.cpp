@@ -34,11 +34,11 @@ void Shop::editItem(const string _id,bsoncxx::document::view info){
                bsoncxx::builder::concatenate(info) << close_document << finalize);
     qDebug()<<"finish";
 }
-bsoncxx::document::view Shop::getallinfo(const string id){
+bsoncxx::document::value Shop::getallinfo(const string id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(id);
-    bsoncxx::document::view ret = db->get("Item",builder.view());
-    if(ret.find("_id")!=ret.end())
-        qDebug()<<QString::fromStdString(bsoncxx::to_json(ret));
+    bsoncxx::document::value ret = db->get("Item",builder.view());
+    if(ret.view().find("_id")!=ret.view().end())
+        qDebug()<<QString::fromStdString(bsoncxx::to_json(ret.view()));
     return ret;
 }

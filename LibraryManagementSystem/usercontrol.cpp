@@ -58,7 +58,7 @@ void UserControl::Login(){
     delete new_user;
 }
 
-bsoncxx::document::view UserControl::getRegisterInfo(){
+bsoncxx::document::value UserControl::getRegisterInfo(){
 
     qDebug()<<"hahaha"<<endl;
     bsoncxx::builder::basic::document doc;
@@ -70,7 +70,7 @@ bsoncxx::document::view UserControl::getRegisterInfo(){
     mp["nickname"]=make_pair("","");
     mp = System->getInput(mp);
     qDebug()<<"lalala"<<endl;
-    if(mp.size()==0) return fail.view();
+    if(mp.size()==0) return document{}.extract();
     string Username = mp["username"].first;
     while(Username.length()<6||db->find("User",bsoncxx::builder::basic::make_document(kvp("username", Username)))){
         if(Username.length()<6)
@@ -78,14 +78,14 @@ bsoncxx::document::view UserControl::getRegisterInfo(){
         else
             mp["username"].second = "username already exists";
         mp = System->getInput(mp);
-        if(mp.size()==0) return fail.view();
+        if(mp.size()==0) return document{}.extract();
         Username = mp["username"].first;
     }
     string Password = mp["password"].first;
     while(Password.length()<6){
         mp["password"].second = "password too short";
         mp = System->getInput(mp);
-        if(mp.size()==0) return fail.view();
+        if(mp.size()==0) return document{}.extract();
         Password = mp["password"].first;
         cout << Password <<endl;
     }
@@ -97,7 +97,7 @@ bsoncxx::document::view UserControl::getRegisterInfo(){
     builder.append(kvp("nickname",Id));
     builder.append(kvp("email",Email));
     builder.append(kvp("identity","reader"));
-    return builder.view();
+    return builder.extract();
 }
 
 pair<string,int> UserControl::getLoginInfo(){
@@ -138,13 +138,13 @@ void UserControl::updateUserInfo(const string &_id,bsoncxx::document::view info)
     db->update("User",builder.view(),document{} << "$set" <<
                info << finalize);
 }
-vector<bsoncxx::document::view> UserControl::getUserInfo(const string &user_id){
+vector<bsoncxx::document::value> UserControl::getUserInfo(const string &user_id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(user_id) ;
     mongocxx::cursor res = db->getAll("User",builder.view());
-    vector<bsoncxx::document::view> v{};
+    vector<bsoncxx::document::value> v{};
     for(auto i:res)
-        v.push_back(i);
+        v.push_back(document{}<<concatenate(i)<<finalize);
     return v;
 }
 void UserControl::test(){

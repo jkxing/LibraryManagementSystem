@@ -64,8 +64,8 @@ string User::search(){
         if(k==num)
         {
             cout << "Here is the id of the book:";
-            cout << doc["id"].get_utf8().value.to_string() << endl;
-            return doc["id"].get_utf8().value.to_string();
+            cout << doc.view()["id"].get_utf8().value.to_string() << endl;
+            return doc.view()["id"].get_utf8().value.to_string();
             break;
         }
         else
