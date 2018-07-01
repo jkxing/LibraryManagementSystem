@@ -239,7 +239,7 @@ bsoncxx::document::view get_book(){
         }
         choosed[choice] = true;
         cout << "What infomation do you have about the book?" << endl;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 9; i++)
             cout << (i+1) << ". " << info[i] << endl;
     }
     basic_builder.append(kvp("标签", another_builder));
@@ -268,6 +268,7 @@ void Administrator::modify_book(){
 void Administrator::check_giveback(){
     vector<bsoncxx::document::view> list = rc->getReturnList();
     bsoncxx::document::view book = check_book(list);
+    if (book == bsoncxx::document::view{}) return;
     rc->commitReturn(book["id"].get_utf8().value.to_string());
 }
 
