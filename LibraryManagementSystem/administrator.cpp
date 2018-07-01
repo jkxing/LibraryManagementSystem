@@ -82,6 +82,9 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         string* authorname = new string[list.size()+1];
         string* ISBN = new string[list.size()+1];
         string* press = new string[list.size()+1];
+        string* time = new string[list.size()+1];
+        string* introduction = new string[list.size()+1];
+        string* translator = new string[list.size()+1];
         for (int i=1; i<list.size(); i++)
         {
             bookname[i] = "";
@@ -104,15 +107,30 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
                 authorname[i] = doc["作者"].get_utf8().value.to_string();
                 cout << authorname[i] << endl;
             }
+            if (doc.find("译者") != doc.end())
+            {
+                translator[i] = doc["译者"].get_utf8().value.to_string();
+                cout << translator[i] << endl;
+            }
             if (doc.find("出版社") != doc.end())
             {
                 press[i] = doc["出版社"].get_utf8().value.to_string();
                 cout << press[i] << endl;
             }
+            if (doc.find("出版时间") != doc.end())
+            {
+                time[i] = doc["出版时间"].get_utf8().value.to_string();
+                cout << time[i] << endl;
+            }
             if (doc.find("ISBN") != doc.end())
             {
                 ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
                 cout << ISBN[i] << endl;
+            }
+            if (doc.find("编辑推荐") != doc.end())
+            {
+                introduction[i] = doc["编辑推荐"].get_utf8().value.to_string();
+                cout << introduction[i] << endl;
             }
         }
         cout << endl;
@@ -132,45 +150,34 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         builder.clear();
         if (ISBN[i] != "")
         {
-            bsoncxx::document::value key = builder
-                    << "ISBN" << ISBN[i]
-                    << bsoncxx::builder::stream::finalize;
-            return db->get("Item", key);
+            builder << "ISBN" << ISBN[i];
         }
-        else
+        if (bookname[i] != "")
         {
-            if (bookname[i] != "")
-            {
-                bsoncxx::document::value key = builder
-                        << "书名" << bookname[i]
-                        << bsoncxx::builder::stream::finalize;
-                return db->get("Item", key);
-            }
-            else
-            {
-                if (authorname[i] != "")
-                {
-                    bsoncxx::document::value key = builder
-                            << "作者" << authorname[i]
-                            << bsoncxx::builder::stream::finalize;
-                    return db->get("Item", key);
-                }
-                else
-                {
-                    if (authorname[i] != "")
-                    {
-                        bsoncxx::document::value key = builder
-                                << "出版社" << press[i]
-                                << bsoncxx::builder::stream::finalize;
-                        return db->get("Item", key);
-                    }
-                    else
-                    {
-                        return bsoncxx::document::view{};
-                    }
-                }
-            }
+            builder << "书名" << bookname[i];
         }
+        if (authorname[i] != "")
+        {
+            builder << "作者" << authorname[i];
+        }
+        if (authorname[i] != "")
+        {
+            builder << "出版社" << press[i];
+        }
+        if (time[i] != "")
+        {
+            builder << "出版时间" << time[i];
+        }
+        if (translator[i] != "")
+        {
+            builder << "译者" << translator[i];
+        }
+        if (introduction[i] != "")
+        {
+            builder << "编辑推荐" << introduction[i];
+        }
+        bsoncxx::document::value key = builder.extract();
+        return db->get("Item", key.view());
     }
 }
 //新建一本书
