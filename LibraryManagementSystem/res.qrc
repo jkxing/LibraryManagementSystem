@@ -3,5 +3,6 @@
         <file alias="logo">image/logo.ico</file>
         <file alias="bookbg.jpg">image/book.jpg</file>
         <file alias="book2.jpg">image/book2.jpg</file>
+        <file alias="bookbgs.jpg">image/book_s.jpg</file>
     </qresource>
 </RCC>

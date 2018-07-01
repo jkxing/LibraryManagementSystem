@@ -8,14 +8,20 @@ using bsoncxx::builder::basic::kvp;
 void Shop::rend(const string item_id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(item_id) ;
-    db->update("Item",builder.extract(),document{} << "$set" << open_document <<
-               "state" << "rending" << close_document << finalize);
+    bsoncxx::document::value val = db->get("Item",builder.view());
+    string snum = val.view()["number"].get_utf8().value.to_string();
+    int num = stoi(snum);
+    db->update("Item",builder.view(),document{} << "$set" << open_document <<
+               "state" << "borrowed" << "number" << to_string(num+1) << close_document << finalize);
 }
 void Shop::Return(const string item_id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(item_id) ;
+    bsoncxx::document::value val = db->get("Item",builder.view());
+    string snum = val.view()["number"].get_utf8().value.to_string();
+    int num = stoi(snum);
     db->update("Item",builder.extract(),document{} << "$set" << open_document <<
-               "state" << "storing" << close_document << finalize);
+               "state" << "storing" << "number" << to_string(num+1)<< close_document << finalize);
 }
 void Shop::addItem(bsoncxx::document::view val){
     db->insert("Item",val);
