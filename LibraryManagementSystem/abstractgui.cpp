@@ -4,7 +4,7 @@
 AbstractGui::AbstractGui(string str):User(str){
 
 }
-string AbstractGui::setData(int r,int c, bsoncxx::document::view &v, QString qstr){
+string AbstractGui::setData(int r,int c, bsoncxx::document::view v, QString qstr){
     QModelIndex index = model->index(r,c,QModelIndex());
     string str = qstr.toStdString();
     qDebug()<<qstr;

@@ -17,7 +17,7 @@ public:
 protected:
     QStandardItemModel *model;
     int nowShow;
-    string setData(int r,int c,bsoncxx::document::view &v,QString qstr);
+    string setData(int r,int c,bsoncxx::document::view v,QString qstr);
 };
 
 #endif // ABSTRACTGUI_H

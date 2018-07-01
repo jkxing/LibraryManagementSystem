@@ -16,6 +16,7 @@ void RendControl::newRendRequest(const string &user_id,const string &item_id){
     builder.append(kvp("borrow date",dat.toString()));
     builder.append(kvp("return date",(dat+CONST::defaultBorrowTime).toString()));
     db->insert("BorrowList",builder.view());
+    builder.clear();
     builder.append(kvp("_id",bsoncxx::oid(item_id)));
     db->update("Item",builder.view(),document{} << "$set" << open_document <<
                                                           "state" << "borrowed" << close_document << finalize);
