@@ -12,7 +12,7 @@ void Shop::rend(const string item_id){
     string snum = val.view()["number"].get_utf8().value.to_string();
     int num = stoi(snum);
     db->update("Item",builder.view(),document{} << "$set" << open_document <<
-               "state" << "borrowed" << "number" << to_string(num+1) << close_document << finalize);
+               "state" << "borrowed" << "number" << to_string(num-1) << close_document << finalize);
 }
 void Shop::Return(const string item_id){
     bsoncxx::builder::stream::document builder{};

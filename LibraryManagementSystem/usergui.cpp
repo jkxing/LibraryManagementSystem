@@ -81,7 +81,7 @@ void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
         QModelIndex t = model->index(index.row(),4);
         QString qtmp = model->data(t).toString();
         string stmp = qtmp.toStdString();
-        if(stmp=="borrowing")
+        if(stmp!="returning")
         {
             string str = qstr.toStdString();
             model->setData(t,"returning");
