@@ -1,7 +1,7 @@
 #include "dialog.h"
 #include "ui_dialog.h"
-#include <QDebug>
-#include <QPropertyAnimation>
+#include <stdafx.h>
+
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -36,7 +36,7 @@ map<string, pair<string, string> > Dialog::work(map<string, pair<string, string>
         QString str2 = ui->lineEdit_2->text();
         QString str3 = ui->lineEdit_3->text();
         QString str4 = ui->lineEdit_4->text();
-        qDebug()<<str1<<" "<<str2<<" "<<str3<<" "<<str4<<endl;
+
         mp["email"].first = str1.toStdString();
         mp["username"].first = str2.toStdString();
         mp["nickname"].first = str3.toStdString();

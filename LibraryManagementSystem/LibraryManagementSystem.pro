@@ -7,7 +7,7 @@ CONFIG += resources_big
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-DEFINES += __Database
+#DEFINES += __Database
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -26,7 +26,6 @@ SOURCES += \
     abstractapp.cpp \
     consoleapp.cpp \
     user.cpp \
-    books.cpp \
     database.cpp \
     rendingcontrol.cpp \
     searcher.cpp \
@@ -44,13 +43,13 @@ SOURCES += \
     admingui.cpp \
     editdialog.cpp \
     confirmdialog.cpp \
-    addbookdialog.cpp
+    addbookdialog.cpp \
+    abstractgui.cpp
 
 HEADERS += \
     abstractapp.h \
     consoleapp.h \
     user.h \
-    books.h \
     database.h \
     shop.h \
     const.h \
@@ -68,7 +67,9 @@ HEADERS += \
     admingui.h \
     editdialog.h \
     confirmdialog.h \
-    addbookdialog.h
+    addbookdialog.h \
+    abstractgui.h \
+    stdafx.h
 
 DISTFILES +=
 

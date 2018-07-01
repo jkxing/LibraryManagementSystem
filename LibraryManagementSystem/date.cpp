@@ -1,13 +1,14 @@
-#include <algorithm>
-#include <iostream>
-#include <cstring>
-#include <cstdio>
+
+#include <boost/algorithm/string.hpp>
+
+#include <stdafx.h>
+
 #include <time.h>
 #include <date.h>
-#include <boost/algorithm/string.hpp>
-#include <QDebug>
+
 using namespace std;
 using namespace boost;
+
 bool checkYear(int x)
 {
 	return x % 4 == 0 && (x % 100 != 0 || x % 400 == 0);
@@ -27,10 +28,12 @@ void Date::init()
 	for (int i = 1; i < month; i++) tothour += getMonthDay(year, i) * 24;
 	for (int i = 1; i < year; i++) tothour += getYearDay(i) * 24;
 }
-long long Date::toHour(){
+long long Date::toHour()
+{
     return tothour;
 }
-string Date::toString(){
+string Date::toString()
+{
     string tmp="";
     tmp = tmp+to_string(year)+"-";
     tmp = tmp+to_string(month)+"-";
@@ -50,8 +53,6 @@ Date::Date()
 }
 Date::Date(int y, int m, int d, int h)
 {
-	time_t t = time(NULL);
-	struct tm* stime = localtime(&t);
 	year = y;
 	month = m;
 	day = d;
@@ -75,9 +76,9 @@ Date::Date(string str)
 
 Date::Date(long long t)
 {
-	tothour = t;
-	long long s1 = 0, s2 = 0, s3 = 0, s4 = 0;
-	for (int s1 = 0, i = 1; i <= 2500; s1 += getYearDay(i++) * 24)
+    tothour = t;
+    long long s1 = 0, s2 = 0, s3 = 0;
+    for (int i = 1; i <= 2500; s1 += getYearDay(i++) * 24)
 		if (s1 + getYearDay(i) * 24 > t)
 		{
 			t -= s1;
@@ -144,8 +145,8 @@ void TimeLen::init()
 TimeLen::TimeLen(long long t)
 {
 	tothour = t;
-	long long s1 = 0, s2 = 0, s3 = 0, s4 = 0;
-	for (int s1 = 0, i = 1; i <= 2500; s1 += getYearDay(i++) * 24)
+    long long s1 = 0, s2 = 0, s3 = 0;
+    for (int i = 1; i <= 2500; s1 += getYearDay(i++) * 24)
 		if (s1 + getYearDay(i) * 24 > t)
 		{
 			t -= s1;

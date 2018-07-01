@@ -3,6 +3,10 @@ extern Searcher* sc;
 extern RendControl* rc;
 extern UserControl *uc;
 
+Reader::~Reader(){
+
+}
+
 void Reader::borrow() {
     rc->newRendRequest(getid(),search());
     cout << "id: " << getid() << " has initiated a request to borrow the book." << endl;
@@ -31,7 +35,7 @@ void Reader::borrow() {
             {
                 if(k==num)
                 {
-                    this->getNowBookId()=doc["id"].get_utf8().value.to_string();
+                    this->getNowBookId()=doc.view()["id"].get_utf8().value.to_string();
                     cout << "OK!" << endl;
                     break;
                 }
@@ -64,14 +68,15 @@ void Reader::changepassword() {
     string password;
     cin >> password;
     auto lia = uc->getUserInfo(getid());
-    for(auto doc : lia)
+    for(auto doc1 : lia)
     {
+        auto doc = doc1.view();
         if(password==doc["password"].get_utf8().value.to_string())
         {
             cout << "Success! Now you can change your password. Please enter your new password." << endl;
             string newpassword;
             cin >> newpassword;
-            bsoncxx::document::value tmpdoc = bsoncxx::builder::stream::document{} << "password" << newpassword << bsoncxx::builder::stream::finalize;
+            bsoncxx::document::view tmpdoc = bsoncxx::builder::stream::document{} << "password" << newpassword << bsoncxx::builder::stream::finalize;
             uc->updateUserInfo(getid(),tmpdoc);
             cout << "Congratulations! You've finished changing your password." << endl;
         }

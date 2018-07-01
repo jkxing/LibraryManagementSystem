@@ -56,7 +56,7 @@ string User::search(){
     //将用户输入的信息转入到Searcher类中，进入search函数。
     auto builder = bsoncxx::builder::stream::document{};
     bsoncxx::document::value doc_value = builder << "bookname" << bookname << "writername" << writername << "tags" << bsoncxx::builder::stream::open_array << tags[0] << tags[1] << tags[2] << tags[3] << tags[4] << bsoncxx::builder::stream::close_array << finalize;
-    auto lia = sc->search(doc_value);
+    auto lia = sc->search(doc_value.view());
     int i = 1;
     for(auto doc : lia)
     {
@@ -74,11 +74,12 @@ string User::search(){
         if(k==num)
         {
             cout << "Here is the id of the book:";
-            cout << doc["id"].get_utf8().value.to_string() << endl;
-            return doc["id"].get_utf8().value.to_string();
+            cout << doc.view()["id"].get_utf8().value.to_string() << endl;
+            return doc.view()["id"].get_utf8().value.to_string();
             break;
         }
         else
             k++;
     }
+    return "";
 }

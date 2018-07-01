@@ -1,11 +1,12 @@
 #ifndef USER_H
 #define USER_H
-#include <string>
+
 #include <rendingcontrol.h>
-#include <searcher.h>
-#include <usercontrol.h>
 #include <confirmdialog.h>
+#include <usercontrol.h>
+#include <searcher.h>
 #include <cstdio>
+
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::sub_array;
 using namespace std;
@@ -23,7 +24,7 @@ public:
     string getName();
     string getIdentity();
     string search();
-    ~User(){}
+    virtual ~User(){}
 };
 
 #endif // USER_H

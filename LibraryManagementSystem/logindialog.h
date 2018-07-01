@@ -1,14 +1,13 @@
 #ifndef LOGINDIALOG_H
 #define LOGINDIALOG_H
 
-#include <QDialog>
-#include <string>
-using namespace std;
+#include <stdafx.h>
+
 namespace Ui {
 class LoginDialog;
 }
 
-class LoginDialog : public QDialog
+class LoginDialog : public QDialog//Login GUI
 {
     Q_OBJECT
 

@@ -1,19 +1,21 @@
 //
 #include <database.h>
 #include <const.h>
-#include <thread>
-#include <string>
-#include <QDebug>
+#include <stdafx.h>
+
 using namespace std;
-extern Database *db;
-using bsoncxx::builder::basic::kvp;
-Database::Database():pool(mongocxx::uri{}){}
+#ifdef __Database
+Database::Database():pool(mongocxx::uri{}){
+    //client = mongocxx::client{mongocxx::uri{}};
+    //db = client[CONST::projectName];
+}
+
 Database::~Database(){
     sync();
 }
 
 void Database::sync(){
-    cout<<"syncing"<<endl;
+    qDebug()<<"syncing"<<endl;
     while(!threads.empty()){
         thread* i=threads.front();
         threads.pop();
@@ -21,97 +23,107 @@ void Database::sync(){
     }
 }
 
-void Database::multiInsert(const string &str,bsoncxx::document::value item){
+void Database::multiInsert(const string &str,bsoncxx::document::view item){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    coll.insert_one(item.view());
+    coll.insert_one(item);
 }
 
-void Database::multiRemove(const string &str,bsoncxx::document::value item){
+void Database::multiRemove(const string &str,bsoncxx::document::view item){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    coll.delete_one(item.view());
+    coll.delete_one(item);
 }
 
-void Database::multiUpdate(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem){
+void Database::multiUpdate(const string &str,bsoncxx::document::view oldItem,bsoncxx::document::view newItem){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    coll.update_one(oldItem.view(),newItem.view());
-    //<<"finish"<<endl;
+    coll.update_one(oldItem,newItem);
 }
 bsoncxx::document::value Database::get(const string &str,bsoncxx::document::view key){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
+
+    //mongocxx::collection coll = db[str];
     bsoncxx::stdx::optional<bsoncxx::document::value> ret =  coll.find_one(key);
     if(ret)
         return *ret;
-    qDebug()<<"fuck";
     document doc{};
-    bsoncxx::document::value val = doc.extract();
-    return val;
+    return doc.extract();
 }
 
-mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::value key){
+mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::view key){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
-    mongocxx::cursor ret =  coll.find(key.view());
+    //mongocxx::collection coll = db[str];
+    mongocxx::cursor ret =  coll.find(key);
     return ret;
 }
 
-bool Database::insert(const string &str,bsoncxx::document::value item){
+bool Database::insert(const string &str,bsoncxx::document::view item){
+
     std::thread* inst = new thread(&Database::multiInsert,this,str,item);
-    threads.push(inst);
+    //threads.push(inst);
+    inst->join();
     return true;
 }
 
-bool Database::update(const string &str,bsoncxx::document::value oldItem,bsoncxx::document::value newItem){
+bool Database::update(const string &str,bsoncxx::document::view oldItem,bsoncxx::document::view newItem){
 
     std::thread *upd = new thread(&Database::multiUpdate,this,str,oldItem,newItem);
-    threads.push(upd);
+    upd->join();
+    //mongocxx::collection coll = db[str];
+    //coll.update_one(oldItem,newItem);
     return true;
 }
 
-bool Database::remove(const string &str,bsoncxx::document::value item){
+bool Database::remove(const string &str,bsoncxx::document::view item){
     std::thread *rem = new thread(&Database::multiRemove,this,str,item);
-    threads.push(rem);
+    rem->join();
+    //threads.push(rem);
+    //mongocxx::collection coll = db[str];
+    //coll.delete_one(item);
     return true;
 }
 
-bool Database::find(const string &str,bsoncxx::document::value key){
+bool Database::find(const string &str,bsoncxx::document::view key){
     auto client = pool.acquire();
     auto coll = (*client)[CONST::projectName][str];
+    //mongocxx::collection coll = db[str];
     bsoncxx::stdx::optional<bsoncxx::document::value> result =
-        coll.find_one(key.view());
+        coll.find_one(key);
     if(result)
         return true;
     return false;
 }
-
-/*
- *
-    filter << "_id" << bsoncxx::oid("5afda2f58726e333fc006ab2") <<finalize;
-    mongocxx::cursor cursor = bookCollection.find(filter.extract());
-    auto tmp = doc["_id"].get_oid().value.to_string();
-*/
-void Database::test(){
-    bsoncxx::builder::basic::document doc{};
-    doc.append(kvp("bookname","c++bcsx"));
-    doc.append(kvp("tag","c++"));
-
-    bsoncxx::builder::stream::document sdoc{};
-    sdoc << "hello" <<"world";
-
-
-    cout<<"working"<<endl;
-    bsoncxx::document::value info = sdoc.extract();
-    mongocxx::client client{mongocxx::uri{}};
-    mongocxx::database db = client[CONST::projectName];
-    mongocxx::collection coll = db["test"];
-    mongocxx::cursor list = coll.find(bsoncxx::builder::stream::document{}<<"hello"<<"world"<<finalize);
-
-    for(auto item:list){
-        string tmp = item["_id"].get_oid().value.to_string();
-        cout<<tmp<<endl;
-    }
-
+#endif
+#ifndef __Database
+bsoncxx::document::value Database::get(const string &str,bsoncxx::document::view key){
+    document doc{};
+    return doc.extract();
 }
+
+bool Database::insert(const string &str,bsoncxx::document::view item){
+    return true;
+}
+
+bool Database::update(const string &str,bsoncxx::document::view oldItem,bsoncxx::document::view newItem){
+    return true;
+}
+
+bool Database::remove(const string &str,bsoncxx::document::view item){
+    return true;
+}
+
+bool Database::find(const string &str,bsoncxx::document::view key){
+    return true;
+}
+
+Database::Database(){
+}
+
+Database::~Database(){
+}
+
+#endif
+
