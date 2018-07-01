@@ -85,7 +85,7 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
         string* time = new string[list.size()+1];
         string* introduction = new string[list.size()+1];
         string* translator = new string[list.size()+1];
-        for (int i=1; i<list.size(); i++)
+        for (int i=1; i<(int)list.size(); i++)
         {
             bookname[i] = "";
             authorname[i] = "";
@@ -137,7 +137,7 @@ bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
         cout << endl;
         cout << "Choose one... (0 for quit)" << endl;
         cin >> i;
-        while (!(i >= 0 && i <= list.size()))
+        while (!(i >= 0 && i <= (int)list.size()))
         {
             cout << "Invalid number." << endl;
             cout << "Please choose again..." << endl;

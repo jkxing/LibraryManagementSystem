@@ -116,6 +116,7 @@ void userGui::on_tableView_doubleClicked(const QModelIndex &Index)
             qDebug()<<"already borrowed or sale";
         }
     }
+    qDebug()<<"finish";
 }
 
 void userGui::on_Search_clicked()

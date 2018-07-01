@@ -1,13 +1,12 @@
 #include <rendingcontrol.h>
-#include <database.h>
-#include <iostream>
-#include <date.h>
-#include <QDebug>
-#include <const.h>
+#include <stdafx.h>
+#include <shop.h>
 using namespace std;
 using bsoncxx::builder::basic::kvp;
 extern Database* db;
+extern Shop* shop;
 void RendControl::newRendRequest(const string &user_id,const string &item_id){
+
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("user_id",user_id));
     builder.append(kvp("item_id",item_id));
@@ -15,11 +14,9 @@ void RendControl::newRendRequest(const string &user_id,const string &item_id){
     Date dat;
     builder.append(kvp("borrow date",dat.toString()));
     builder.append(kvp("return date",(dat+CONST::defaultBorrowTime).toString()));
+
     db->insert("BorrowList",builder.view());
-    builder.clear();
-    builder.append(kvp("_id",bsoncxx::oid(item_id)));
-    db->update("Item",builder.view(),document{} << "$set" << open_document <<
-                                                          "state" << "borrowed" << close_document << finalize);
+    shop->rend(item_id);
 }
 void RendControl::newReturnRequest(const string &item_id){
     bsoncxx::builder::basic::document builder{};
@@ -35,13 +32,10 @@ void RendControl::commitReturn(const string &item_id){
     db->remove("ReturnList",builder.view());
     db->update("BorrowList",builder.view(),document{} << "$set" << open_document <<
                "state" << "finish" << close_document << finalize);
-    builder.clear();
-    builder.append(kvp("_id",bsoncxx::oid(item_id)));
-    db->update("Item",builder.view(),document{} << "$set" << open_document <<
-                                                          "state" << "storing" << close_document << finalize);
+    shop->Return(item_id);
 }
-
 vector<bsoncxx::document::value> RendControl::getBorrowList(const string &user_id){
+
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("user_id",user_id));
     mongocxx::cursor ret = db->getAll("BorrowList",builder.view());

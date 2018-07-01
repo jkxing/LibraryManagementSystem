@@ -1,7 +1,7 @@
 #ifndef READER_H
 #define READER_H
 
-#include "User.h"
+#include <user.h>
 
 class Reader : public User{
 public:

@@ -30,8 +30,8 @@ pair<CONST::loginState,string> UserControl::verifyUser(const string &username, c
 
         else if(passAndId["identity"].get_utf8().value.to_string()=="administrator")
             return make_pair(CONST::loginState::SuccessAdminLogin,passAndId["_id"].get_oid().value.to_string());
-
     }
+    return make_pair(CONST::loginState::Other,"");
 }
 
 void UserControl::Register(){
@@ -59,8 +59,6 @@ void UserControl::Login(){
 }
 
 bsoncxx::document::value UserControl::getRegisterInfo(){
-
-    qDebug()<<"hahaha"<<endl;
     bsoncxx::builder::basic::document doc;
     bsoncxx::builder::basic::document fail{};
     map< string,pair<string,string> > mp;
@@ -69,7 +67,6 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
     mp["password"]=make_pair("","");
     mp["nickname"]=make_pair("","");
     mp = System->getInput(mp);
-    qDebug()<<"lalala"<<endl;
     if(mp.size()==0) return document{}.extract();
     string Username = mp["username"].first;
     while(Username.length()<6||db->find("User",bsoncxx::builder::basic::make_document(kvp("username", Username)))){
@@ -103,10 +100,10 @@ bsoncxx::document::value UserControl::getRegisterInfo(){
 pair<string,int> UserControl::getLoginInfo(){
     bsoncxx::builder::basic::document doc;
     map< string,pair<string,string> > mp;
-    mp["username"]=make_pair("","");
+    mp["Username"]=make_pair("","");
     mp["password"]=make_pair("","");
     mp = System->getInput(mp);
-    string name = mp["username"].first;
+    string name = mp["Username"].first;
     if(name == "exit")
         return make_pair("",0);
     string pass = mp["password"].first;
@@ -146,7 +143,4 @@ vector<bsoncxx::document::value> UserControl::getUserInfo(const string &user_id)
     for(auto i:res)
         v.push_back(document{}<<concatenate(i)<<finalize);
     return v;
-}
-void UserControl::test(){
-
 }

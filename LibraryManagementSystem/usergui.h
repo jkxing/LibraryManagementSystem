@@ -1,12 +1,10 @@
 #ifndef USERGUI_H
 #define USERGUI_H
 
-#include <QMainWindow>
 #include <abstractgui.h>
-#include <user.h>
-#include <QStandardItemModel>
+
 namespace Ui {
-class userGui;
+class userGui;//reader gui
 }
 
 class userGui : public QMainWindow,public AbstractGui

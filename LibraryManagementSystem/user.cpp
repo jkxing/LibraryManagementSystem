@@ -71,4 +71,5 @@ string User::search(){
         else
             k++;
     }
+    return "";
 }

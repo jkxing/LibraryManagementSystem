@@ -1,15 +1,14 @@
 #ifndef USERCONTROL_H
 #define USERCONTROL_H
-#include <database.h>
-#include <const.h>
-#include <string>
+
+#include <stdafx.h>
+
 using namespace std;
 extern Database* db;
-class UserControl{
+class UserControl{//control user info,function name is almost what is does
 public:
     bsoncxx::document::value getRegisterInfo();
     pair<string,int> getLoginInfo();
-    void test();
     void Login();
     void Register();
     pair<CONST::loginState,string> verifyUser(const string &username, const string &password);

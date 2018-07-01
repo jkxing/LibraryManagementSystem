@@ -1,15 +1,13 @@
 #include "addbookdialog.h"
 #include "ui_addbookdialog.h"
-#include <vector>
-#include <string>
-#include <map>
+
 using namespace std;
 AddBookDialog::AddBookDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddBookDialog)
 {
     ui->setupUi(this);
-    setStyleSheet("#AdminGui{border-image: url(:/image/bookbg.jpg)}");
+    setStyleSheet("#AddBookDialog{border-image: url(:/image/bookbg.jpg)}");
     setWindowTitle("添加书籍");
 }
 

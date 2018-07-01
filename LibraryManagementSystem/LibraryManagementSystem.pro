@@ -68,7 +68,8 @@ HEADERS += \
     editdialog.h \
     confirmdialog.h \
     addbookdialog.h \
-    abstractgui.h
+    abstractgui.h \
+    stdafx.h
 
 DISTFILES +=
 

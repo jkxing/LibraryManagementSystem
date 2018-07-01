@@ -2,19 +2,19 @@
 #include "ui_admingui.h"
 #include <user.h>
 #include <rendingcontrol.h>
-#include <QStandardItemModel>
-#include <QDebug>
-#include <iostream>
-#include <shop.h>
+
+#include <addbookdialog.h>
+#include <editdialog.h>
 #include <searchui.h>
 #include <search.h>
-#include <QPropertyAnimation>
-#include <editdialog.h>
-#include <addbookdialog.h>
+#include <shop.h>
+
 using namespace std;
+
 extern RendControl *rc;
 extern Shop *shop;
 extern Searcher *sc;
+
 AdminGui::AdminGui(QWidget *parent,const string &str) :
     QMainWindow(parent),
     ui(new Ui::AdminGui),
@@ -35,43 +35,18 @@ AdminGui::~AdminGui()
     delete ui;
 }
 
-void AdminGui::on_pushButton_clicked()
-{
-    nowShow = 0;
-    vector<bsoncxx::document::value> list = rc->getReturnList();
-    model = new QStandardItemModel(list.size(),3,this);
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
-    int tmp = 0;
-    for(auto doc1:list)
-    {
-        auto doc = doc1.view();
-        string str = setData(tmp,0,doc,"item_id");
-        qDebug()<<QString::fromStdString(str);
-        bsoncxx::document::value val = shop->getallinfo(str);
-        bsoncxx::document::view vie = val.view();
-        setData(tmp,1,vie,"书名");
-        setData(tmp,2,vie,"state");
-        tmp++;
-    }
-    ui->tableView->setModel(model);
-}
-
 void AdminGui::on_tableView_clicked(const QModelIndex &index)
 {
     if(nowShow == 0){
         ConfirmDialog confirm(this,"是否确认书籍已归还");
         if(confirm.exec()!=QDialog::Accepted)
             return;
-        qDebug()<<"handling return";
         QModelIndex bookId = model->index(index.row(),0);
         QString qstr = model->data(bookId).toString();
         qDebug()<<qstr;
         QModelIndex bookStateIndex = model->index(index.row(),2);
         QString qtmp = model->data(bookStateIndex).toString();
         string stmp = qtmp.toStdString();
-        qDebug()<<qtmp;
         if(stmp!="storing")
         {
             string str = qstr.toStdString();
@@ -86,10 +61,8 @@ void AdminGui::on_tableView_clicked(const QModelIndex &index)
     else if(nowShow == 1){
         qDebug()<<"handling edit";
         QString qstr = model->data(index).toString();
-        qDebug()<<qstr;
         EditDialog tmp(this,qstr);
         qstr = tmp.work();
-        qDebug()<<qstr;
         string str = qstr.toStdString();
         if(str!="")
         {
@@ -108,6 +81,29 @@ void AdminGui::Main(){
     this->show();
     return;
 }
+
+void AdminGui::on_pushButton_clicked()
+{
+    nowShow = 0;
+    vector<bsoncxx::document::value> list = rc->getReturnList();
+    model = new QStandardItemModel(list.size(),3,this);
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
+    int tmp = 0;
+    for(auto doc1:list)
+    {
+        auto doc = doc1.view();
+        string str = setData(tmp,0,doc,"item_id");
+        bsoncxx::document::value val = shop->getallinfo(str);
+        bsoncxx::document::view vie = val.view();
+        setData(tmp,1,vie,"书名");
+        setData(tmp,2,vie,"state");
+        tmp++;
+    }
+    ui->tableView->setModel(model);
+}
+
 void AdminGui::on_pushButton_2_clicked()
 {
     nowShow = 1;
@@ -115,18 +111,21 @@ void AdminGui::on_pushButton_2_clicked()
     map<string,string> v = se->work();
     if(v.size()==0)
         return;
-    bsoncxx::builder::stream::document dd;
+    bsoncxx::builder::stream::document dd{};
     for(auto i:v){
         dd<<i.first<<i.second;
     }
     vector<bsoncxx::document::value> list = sc->search(dd.view());
+
     model = new QStandardItemModel(list.size(),6,this);
+
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("书名"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("作者"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("ISBN"));
     model->setHeaderData(3, Qt::Horizontal, QObject::tr("出版社"));
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
+
     int tmp = 0;
     for(auto doc1:list)
     {

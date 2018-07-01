@@ -1,30 +1,26 @@
-#include <QCoreApplication>
-#include <QApplication>
-#include <algorithm>
-#include <iostream>
-#include <cstdio>
-#include <string>
-#include <abstractapp.h>
-#include <consoleapp.h>
-#include <interface.h>
+
+#include <stdafx.h>
+
 #include <rendingcontrol.h>
-#include <shop.h>
-#include <date.h>
+#include <abstractapp.h>
 #include <usercontrol.h>
+#include <consoleapp.h>
 #include <searcher.h>
 #include <guiapp.h>
 #include <unistd.h>
-#include <QDebug>
-#include <Administrator.h>
+#include <shop.h>
+#include <date.h>
+
 using namespace std;
-using bsoncxx::builder::basic::kvp;
+
 AbstractApp* System;
-Database *db;
+QApplication *a;
 RendControl *rc;
-Shop* shop;
 UserControl *uc;
 Searcher *sc;
-QApplication *a;
+Database *db;
+Shop* shop;
+
 void parseParameters(int argc,char** argv)
 {
     a = new QApplication(argc,argv);
@@ -47,6 +43,7 @@ void parseParameters(int argc,char** argv)
     uc = new UserControl();
     sc = new Searcher();
 }
+
 void end()
 {
     delete System;
@@ -56,13 +53,11 @@ void end()
     delete uc;
     delete sc;
 }
+//main -m g ---using gui
+//main -m c ---using cmd
 int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
-    //string str = "adminn";
-    //User * user = new Administrator(str);
-    //user->Main();
-    //uc->test();
     System->Main();
     return a->exec();
 }

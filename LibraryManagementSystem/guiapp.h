@@ -1,19 +1,17 @@
 #ifndef GUIAPP_H
 #define GUIAPP_H
 
-#include <QMainWindow>
-#include <QApplication>
+#include <stdafx.h>
 #include <abstractapp.h>
 #include <logindialog.h>
 #include <dialog.h>
-#include <string>
-#include <map>
+
 using namespace std;
 namespace Ui {
 class GuiApp;
 }
 
-class GuiApp : public QMainWindow,public AbstractApp
+class GuiApp : public QMainWindow,public AbstractApp//use gui to interactive with users
 {
     Q_OBJECT
     LoginDialog *ld;
@@ -28,8 +26,6 @@ public:
     ~GuiApp();
 private slots:
     void on_Login_clicked();
-
-    void on_Help_clicked();
 
     void on_Register_clicked();
 

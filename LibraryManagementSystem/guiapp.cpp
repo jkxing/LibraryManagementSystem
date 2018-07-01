@@ -1,10 +1,9 @@
 #include "guiapp.h"
 #include "ui_guiapp.h"
+
+#include <stdafx.h>
+
 #include <usercontrol.h>
-#include <QDebug>
-#include <QPixmap>
-#include <QSplashScreen>
-#include <QPropertyAnimation>
 #include <usergui.h>
 #include <admingui.h>
 extern UserControl* uc;
@@ -41,7 +40,6 @@ void GuiApp::on_Login_clicked()
     if(pa.first!="")
     {
         pair<CONST::loginState,string> tmp = uc->verifyUser(pa.first,pa.second);
-        qDebug()<<"verify ok";
         if(tmp.first == CONST::loginState::SuccessReaderLogin)
         {
             User* user = new userGui(this,tmp.second);
@@ -55,24 +53,17 @@ void GuiApp::on_Login_clicked()
     }
 }
 
-void GuiApp::on_Help_clicked()
-{
-
-}
-
 void GuiApp::on_Register_clicked()
 {
     uc->Register();
 }
 
-map<string, pair<string, string> > GuiApp::getInput(map<string, pair<string, string> > &mp){
-    qDebug()<<"Enter"<<endl;
+map<string, pair<string, string> > GuiApp::getInput(map<string, pair<string, string> > &mp){ 
     Dialog* dia = new Dialog(800,600,this);
     mp = dia->work(mp);
-    qDebug()<<"finish"<<endl;
     return mp;
 }
 
 void GuiApp::showMessage(const string &str){
-
+    qDebug()<<QString::fromStdString(str);
 }

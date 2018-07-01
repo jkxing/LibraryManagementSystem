@@ -1,11 +1,6 @@
 #ifndef ADDBOOKDIALOG_H
 #define ADDBOOKDIALOG_H
-
-#include <QDialog>
-#include <vector>
-#include <QDebug>
-#include <string>
-#include <map>
+#include <stdafx.h>
 using namespace std;
 namespace Ui {
 class AddBookDialog;
@@ -18,7 +13,7 @@ class AddBookDialog : public QDialog
 public:
     explicit AddBookDialog(QWidget *parent = 0);
     ~AddBookDialog();
-    map<string,string> work();
+    map<string,string> work();//add a book
 private:
     Ui::AddBookDialog *ui;
 };
