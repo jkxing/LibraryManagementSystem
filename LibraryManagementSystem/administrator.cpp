@@ -4,13 +4,14 @@ extern Shop* shop;
 extern Searcher* sc;
 extern RendControl* rc;
 extern Database* db;
-//输入搜索一本书的信息
+
+//输入用于搜索一本书的信息
 bsoncxx::document::view find_book(){
     string str;
     int choice;
     string info[6] = {"书名", "作者", "译者", "出版社",
                     "ISBN", "that's all"};
-    bool choosed[6] = {0, 0, 0, 0, 0, 0};
+    bool choosed[6] = {0, 0, 0, 0, 0, 0};//防止重复输入
     bsoncxx::builder::basic::document basic_builder{};
 
     cout << "Let's find the book first." << endl;
@@ -71,7 +72,7 @@ bsoncxx::document::view find_book(){
 //从列表中选择一本书
 bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
     auto builder = bsoncxx::builder::stream::document{};
-    if(list.begin() == list.end())
+    if(list.begin() == list.end())//列表为空
     {
         cout << "No request is waiting for confirmation yet." << endl;
         return bsoncxx::document::view{};
@@ -142,7 +143,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
             cout << "Please choose again..." << endl;
             cin >> i;
         }
-        if (i == 0)
+        if (i == 0)//取消操作
         {
             cout << "Search failed." << endl;
             return bsoncxx::document::view{};;
@@ -186,7 +187,7 @@ bsoncxx::document::view get_book(){
     int choice;
     string info[9] = {"书名", "作者", "译者", "出版社",
                     "出版时间", "标签", "编辑推荐", "ISBN", "that's all"};
-    bool choosed[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    bool choosed[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};//防止重复输入
     //用于保存书籍信息
     bsoncxx::builder::basic::document basic_builder{};
     //用于保存标签
@@ -277,7 +278,9 @@ bsoncxx::document::view get_book(){
 }
 //添加书
 void Administrator::add_book(){
+    //编辑新书的信息
     bsoncxx::document::view document = get_book();
+    //加入数据库
     shop->addItem(document);
 }
 //修改信息
@@ -300,15 +303,16 @@ void Administrator::modify_book(){
 }
 //审核归还
 void Administrator::check_giveback(){
+    //获得等待审核的请求列表
     vector<bsoncxx::document::view> list = rc->getReturnList();
+    //选择一本书
     bsoncxx::document::view book = check_book(list);
-    if (book == bsoncxx::document::view{}) return;
-    rc->commitReturn(book["id"].get_utf8().value.to_string());
+    if (book == bsoncxx::document::view{}) return;//若未选择
+    rc->commitReturn(book["id"].get_utf8().value.to_string());//确认
 }
 //帮助页面
 void Administrator::help(){
     cout << "------------------------------------------------------------------------------" << endl;
-    cout << "Welcome back!" << endl;
     cout << "You are an administrator." << endl;
     cout << "You can manage our library's operation using the following statements." << endl;
     cout << "0) quit: Log out." << endl;
@@ -319,10 +323,10 @@ void Administrator::help(){
 }
 //主界面
 void Administrator::Main(){
-    cout<<"user_id is:"<<this->getid()<<endl;
-    cout<<"user_name is"<<this->getName()<<endl;
-    cout<<"user_identity is"<<this->getIdentity()<<endl;
-    cout<<"Please input orders...(input 'help' to see help page)" << endl;
+    cout << "Welcome back!" << endl;
+    cout << "User identity: Administrator" << endl;
+    cout << endl;
+    cout << "Please input orders...(input 'help' to see help page)" << endl;
     string str;
     while (cin >> str)
     {
