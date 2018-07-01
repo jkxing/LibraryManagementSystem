@@ -71,8 +71,6 @@ bsoncxx::document::view find_book(){
 
 bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
     auto builder = bsoncxx::builder::stream::document{};
-    for (auto doc : list)
-        cout<<doc["ISBN"].get_utf8().value.to_string()<<endl;
     if(list.begin() == list.end())
     {
         cout << "No request is waiting for confirmation yet." << endl;
@@ -95,10 +93,27 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         for (auto doc : list)
         {
             i++;
-            if (doc.find("书名") != doc.end()) bookname[i] = doc["书名"].get_utf8().value.to_string();
-            if (doc.find("作者") != doc.end()) authorname[i] = doc["作者"].get_utf8().value.to_string();
-            if (doc.find("ISBN") != doc.end()) ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
-            if (doc.find("出版社") != doc.end()) press[i] = doc["出版社"].get_utf8().value.to_string();
+            cout << i << "." << endl;
+            if (doc.find("书名") != doc.end())
+            {
+                bookname[i] = doc["书名"].get_utf8().value.to_string();
+                cout << bookname[i] << endl;
+            }
+            if (doc.find("作者") != doc.end())
+            {
+                authorname[i] = doc["作者"].get_utf8().value.to_string();
+                cout << authorname[i] << endl;
+            }
+            if (doc.find("出版社") != doc.end())
+            {
+                press[i] = doc["出版社"].get_utf8().value.to_string();
+                cout << press[i] << endl;
+            }
+            if (doc.find("ISBN") != doc.end())
+            {
+                ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
+                cout << ISBN[i] << endl;
+            }
         }
         cout << endl;
         cout << "Choose one... (0 for quit)" << endl;
@@ -112,8 +127,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         if (i == 0)
         {
             cout << "Search failed." << endl;
-            bsoncxx::document::value x = document{}.extract();
-            return x;
+            return bsoncxx::document::view{};;
         }
         builder.clear();
         if (ISBN[i] != "")
@@ -156,8 +170,8 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
 bsoncxx::document::view get_book(){
     string str;
     int choice;
-    string info[9] = {"bookname", "authorname", "translator", "press",
-                    "publication time", "label", "introduction", "ISBN", "that's all"};
+    string info[9] = {"书名", "作者", "译者", "出版社",
+                    "出版时间", "标签", "编辑推荐", "ISBN", "that's all"};
     bool choosed[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     bsoncxx::builder::basic::document basic_builder{};
 
@@ -259,6 +273,7 @@ void Administrator::modify_book(){
     cout<<"finish modify_1"<<endl;
     bsoncxx::document::view book = check_book(found);
     cout<<"finish modify_1.5"<<endl;
+    if (book == bsoncxx::document::view{}) return;
     bsoncxx::document::view newbook = get_book();
     cout<<"finish modify_2"<<endl;
     shop->editItem(book["_id"].get_oid().value.to_string(), newbook);
