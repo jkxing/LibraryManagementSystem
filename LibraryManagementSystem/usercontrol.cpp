@@ -10,6 +10,12 @@ extern Database* db;
 extern AbstractApp* System;
 using bsoncxx::builder::basic::kvp;
 pair<CONST::loginState,string> UserControl::verifyUser(const string &username, const string &password){
+#ifndef __Database
+    if(username == "reader")
+        return make_pair(CONST::loginState::SuccessReaderLogin,"reader");
+    if(username == "admin")
+        return make_pair(CONST::loginState::SuccessAdminLogin,"admin");
+#endif
     bsoncxx::builder::basic::document builder{};
     bsoncxx::document::view passAndId{};
     builder.append(kvp("username",username));
@@ -138,9 +144,11 @@ void UserControl::updateUserInfo(const string &_id,bsoncxx::document::view info)
 vector<bsoncxx::document::value> UserControl::getUserInfo(const string &user_id){
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(user_id) ;
-    mongocxx::cursor res = db->getAll("User",builder.view());
     vector<bsoncxx::document::value> v{};
+#ifdef __Database
+    mongocxx::cursor res = db->getAll("User",builder.view());
     for(auto i:res)
         v.push_back(document{}<<concatenate(i)<<finalize);
+#endif
     return v;
 }

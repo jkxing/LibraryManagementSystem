@@ -28,7 +28,7 @@ using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::concatenate;
 using bsoncxx::builder::basic::kvp;
-
+#ifdef __Database
 class Database{//Database
     queue<thread*> threads;
     //mongocxx::instance instance;
@@ -54,4 +54,23 @@ public:
     Database();
     ~Database();
 };
+#endif
+#ifndef __Database
+class Database{//Database
+    queue<thread*> threads;
+    bsoncxx::document::value get(const string &str,bsoncxx::document::view key);
+    bool insert(const string &str,bsoncxx::document::view item);
+    bool update(const string &str,bsoncxx::document::view oldItem,bsoncxx::document::view newItem);
+    bool remove(const string &str,bsoncxx::document::view item);
+    bool find(const string &str,bsoncxx::document::view key);
+    friend class UserControl;
+    friend class RendControl;
+    friend class Searcher;
+    friend class Shop;
+public:
+    mongocxx::pool pool;
+    Database();
+    ~Database();
+};
+#endif
 #endif // DATABASE_H

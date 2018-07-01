@@ -38,18 +38,22 @@ vector<bsoncxx::document::value> RendControl::getBorrowList(const string &user_i
 
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("user_id",user_id));
-    mongocxx::cursor ret = db->getAll("BorrowList",builder.view());
     vector<bsoncxx::document::value> v{};
-    for(auto i:ret)
+#ifdef __Database
+    mongocxx::cursor res = db->getAll("BorrowList",builder.view());
+    for(auto i:res)
         v.push_back(document{}<<concatenate(i)<<finalize);
+#endif
     return v;
 }
 
 vector<bsoncxx::document::value> RendControl::getReturnList(){
     bsoncxx::builder::basic::document builder{};
-    mongocxx::cursor ret = db->getAll("ReturnList",builder.extract());
     vector<bsoncxx::document::value> v{};
-    for(auto i:ret)
+#ifdef __Database
+    mongocxx::cursor res = db->getAll("ReturnList",builder.view());
+    for(auto i:res)
         v.push_back(document{}<<concatenate(i)<<finalize);
+#endif
     return v;
 }

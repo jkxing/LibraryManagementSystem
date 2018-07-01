@@ -4,7 +4,7 @@
 #include <stdafx.h>
 
 using namespace std;
-
+#ifdef __Database
 Database::Database():pool(mongocxx::uri{}){
     //client = mongocxx::client{mongocxx::uri{}};
     //db = client[CONST::projectName];
@@ -96,4 +96,34 @@ bool Database::find(const string &str,bsoncxx::document::view key){
         return true;
     return false;
 }
+#endif
+#ifndef __Database
+bsoncxx::document::value Database::get(const string &str,bsoncxx::document::view key){
+    document doc{};
+    return doc.extract();
+}
+
+bool Database::insert(const string &str,bsoncxx::document::view item){
+    return true;
+}
+
+bool Database::update(const string &str,bsoncxx::document::view oldItem,bsoncxx::document::view newItem){
+    return true;
+}
+
+bool Database::remove(const string &str,bsoncxx::document::view item){
+    return true;
+}
+
+bool Database::find(const string &str,bsoncxx::document::view key){
+    return true;
+}
+
+Database::Database(){
+}
+
+Database::~Database(){
+}
+
+#endif
 
