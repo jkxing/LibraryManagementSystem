@@ -59,10 +59,10 @@ void end()
 int main(int argc, char **argv)
 {
     parseParameters(argc,argv);
-    //string str = "5b35eabe8726e31128006422";
-    //User * user = new Administrator(str);
-    //user->Main();
-    //uc->test();
+    string str = "adminn";
+    User * user = new Administrator(str);
+    user->Main();
+    uc->test();
     System->Main();
     return a->exec();
 }

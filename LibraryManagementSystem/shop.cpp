@@ -23,7 +23,7 @@ void Shop::addItem(bsoncxx::document::view val){
 
 void Shop::editItem(const string &_id,bsoncxx::document::view info){
     qDebug()<<QString::fromStdString(_id);
-    qDebug()<<QString::fromStdString(bsoncxx::to_json(info));
+    //cout<<bsoncxx::to_json(info);
     bsoncxx::builder::stream::document builder{};
     builder << "_id" << bsoncxx::oid(_id) ;
     qDebug()<<"medium";
