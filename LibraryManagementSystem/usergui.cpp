@@ -16,7 +16,7 @@ extern Searcher *sc;
 userGui::userGui(QWidget *parent,const string &str) :
     QMainWindow(parent),
     ui(new Ui::userGui),
-    User(str)
+    AbstractGui(str)
 {
     ui->setupUi(this);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -39,6 +39,7 @@ void userGui::on_Record_clicked()
 {
     nowShow = 0;
     vector<bsoncxx::document::view> list = rc->getBorrowList(getid());
+    qDebug()<<list.size();
     model = new QStandardItemModel(list.size(),5,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
@@ -48,22 +49,20 @@ void userGui::on_Record_clicked()
     int tmp = 0;
     for(auto doc:list)
     {
-        QModelIndex index = model->index(tmp,0,QModelIndex());
-        string str = doc["item_id"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,1,QModelIndex());
-        bsoncxx::document::view vie = shop->getallinfo(str);
-        str = vie["书名"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,2,QModelIndex());
-        str = doc["borrow date"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,3,QModelIndex());
-        str = doc["return date"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,4,QModelIndex());
-        str = doc["state"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
+        string str = setData(tmp,0,doc,"item_id");
+        qDebug()<<"0";
+        if(str!="")
+        {
+            bsoncxx::document::view vie = shop->getallinfo(str);
+            setData(tmp,1,vie,"书名");
+            qDebug()<<"1";
+        }
+        setData(tmp,2,doc,"borrow date");
+        qDebug()<<"2";
+        setData(tmp,3,doc,"return date");
+        qDebug()<<"3";
+        setData(tmp,4,doc,"state");
+        qDebug()<<"4";
         tmp++;
     }
     ui->tableView->setModel(model);
@@ -142,24 +141,12 @@ void userGui::on_Search_clicked()
     int tmp = 0;
     for(auto doc:list)
     {
-        QModelIndex index = model->index(tmp,0,QModelIndex());
-        string str = doc["书名"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,1,QModelIndex());
-        str = doc["作者"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,2,QModelIndex());
-        str = doc["ISBN"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,3,QModelIndex());
-        str = doc["出版社"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,4,QModelIndex());
-        str = doc["_id"].get_oid().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,5,QModelIndex());
-        str = doc["state"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
+        setData(tmp,0,doc,"书名");
+        setData(tmp,1,doc,"作者");
+        setData(tmp,2,doc,"ISBN");
+        setData(tmp,3,doc,"出版社");
+        setData(tmp,4,doc,"_id");
+        setData(tmp,5,doc,"state");
         tmp++;
     }
     ui->tableView->setModel(model);

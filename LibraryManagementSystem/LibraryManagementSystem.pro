@@ -43,7 +43,8 @@ SOURCES += \
     admingui.cpp \
     editdialog.cpp \
     confirmdialog.cpp \
-    addbookdialog.cpp
+    addbookdialog.cpp \
+    abstractgui.cpp
 
 HEADERS += \
     abstractapp.h \
@@ -66,7 +67,8 @@ HEADERS += \
     admingui.h \
     editdialog.h \
     confirmdialog.h \
-    addbookdialog.h
+    addbookdialog.h \
+    abstractgui.h
 
 DISTFILES +=
 

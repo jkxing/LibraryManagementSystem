@@ -18,12 +18,11 @@ extern Searcher *sc;
 AdminGui::AdminGui(QWidget *parent,const string &str) :
     QMainWindow(parent),
     ui(new Ui::AdminGui),
-    User(str)
+    AbstractGui(str)
 {
     ui->setupUi(this);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     setStyleSheet("#AdminGui{border-image: url(:/image/bookbg.jpg)}");
-    qDebug()<<QString::fromStdString(str);
     QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
     animation->setDuration(1000);
     animation->setStartValue(0);
@@ -40,8 +39,6 @@ void AdminGui::on_pushButton_clicked()
 {
     nowShow = 0;
     vector<bsoncxx::document::view> list = rc->getReturnList();
-    qDebug()<<"get over";
-    qDebug()<<list.size();
     model = new QStandardItemModel(list.size(),3,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
@@ -49,16 +46,11 @@ void AdminGui::on_pushButton_clicked()
     int tmp = 0;
     for(auto doc:list)
     {
-        QModelIndex index = model->index(tmp,0,QModelIndex());
-        string str = doc["item_id"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,1,QModelIndex());
+        string str = setData(tmp,0,doc,"item_id");
+        qDebug()<<QString::fromStdString(str);
         bsoncxx::document::view vie = shop->getallinfo(str);
-        str = vie["书名"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,2,QModelIndex());
-        str = vie["state"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
+        setData(tmp,1,vie,"书名");
+        setData(tmp,2,vie,"state");
         tmp++;
     }
     ui->tableView->setModel(model);
@@ -114,7 +106,6 @@ void AdminGui::Main(){
     this->show();
     return;
 }
-
 void AdminGui::on_pushButton_2_clicked()
 {
     nowShow = 1;
@@ -125,8 +116,6 @@ void AdminGui::on_pushButton_2_clicked()
     bsoncxx::builder::stream::document dd;
     for(auto i:v){
         dd<<i.first<<i.second;
-        qDebug()<<QString::fromStdString(i.first);
-        qDebug()<<QString::fromStdString(i.second);
     }
     vector<bsoncxx::document::view> list = sc->search(dd.view());
     model = new QStandardItemModel(list.size(),6,this);
@@ -139,24 +128,12 @@ void AdminGui::on_pushButton_2_clicked()
     int tmp = 0;
     for(auto doc:list)
     {
-        QModelIndex index = model->index(tmp,0,QModelIndex());
-        string str = doc["书名"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,1,QModelIndex());
-        str = doc["作者"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,2,QModelIndex());
-        str = doc["ISBN"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,3,QModelIndex());
-        str = doc["出版社"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,4,QModelIndex());
-        str = doc["_id"].get_oid().value.to_string();
-        model->setData(index,QString::fromStdString(str));
-        index = model->index(tmp,5,QModelIndex());
-        str = doc["state"].get_utf8().value.to_string();
-        model->setData(index,QString::fromStdString(str));
+        setData(tmp,0,doc,"书名");
+        setData(tmp,1,doc,"作者");
+        setData(tmp,2,doc,"ISBN");
+        setData(tmp,3,doc,"出版社");
+        setData(tmp,4,doc,"_id");
+        setData(tmp,5,doc,"state");
         tmp++;
     }
     ui->tableView->setModel(model);
