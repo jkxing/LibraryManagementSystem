@@ -15,8 +15,8 @@ using namespace std;
 
 extern RendControl *rc;
 extern UserControl *uc;
-extern Shop *shop;
 extern Searcher *sc;
+extern Shop *shop;
 
 AdminGui::AdminGui(QWidget *parent,const string &str) :
     QMainWindow(parent),
@@ -32,9 +32,7 @@ AdminGui::AdminGui(QWidget *parent,const string &str) :
     animation->setEndValue(1);
     animation->start();
     setWindowTitle("Welcome, administrator");
-    ui->tabWidget->setAttribute(Qt::WA_TranslucentBackground);
-    ui->tabWidget->setStyleSheet("background-color: transparent");
-
+    ui->tabWidget->setStyleSheet("#border-image: url(:/image/bookbgs.jpg)");
     ui->pushButton->setText("编辑图书");
     ui->pushButton_2->setText("添加图书");
 }
@@ -111,7 +109,7 @@ void AdminGui::on_pushButton_clicked()
         model->setHeaderData(2, Qt::Horizontal, QObject::tr("ISBN"));
         model->setHeaderData(3, Qt::Horizontal, QObject::tr("出版社"));
         model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
-        model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
+        model->setHeaderData(5, Qt::Horizontal, QObject::tr("number"));
 
         int tmp = 0;
         for(auto doc1:list)
@@ -122,7 +120,7 @@ void AdminGui::on_pushButton_clicked()
             setData(tmp,2,doc,"ISBN");
             setData(tmp,3,doc,"出版社");
             setData(tmp,4,doc,"_id");
-            setData(tmp,5,doc,"state");
+            setData(tmp,5,doc,"number");
             tmp++;
         }
         ui->tableView->setModel(model);
@@ -135,11 +133,12 @@ void AdminGui::on_pushButton_2_clicked()
     if(page == 2)
     {
         vector<bsoncxx::document::value> list = rc->getBorrowList();
-        model = new QStandardItemModel(list.size(),4,this);
+        model = new QStandardItemModel(list.size(),5,this);
         model->setHeaderData(0, Qt::Horizontal, QObject::tr("item_id"));
-        model->setHeaderData(0, Qt::Horizontal, QObject::tr("user_id"));
-        model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
-        model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
+        model->setHeaderData(1, Qt::Horizontal, QObject::tr("user_id"));
+        model->setHeaderData(2, Qt::Horizontal, QObject::tr("username"));
+        model->setHeaderData(3, Qt::Horizontal, QObject::tr("bookname"));
+        model->setHeaderData(4, Qt::Horizontal, QObject::tr("book state"));
         int tmp = 0;
         for(auto doc1:list)
         {
@@ -147,9 +146,12 @@ void AdminGui::on_pushButton_2_clicked()
             string str = setData(tmp,0,doc,"item_id");
             bsoncxx::document::value val = shop->getallinfo(str);
             bsoncxx::document::view vie = val.view();
-            setData(tmp,1,doc,"user_id");
-            setData(tmp,2,vie,"书名");
-            setData(tmp,3,vie,"state");
+            string str2 = setData(tmp,1,doc,"user_id");
+            auto usr = uc->getUserInfo(str2);
+            bsoncxx::document::view usv = usr.begin()->view();
+            setData(tmp,2,usv,"username");
+            setData(tmp,3,vie,"书名");
+            setData(tmp,4,doc,"state");
             tmp++;
         }
         ui->tableView_3->setModel(model);
@@ -284,7 +286,7 @@ void AdminGui::on_tableView_3_clicked(const QModelIndex &index)
         QModelIndex bookId = model->index(index.row(),0);
         QString qstr = model->data(bookId).toString();
         qDebug()<<qstr;
-        QModelIndex bookStateIndex = model->index(index.row(),2);
+        QModelIndex bookStateIndex = model->index(index.row(),4);
         QString qtmp = model->data(bookStateIndex).toString();
         string stmp = qtmp.toStdString();
         if(stmp!="storing")

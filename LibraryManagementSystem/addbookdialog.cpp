@@ -23,6 +23,8 @@ map<string,string> AddBookDialog::work(){
         v["作者"]=ui->lineEdit_2->text().toStdString();
         v["出版社"]=ui->lineEdit_3->text().toStdString();
         v["ISBN"]=ui->lineEdit_4->text().toStdString();
+        v["number"]=ui->lineEdit_5->text().toStdString();
+        v["标签"]=ui->lineEdit_6->text().toStdString();
         return v;
     }
     return v;
