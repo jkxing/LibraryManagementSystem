@@ -135,7 +135,7 @@ void userGui::on_Search_clicked()
     if(!v.count("all"))
     {
         for(auto i:v){
-            dd<<i.first<<i.second;
+            dd<<i.first<<bsoncxx::types::b_regex(".*" + i.second+".*");
             qDebug()<<QString::fromStdString(i.first);
             qDebug()<<QString::fromStdString(i.second);
         }

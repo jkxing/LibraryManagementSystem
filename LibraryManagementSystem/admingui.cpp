@@ -98,7 +98,7 @@ void AdminGui::on_pushButton_clicked()
         if(!v.count("all"))
         {
             for(auto i:v)
-                dd<<i.first<<i.second;
+                dd<<i.first<<bsoncxx::types::b_regex(".*" + i.second+".*");
         }
         vector<bsoncxx::document::value> list = sc->search(dd.view());
 
