@@ -5,8 +5,9 @@ extern Searcher* sc;
 extern RendControl* rc;
 extern Database* db;
 
-//输入用于搜索一本书的信息
-bsoncxx::document::view find_book(){
+//输入搜索一本书的信息
+bsoncxx::document::value find_book(){
+>>>>>>> a608aeea7f870063201da5936d047f58635fb5c0
     string str;
     int choice;
     string info[6] = {"书名", "作者", "译者", "出版社",
@@ -67,15 +68,15 @@ bsoncxx::document::view find_book(){
         for (int i = 0; i < 6; i++)
             cout << (i+1) << ". " << info[i] << endl;
     }
-    return basic_builder.view();
+    return basic_builder.extract();
 }
 //从列表中选择一本书
-bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
+bsoncxx::document::value check_book(vector<bsoncxx::document::value> list){
     auto builder = bsoncxx::builder::stream::document{};
     if(list.begin() == list.end())//列表为空
     {
         cout << "No request is waiting for confirmation yet." << endl;
-        return bsoncxx::document::view{};
+        return document().extract();
     }
     else
     {
@@ -94,8 +95,9 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
             press[i] = "";
         }
         int i = 0;
-        for (auto doc : list)
+        for (auto doc1 : list)
         {
+            auto doc = doc1.view();
             i++;
             cout << i << "." << endl;
             if (doc.find("书名") != doc.end())
@@ -146,7 +148,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         if (i == 0)//取消操作
         {
             cout << "Search failed." << endl;
-            return bsoncxx::document::view{};;
+            return document().extract();
         }
         builder.clear();
         if (ISBN[i] != "")
@@ -182,7 +184,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
     }
 }
 //新建一本书
-bsoncxx::document::view get_book(){
+bsoncxx::document::value get_book(){
     string str;
     int choice;
     string info[9] = {"书名", "作者", "译者", "出版社",
@@ -274,41 +276,41 @@ bsoncxx::document::view get_book(){
             cout << (i+1) << ". " << info[i] << endl;
     }
     //basic_builder.append(kvp("标签", another_builder));
-    return basic_builder.view();
+    return basic_builder.extract();
 }
 //添加书
 void Administrator::add_book(){
     //编辑新书的信息
-    bsoncxx::document::view document = get_book();
+    bsoncxx::document::value document = get_book();
     //加入数据库
     shop->addItem(document);
 }
 //修改信息
 void Administrator::modify_book(){
     cout<<"finish modify_0"<<endl;
-    bsoncxx::document::view document = find_book();
+    bsoncxx::document::value document = find_book();
     cout<<"finish modify_0.5"<<endl;
-    vector<bsoncxx::document::view> found = sc->search(document);
+    vector<bsoncxx::document::value> found = sc->search(document);
     cout<<"finish modify_1"<<endl;
-    bsoncxx::document::view book = check_book(found);
+    bsoncxx::document::value book = check_book(found);
     cout<<"finish modify_1.5"<<endl;
-    if (book == bsoncxx::document::view{}) return;
-    bsoncxx::document::view newbook = get_book();
+    if (book.view() == bsoncxx::document::view{}) return;
+    bsoncxx::document::value newbook = get_book();
     cout<<"finish modify_2"<<endl;
-    cout << book["_id"].get_oid().value.to_string() << endl;
-    string tmp = book["_id"].get_oid().value.to_string();
+    cout << book.view()["_id"].get_oid().value.to_string() << endl;
+    string tmp = book.view()["_id"].get_oid().value.to_string();
     cout << bsoncxx::to_json(newbook) << endl;
-    shop->editItem(tmp, newbook);
+    shop->editItem(tmp, newbook.view());
     cout<<"haha"<<endl;
 }
 //审核归还
 void Administrator::check_giveback(){
     //获得等待审核的请求列表
-    vector<bsoncxx::document::view> list = rc->getReturnList();
+    vector<bsoncxx::document::value> list = rc->getReturnList();
     //选择一本书
-    bsoncxx::document::view book = check_book(list);
-    if (book == bsoncxx::document::view{}) return;//若未选择
-    rc->commitReturn(book["id"].get_utf8().value.to_string());//确认
+    bsoncxx::document::value book = check_book(list);
+    if (book.view() == bsoncxx::document::view{}) return;
+    rc->commitReturn(book.view()["id"].get_utf8().value.to_string());
 }
 //帮助页面
 void Administrator::help(){

@@ -5,7 +5,7 @@
 using namespace std;
 class Searcher{
 public:
-    vector<bsoncxx::document::view> search(bsoncxx::document::view info);
-    vector<bsoncxx::document::view> search(bsoncxx::builder::stream::document &doc);
+    vector<bsoncxx::document::value> search(bsoncxx::document::view info);
+    vector<bsoncxx::document::value> search(bsoncxx::builder::stream::document &doc);
 };
 #endif // SEARCHER_H

@@ -41,21 +41,21 @@ void RendControl::commitReturn(const string &item_id){
                                                           "state" << "storing" << close_document << finalize);
 }
 
-vector<bsoncxx::document::view> RendControl::getBorrowList(const string &user_id){
+vector<bsoncxx::document::value> RendControl::getBorrowList(const string &user_id){
     bsoncxx::builder::basic::document builder{};
     builder.append(kvp("user_id",user_id));
     mongocxx::cursor ret = db->getAll("BorrowList",builder.view());
-    vector<bsoncxx::document::view> v{};
+    vector<bsoncxx::document::value> v{};
     for(auto i:ret)
-        v.push_back(i);
+        v.push_back(document{}<<concatenate(i)<<finalize);
     return v;
 }
 
-vector<bsoncxx::document::view> RendControl::getReturnList(){
+vector<bsoncxx::document::value> RendControl::getReturnList(){
     bsoncxx::builder::basic::document builder{};
     mongocxx::cursor ret = db->getAll("ReturnList",builder.extract());
-    vector<bsoncxx::document::view> v{};
+    vector<bsoncxx::document::value> v{};
     for(auto i:ret)
-        v.push_back(i);
+        v.push_back(document{}<<concatenate(i)<<finalize);
     return v;
 }

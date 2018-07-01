@@ -38,17 +38,19 @@ AdminGui::~AdminGui()
 void AdminGui::on_pushButton_clicked()
 {
     nowShow = 0;
-    vector<bsoncxx::document::view> list = rc->getReturnList();
+    vector<bsoncxx::document::value> list = rc->getReturnList();
     model = new QStandardItemModel(list.size(),3,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("book state"));
     int tmp = 0;
-    for(auto doc:list)
+    for(auto doc1:list)
     {
+        auto doc = doc1.view();
         string str = setData(tmp,0,doc,"item_id");
         qDebug()<<QString::fromStdString(str);
-        bsoncxx::document::view vie = shop->getallinfo(str);
+        bsoncxx::document::value val = shop->getallinfo(str);
+        bsoncxx::document::view vie = val.view();
         setData(tmp,1,vie,"书名");
         setData(tmp,2,vie,"state");
         tmp++;
@@ -117,7 +119,7 @@ void AdminGui::on_pushButton_2_clicked()
     for(auto i:v){
         dd<<i.first<<i.second;
     }
-    vector<bsoncxx::document::view> list = sc->search(dd.view());
+    vector<bsoncxx::document::value> list = sc->search(dd.view());
     model = new QStandardItemModel(list.size(),6,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("书名"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("作者"));
@@ -126,8 +128,9 @@ void AdminGui::on_pushButton_2_clicked()
     model->setHeaderData(4, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(5, Qt::Horizontal, QObject::tr("state"));
     int tmp = 0;
-    for(auto doc:list)
+    for(auto doc1:list)
     {
+        auto doc = doc1.view();
         setData(tmp,0,doc,"书名");
         setData(tmp,1,doc,"作者");
         setData(tmp,2,doc,"ISBN");

@@ -12,6 +12,6 @@ public:
     void Return(const string item_id);
     void addItem(bsoncxx::document::view val);
     void editItem(const string id,bsoncxx::document::view info);
-    bsoncxx::document::view getallinfo(const string id);
+    bsoncxx::document::value getallinfo(const string id);
 };
 #endif // SHOP_H
