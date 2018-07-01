@@ -4,6 +4,7 @@
 #include <User.h>
 #include <shop.h>
 #include <searcher.h>
+#include <usercontrol.h>
 
 class Administrator : public User{
 public:
@@ -17,8 +18,16 @@ public:
     void add_book();
     //修改书的信息
     void modify_book();
+    //删除书籍
+    void delete_book();
+    //审核借书
+    void check_borrow();
     //审核归还
     void check_giveback();
+    //添加读者
+    void add_reader();
+    //删除读者
+    void delete_reader();
     ~Administrator(){}
 };
 
