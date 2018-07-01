@@ -84,14 +84,21 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         string* authorname = new string[list.size()+1];
         string* ISBN = new string[list.size()+1];
         string* press = new string[list.size()+1];
+        for (int i=1; i<list.size(); i++)
+        {
+            bookname[i] = "";
+            authorname[i] = "";
+            ISBN[i] = "";
+            press[i] = "";
+        }
         int i = 0;
         for (auto doc : list)
         {
             i++;
-            if (doc.find("书名")) bookname[i] = doc["书名"].get_utf8().value.to_string();
-            if (doc.find("作者")) authorname[i] = doc["作者"].get_utf8().value.to_string();
-            if (doc.find("ISBN")) ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
-            if (doc.find("press")) press[i] = doc["出版社"].get_utf8().value.to_string();
+            if (doc.find("书名") != doc.end()) bookname[i] = doc["书名"].get_utf8().value.to_string();
+            if (doc.find("作者") != doc.end()) authorname[i] = doc["作者"].get_utf8().value.to_string();
+            if (doc.find("ISBN") != doc.end()) ISBN[i] = doc["ISBN"].get_utf8().value.to_string();
+            if (doc.find("出版社") != doc.end()) press[i] = doc["出版社"].get_utf8().value.to_string();
         }
         cout << endl;
         cout << "Choose one... (0 for quit)" << endl;
@@ -109,7 +116,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
             return x;
         }
         builder.clear();
-        if (ISBN[i])
+        if (ISBN[i] != "")
         {
             bsoncxx::document::value key = builder
                     << "ISBN" << ISBN[i]
@@ -118,7 +125,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
         }
         else
         {
-            if (bookname[i])
+            if (bookname[i] != "")
             {
                 bsoncxx::document::value key = builder
                         << "书名" << bookname[i]
@@ -127,7 +134,7 @@ bsoncxx::document::view check_book(vector<bsoncxx::document::view> list){
             }
             else
             {
-                if (authorname[i])
+                if (authorname[i] != "")
                 {
                     bsoncxx::document::value key = builder
                             << "作者" << authorname[i]

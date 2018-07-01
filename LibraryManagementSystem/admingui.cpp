@@ -40,6 +40,8 @@ void AdminGui::on_pushButton_clicked()
 {
     nowShow = 0;
     vector<bsoncxx::document::view> list = rc->getReturnList();
+    qDebug()<<"get over";
+    qDebug()<<list.size();
     model = new QStandardItemModel(list.size(),3,this);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("bookname"));
