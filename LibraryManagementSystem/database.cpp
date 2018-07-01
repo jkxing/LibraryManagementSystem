@@ -65,7 +65,7 @@ mongocxx::cursor Database::getAll(const string &str,bsoncxx::document::view key)
     qDebug()<<"get all from "<<QString::fromStdString(str);
     //auto client = pool.acquire();
     //auto coll = (*client)[CONST::projectName][str];
-    mongocxx::collection coll = db["Item"];
+    mongocxx::collection coll = db[str];
     qDebug()<<"get all medium ";
     mongocxx::cursor ret =  coll.find(key);
     qDebug()<<"get all over ";
