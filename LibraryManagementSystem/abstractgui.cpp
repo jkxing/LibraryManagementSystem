@@ -1,5 +1,8 @@
 #include "abstractgui.h"
 
+//#include "ui_abstractgui.h"
+#include <QDebug>
+
 AbstractGui::AbstractGui(string str):User(str){
 
 }
