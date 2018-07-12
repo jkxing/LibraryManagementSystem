@@ -1,0 +1,6 @@
+.Archive/
+*.mp4
+_image/
+build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Debug/
+build-LibraryManagementSystem-Desktop_Qt_5_10_0_MinGW_32bit-Release/
+项目展示.pptx
