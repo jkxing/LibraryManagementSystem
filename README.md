@@ -1,30 +1,30 @@
 
-#图书管理系统项目文档
-##组员
+# 图书管理系统项目文档
+## 组员
 邢健开 2017011337
 周炫柏 2017011460
 张可真 2017011432
 尹涵 8字班
-##项目需求
-###Qt框架
+## 项目需求
+### Qt框架
 Qt 5.10
 Qt Creator 4.6
-###编译器
+### 编译器
 mingw53_32
-###mongo数据库：
+### mongo数据库：
  客户端地址https://www.mongodb.com/download-center#community
  使用方法：https://docs.mongodb.com/manual/tutorial/install-mongodb-enterprise-on-windows/
 采取默认端口27017即可
  c++驱动：在附件中，在win10 x86/64下应该可运行
-###boost库：
+### boost库：
  在附件中，版本1_67
-##使用方法
-###图形界面
+## 使用方法
+### 图形界面
 具体操作在视频GUI.mp4中
 在项目-Run-Command line arguments中，加入-m g
 
 ![](./_image/2018-07-01-16-38-02.jpg)
-####如可以运行mongoDB数据库
+#### 如可以运行mongoDB数据库
 1.在LibraryManagementSystem.pro中，取消注释DEFINES += __Database
 ![](./_image/2018-07-01-16-39-29.jpg)
 2.运行
@@ -54,11 +54,11 @@ state为finish表示已还书
 记录tab
 双击可批准借书/还书申请
 
-####如果无法运行数据库
+#### 如果无法运行数据库
 可用reader用户名登录读者界面，admin登录管理员界面，密码不用填
 无法显示数据，只有界面
 
-###命令行界面
+### 命令行界面
 在项目-Run-Command line arguments中，加入-m c
 可按提示进行注册，登录，退出等操作
 管理员界面使用指南（来源：张可真）：
@@ -100,10 +100,10 @@ Administrator类
 指令：quit 或 0
 每进行一次操作之后都会自动回到主界面，只有选择退出后可
 以结束程序。
-##文档
+## 文档
 [在线文档](http://doc.jkxing.cn/LibraryManagementSystem) ，由Doxygen生成
 文档中包含UML图和各个类的接口
-###简要介绍
+### 简要介绍
 代码分为用户端，服务端
 用户端
 初始交互类：负责登录，注册
@@ -126,8 +126,7 @@ User类主要为Reader类提供一系列接口，具体功能大部分在Reader�
 User类中有一个重要的函数search，是Reader类借书还书操作的底层实现函数。它通过接收用户输入的信息（书名/作者名/标签），然后调用Searcher类中的Searcher::search函数，找到与这些信息相关的书籍并以cursor形式返回出来，User::search再将返回出来的书籍信息全部打印到屏幕上，让用户继续选择具体是哪一本书，然后根据用户的选择将对应书籍的id返回给上层函数。
 Reader类为读者与系统内核交互的中间媒介，其中定义了读者可以进行的一系列操作，包括阅读帮助界面（help函数），借书操作（borrow函数），还书操作（giveback函数），查看借阅记录（getborrowlist函数），更改密码（changepassword函数），以及退出系统。借书、还书交由rendingcontrol类进行，分别调用newRendRequest函数和newReturnRequest函数；查看借阅记录交由rendingcontrol类进行，调用getBorrowList函数；更改密码交由usercontrol类进行，调用updateUserInfo函数。值得注意的是，只有在确定读者借阅了某本书籍之后，该本书籍才能被该读者归还。
 
-##分工(代码量)
-邢健开：服务端，数据库，图形界面，命令行登录界面（约100KB）
-张可真：命令行管理员界面（约15KB）
-周炫柏：命令行读者界面，抽象用户类（约10KB)
-尹涵：中途退出，没有贡献- -||（0KB）
+## 分工(代码量)
+邢健开：服务端，数据库，图形界面，命令行登录界面
+张可真：命令行管理员界面
+周炫柏：命令行读者界面，抽象用户类
